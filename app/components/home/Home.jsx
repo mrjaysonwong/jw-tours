@@ -14,7 +14,7 @@ export default function Home({ session }) {
             Sign Out
           </Button>
 
-          <Typography sx={{ my: 4 }}>Welcome {session.user.name}</Typography>
+          <Typography sx={{ my: 4 }}>Welcome {session.user?.name || 'Guest'}</Typography>
         </>
       ) : (
         <>
