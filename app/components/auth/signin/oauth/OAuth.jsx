@@ -12,7 +12,12 @@ export default function OAuth() {
       >
         Sign in with Google
       </Button>
-      <Button fullWidth variant="contained" className="oauth btn-github">
+      <Button
+        fullWidth
+        variant="contained"
+        className="oauth btn-github"
+        onClick={() => signIn('github', { callbackUrl: '/' })}
+      >
         Sign in with Github
       </Button>
       <Button fullWidth variant="contained" className="oauth btn-facebook">
