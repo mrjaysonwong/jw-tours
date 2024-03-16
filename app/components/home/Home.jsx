@@ -5,20 +5,16 @@ import { Button, Typography } from '@mui/material';
 import { MainContainer } from '@/app/components/layout/styles/globals';
 import { signIn, signOut } from 'next-auth/react';
 
-export default function Home(props) {
-  const data = props.user;
-
+export default function Home({ session }) {
   return (
     <MainContainer>
-      {data ? (
+      {session ? (
         <>
-          <Link href="/">
-            <Button variant="contained" onClick={() => signOut()}>
-              Sign Out
-            </Button>
-          </Link>
+          <Button variant="contained" onClick={() => signOut()}>
+            Sign Out
+          </Button>
 
-          <Typography sx={{ my: 4 }}>Welcome {data?.user?.name}</Typography>
+          <Typography sx={{ my: 4 }}>Welcome {session.user.name}</Typography>
         </>
       ) : (
         <>
