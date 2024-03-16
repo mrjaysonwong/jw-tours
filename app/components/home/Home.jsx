@@ -18,7 +18,7 @@ export default function Home(props) {
             </Button>
           </Link>
 
-          <Typography sx={{ my: 4 }}>Welcome {data.user.name}</Typography>
+          <Typography sx={{ my: 4 }}>Welcome {data?.user?.name}</Typography>
         </>
       ) : (
         <>
