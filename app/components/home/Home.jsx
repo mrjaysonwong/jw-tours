@@ -3,8 +3,7 @@
 import { Button, Typography } from '@mui/material';
 import { MainContainer } from '@/app/components/layout/styles/globals';
 import { signIn, signOut } from 'next-auth/react';
-import { useSession } from 'next-auth/react';
-import Spinner from '../layout/loaders/spinner';
+
 
 export default function Home(props) {
   const session = props.user;
