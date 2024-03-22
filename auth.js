@@ -2,6 +2,8 @@ import NextAuth from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
 import GitHubProvider from 'next-auth/providers/github';
 import FacebookProvider from 'next-auth/providers/facebook';
+import CredentialsProvider from 'next-auth/providers/credentials';
+import { authSignin } from './utils/helper/authUser';
 
 export const {
   handlers: { GET, POST },
@@ -21,10 +23,37 @@ export const {
       clientId: process.env.FACEBOOK_ID,
       clientSecret: process.env.FACEBOOK_SECRET,
     }),
+    CredentialsProvider({
+      id: 'email',
+      name: 'email',
+      async authorize(credentials, req) {
+        const user = await authSignin(credentials);
+
+        if (user) {
+          return user;
+        }
+      },
+    }),
   ],
+  callbacks: {
+    async signIn({ user, account, email, profile, credentials }) {
+      if (user) {
+        return true;
+      }
+    },
+
+    async jwt({ token, user, account, profile }) {
+      if (user) {
+        token.user = user;
+      }
+
+      return token;
+    },
+  },
   secret: process.env.AUTH_SECRET,
   pages: {
     signIn: '/auth/signin',
+    error: '/auth/signup',
   },
   trustHost: true,
 });

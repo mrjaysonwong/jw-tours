@@ -1,7 +1,7 @@
 import SignUp from '@/app/components/auth/signup/SignUp';
 
 export const metadata = {
-  title: 'Sign Up | JW-Tours',
+  title: 'Sign Up',
 };
 
 export default function SignUpPage() {

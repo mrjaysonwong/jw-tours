@@ -1,15 +1,15 @@
-import Link from 'next/link';
-import { Button, Typography } from '@mui/material';
-import { MainContainer } from '@/app/components/layout/styles/globals';
+import Verify from '@/app/components/auth/verify/Verify';
+
 
 export const metadata = {
-  title: 'Verify Email | JW-Tours',
+  title: 'Verify Request',
 };
 
-export default function Verify() {
+export default function VerifyPage() {
+
   return (
-    <MainContainer>
-      <Typography>Verify Page</Typography>
-    </MainContainer>
+    <>
+      <Verify />
+    </>
   );
 }

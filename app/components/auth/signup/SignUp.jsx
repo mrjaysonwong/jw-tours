@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { Button, Typography } from '@mui/material';
-import { MainContainer } from '@/app/components/layout/styles/globals';
+import { MainContainer } from '@/app/components/custom/styles/globals';
 
 
 export default function SignUp() {

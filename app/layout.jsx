@@ -1,14 +1,17 @@
 import { cookies } from 'next/headers';
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v13-appRouter';
-import Nav from './components/layout/navbar/Nav';
-import Footer from './components/layout/footer/Footer';
-import ToggleThemeMode from './components/layout/navbar/ToggleThemeMode';
+import Nav from './components/custom/navbar/Nav';
+import Footer from './components/custom/footer/Footer';
+import ToggleThemeMode from './components/custom/navbar/ToggleThemeMode';
 import SessionWrapper from './components/auth/SessionWrapper';
 import '../app/globals.css';
 
+
 export const metadata = {
-  title: 'JW-Tours App',
-  description: 'Simple Project using Next.js',
+  title: {
+    template: '%s | JW Tours',
+    default: 'JW Tours',
+  },
 };
 
 export default function RootLayout({ children }) {

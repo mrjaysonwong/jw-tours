@@ -1,4 +1,4 @@
-import { Button, Typography, TextField, Box } from '@mui/material';
+import { Button } from '@mui/material';
 import { signIn } from 'next-auth/react';
 
 export default function OAuth() {
@@ -10,7 +10,7 @@ export default function OAuth() {
         className="oauth btn-google"
         onClick={() => signIn('google', { callbackUrl: '/' })}
       >
-        Sign in with Google
+        Sign-in with Google
       </Button>
       <Button
         fullWidth
@@ -18,7 +18,7 @@ export default function OAuth() {
         className="oauth btn-github"
         onClick={() => signIn('github', { callbackUrl: '/' })}
       >
-        Sign in with Github
+        Sign-in with Github
       </Button>
       <Button
         fullWidth
@@ -26,7 +26,7 @@ export default function OAuth() {
         className="oauth btn-facebook"
         onClick={() => signIn('facebook', { callbackUrl: '/' })}
       >
-        Sign in with Facebook
+        Sign-in with Facebook
       </Button>
     </>
   );
