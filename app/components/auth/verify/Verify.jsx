@@ -13,18 +13,20 @@ export default function Verify() {
   const token = searchParams.get('token');
   const email = searchParams.get('email');
   const mode = searchParams.get('mode');
+  const callbackUrl = searchParams.get('callbackUrl');
 
   const handleSignIn = async () => {
     const res = await signIn('email', {
       redirect: false,
       token: token,
       email: email,
+      mode: mode,
     });
 
     if (res.error) {
       router.replace('/notifications/authentication-failed');
     } else {
-      router.push('/');
+      router.replace(callbackUrl ?? '/');
     }
   };
 

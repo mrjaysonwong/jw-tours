@@ -33,6 +33,7 @@ export async function PATCH(Request) {
     Request.user = decoded;
 
     const { exp: expires } = Request.user;
+
     const epochTime = expires * 1000; // convert to milliseconds
     const formattedDateString = await formattedDate(epochTime);
     const encodedEmail = encodeURIComponent(email);
@@ -59,7 +60,6 @@ export async function PATCH(Request) {
           $set: {
             'email.$.token': token,
             'email.$.expireTimestamp': epochTime,
-            'email.$.isVerified': false,
           },
         },
         { new: true }
@@ -86,10 +86,12 @@ export async function PATCH(Request) {
     });
 
     return Response.json(
-      { message: `A Sign-in link has been sent to ${email}` },
+      { message: `A sign-in link has been sent to ${email}` },
       { status: 200 }
     );
   } catch (error) {
     console.error(error);
+
+    throw error.message;
   }
 }

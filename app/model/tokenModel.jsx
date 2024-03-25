@@ -30,10 +30,6 @@ const tokenSchema = new Schema({
         type: Boolean,
         default: undefined,
       },
-      isVerified: {
-        type: Boolean,
-        default: false,
-      },
 
       _id: false,
     },

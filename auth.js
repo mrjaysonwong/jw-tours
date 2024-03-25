@@ -39,6 +39,8 @@ export const {
     async signIn({ user, account, email, profile, credentials }) {
       if (user) {
         return true;
+      } else {
+        return false;
       }
     },
 
@@ -53,7 +55,6 @@ export const {
   secret: process.env.AUTH_SECRET,
   pages: {
     signIn: '/auth/signin',
-    error: '/auth/signup',
   },
   trustHost: true,
 });

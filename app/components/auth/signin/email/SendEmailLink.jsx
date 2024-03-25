@@ -16,7 +16,6 @@ import FormSubmitButton from '@/app/components/custom/buttons/FormSubmitButton';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { emailSignInSchema } from '@/lib/validation/yup/signInSchema';
-import { sleep } from '@/utils/sleep';
 import { FieldErrorMessage } from '@/app/components/custom/messages';
 import axios from 'axios';
 import { errorHandler } from '@/utils/errorHandler';
@@ -26,6 +25,7 @@ export default function SendEmailLink({ open, setOpen }) {
 
   const [hasError, setHasError] = useState(false);
   const [error, setError] = useState('');
+  const [email, setEmail] = useState('');
 
   const handleClose = (event, reason) => {
     if (reason !== 'backdropClick') {
@@ -48,6 +48,7 @@ export default function SendEmailLink({ open, setOpen }) {
 
       const { data } = await axios.patch(url, values);
 
+      setEmail(values.email);
       setHasError(false);
       reset();
     } catch (error) {
@@ -61,8 +62,10 @@ export default function SendEmailLink({ open, setOpen }) {
   useEffect(() => {
     if (isSubmitSuccessful && !hasError) {
       const timeoutId = setTimeout(() => {
-        router.push('/');
-      }, 1500);
+        router.replace(
+          `/confirmation/send-link?email=${encodeURIComponent(email)}`
+        );
+      }, 1000);
 
       return () => clearTimeout(timeoutId);
     }
@@ -94,7 +97,7 @@ export default function SendEmailLink({ open, setOpen }) {
 
         <DialogContent>
           <DialogContentText id="dialog-content-text">
-            To Sign in, please enter your email address here.
+            To sign in, please enter your email address here.
             <br />
             We&apos;ll send one-tap sign in link.
           </DialogContentText>
@@ -128,6 +131,7 @@ export default function SendEmailLink({ open, setOpen }) {
               isSubmitSuccessful={isSubmitSuccessful}
               hasError={hasError}
               errors={errors}
+              mode="signin"
             />
           </Box>
           {hasError && (

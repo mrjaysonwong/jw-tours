@@ -1,16 +1,10 @@
 import { MainContainer } from '@/app/components/custom/styles/globals';
 import AuthenticationFailed from '@/app/components/notifications/AuthenticationFailed';
-import Custom404 from '@/app/components/custom/404';
+import Custom404 from '@/app/components/custom/error/404';
+import { formatMetadata } from '@/utils/formatMetadata';
 
 export async function generateMetadata({ params }) {
-  const formattedTitle = params.slug
-    .split('-')
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(' ');
-
-  return {
-    title: formattedTitle,
-  };
+  return formatMetadata(params);
 }
 
 export default function NotificationsPage({ params }) {
@@ -26,7 +20,7 @@ export default function NotificationsPage({ params }) {
   };
 
   return (
-    <MainContainer sx={{ m: 2, textAlign: 'center' }}>
+    <MainContainer sx={{ mx: 2, textAlign: 'center' }}>
       {renderNotificationComponent(slug)}
     </MainContainer>
   );

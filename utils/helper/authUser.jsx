@@ -22,21 +22,14 @@ export async function authSignin(credentials) {
       'email.token': token,
     });
 
-    const isTokenVerified = await Token.findOne({
-      'email.email': email,
-      'email.isVerified': true,
-    });
-
-    if (!userTokenExists || isTokenVerified) {
+    if (!userTokenExists) {
       throw new Error('Invalid sign in link');
     }
 
     if (isSignUp) {
       // Set isVerified to true for the newly signed-up user
       await User.findOneAndUpdate(
-        {
-          'email.email': email,
-        },
+        { 'email.email': email },
         {
           $set: {
             'email.$.isVerified': true,
@@ -48,11 +41,13 @@ export async function authSignin(credentials) {
       );
     }
 
+    const currentTimestamp = Date.now();
+
     await Token.findOneAndUpdate(
       { 'email.email': email },
       {
         $set: {
-          'email.$.isVerified': true,
+          'email.$.expireTimestamp': currentTimestamp,
         },
       },
       { new: true }
@@ -71,6 +66,6 @@ export async function authSignin(credentials) {
 
     return userObj;
   } catch (error) {
-    throw error;
+    throw error.message;
   }
 }
