@@ -4,11 +4,22 @@
   --palette-light: rgb(255, 255, 255);
   --palette-dark: rgb(45, 45, 45);
   --palette-light-blue: #42a5f5;
-  --palette-purple: #9F70FD;
+  --palette-purple: #9f70fd;
   --palette-pastel-blue: #2f579c;
   --palette-success: #388e3c;
+  --palette-error: #d32f2f;
   --background-color-title: rgba(128, 128, 128, 0.1);
-  --dialog-bgColor-dark: #1B2430;
+  --background-color-list: rgb(45, 45, 45);
+  --dialog-bgColor-dark: #1b2430;
+  --text-link-color-blue: #0a66c2;
+  --button-gradient-blue: linear-gradient(
+    to right,
+    #7474bf 0%,
+    #348ac7 51%,
+    #7474bf 100%
+  );
+  --border-color: rgba(113, 113, 113, 0.5);
+  --hover-bgcolor: rgba(163, 163, 163, 0.4);
 }
 
 * {
@@ -24,6 +35,6 @@ body {
 }
 
 a {
-  color: inherit;
+  color: var(--text-link-color-blue);
   text-decoration: none;
 }

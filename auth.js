@@ -3,11 +3,17 @@ import GoogleProvider from 'next-auth/providers/google';
 import GitHubProvider from 'next-auth/providers/github';
 import FacebookProvider from 'next-auth/providers/facebook';
 import CredentialsProvider from 'next-auth/providers/credentials';
-import { authSignin } from './utils/helper/authUser';
+import {
+  authSignInCredentials,
+  authSignInEmail,
+  authSignInOAuth,
+} from './utils/helper/authSignIn';
+import { findUser } from './utils/helper/findUser';
 
 export const {
   handlers: { GET, POST },
   auth,
+  signIn,
 } = NextAuth({
   // Configure one or more authentication providers
   providers: [
@@ -27,20 +33,39 @@ export const {
       id: 'email',
       name: 'email',
       async authorize(credentials, req) {
-        const user = await authSignin(credentials);
+        if (credentials) {
+          const user = await authSignInEmail(credentials);
 
-        if (user) {
-          return user;
+          if (user) {
+            return user;
+          }
         }
+        return null;
+      },
+    }),
+    CredentialsProvider({
+      name: 'credentials',
+      async authorize(credentials, req) {
+        if (credentials) {
+          const user = await authSignInCredentials(credentials, req);
+
+          if (user) {
+            return user;
+          }
+        }
+
+        return null;
       },
     }),
   ],
   callbacks: {
-    async signIn({ user, account, email, profile, credentials }) {
-      if (user) {
+    async signIn({ user, account, profile }) {
+      // if signed in using OAuth
+      if (user && profile) {
+        await authSignInOAuth(user, account);
         return true;
-      } else {
-        return false;
+      } else if (user) {
+        return true;
       }
     },
 
@@ -51,10 +76,21 @@ export const {
 
       return token;
     },
+
+    async session({ session, token }) {
+      if (token) {
+        const userExists = await findUser(token.user.email);
+
+        session.user = token.user;
+        session.user.role = userExists.role;
+
+        return session;
+      }
+    },
   },
   secret: process.env.AUTH_SECRET,
   pages: {
-    signIn: '/auth/signin',
+    signIn: '/signin',
   },
   trustHost: true,
 });

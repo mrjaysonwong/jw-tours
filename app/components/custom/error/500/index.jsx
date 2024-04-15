@@ -1,4 +1,4 @@
-import { MainContainer } from '@/app/components/custom/styles/globals';
+import { MainContainer } from '@/app/components/global-styles/globals';
 import { Typography, Button } from '@mui/material';
 import Image from 'next/image';
 

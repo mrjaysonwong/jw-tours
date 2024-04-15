@@ -1,8 +1,6 @@
-'use client';
-
 import Image from 'next/image';
 import Link from 'next/link';
-import { MainContainer } from '../../styles/globals';
+import { MainContainer } from '@/app/components/global-styles/globals'
 import { Typography, Button } from '@mui/material';
 
 export default function Custom404(props) {
@@ -26,7 +24,7 @@ export default function Custom404(props) {
       {props.resource ? (
         <Typography>
           Go back to
-          <Link href="/auth/signin" replace>
+          <Link href="/signin" replace>
             <Button variant="text" sx={{ ml: 1 }}>
               Sign In Page
             </Button>
@@ -35,11 +33,11 @@ export default function Custom404(props) {
       ) : (
         <Typography>
           Go back to
-          <Link href="/" replace>
+          <a href="/">
             <Button variant="text" sx={{ ml: 1 }}>
               Home page
             </Button>
-          </Link>
+          </a>
         </Typography>
       )}
     </MainContainer>

@@ -4,22 +4,25 @@ import CheckIcon from '@mui/icons-material/Check';
 export default function FormSubmitButton(props) {
   const {
     label,
+    mode,
     handleSubmit,
     isSubmitting,
     isSubmitSuccessful,
     hasError,
-    errors,
-    mode,
+    fullWidth,
+    captcha,
   } = props;
 
   return (
     <>
-      {mode === 'signin' ? (
+      {mode === 'auth' ? (
         <Button
+          fullWidth={fullWidth}
           type="submit"
-          disabled={isSubmitting}
+          disabled={isSubmitting || captcha}
           variant="contained"
           onClick={handleSubmit}
+          sx={{ mt: 2 }}
           color={
             hasError
               ? 'error'
@@ -40,9 +43,10 @@ export default function FormSubmitButton(props) {
         <>
           <Button
             type="submit"
-            disabled={isSubmitting}
+            disabled={isSubmitting || captcha}
             variant="contained"
             onClick={handleSubmit}
+            sx={{ mt: 2 }}
             color={hasError ? 'error' : undefined}
           >
             {isSubmitting ? <CircularProgress size={25} /> : label}

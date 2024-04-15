@@ -1,5 +1,5 @@
-import { MainContainer } from '@/app/components/custom/styles/globals';
-import AuthenticationFailed from '@/app/components/notifications/AuthenticationFailed';
+import { MainContainer } from '@/app/components/global-styles/globals';
+import AuthenticationFailed from '@/app/notifications/components/AuthenticationFailed';
 import Custom404 from '@/app/components/custom/error/404';
 import { formatMetadata } from '@/utils/formatMetadata';
 

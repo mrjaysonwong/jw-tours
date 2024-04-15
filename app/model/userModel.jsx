@@ -63,9 +63,9 @@ const userSchema = new Schema(
         default: '',
       },
     },
-    accountType: {
+    accountProvider: {
       type: String,
-      default: '',
+      default: 'credentials',
     },
     phone: {
       dialCode: {

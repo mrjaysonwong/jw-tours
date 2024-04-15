@@ -24,14 +24,14 @@ export default function Footer() {
       }}
     >
       <Typography variant="body2">
-        <Link href="/" replace>
-          Terms of use
+        <Link href="/legal/user-agreement" replace>
+          User Agreement
         </Link>
       </Typography>
 
       <Typography variant="body2">
-        <Link href="/" replace>
-          Privacy policy
+        <Link href="/legal/privacy-policy" replace>
+          Privacy Policy
         </Link>
       </Typography>
     </Box>

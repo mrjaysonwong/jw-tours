@@ -14,9 +14,15 @@ export async function findUser(email) {
       return null;
     }
 
-    const user = userExists.email.find((e) => e.email === email);
+    const userEmail = userExists.email.find((e) => e.email === email);
+    const role = userExists.role;
 
-    return user;
+    const userObj = {
+      userEmail,
+      role,
+    };
+
+    return userObj;
   } catch (error) {
     throw error.message;
   }

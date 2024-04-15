@@ -1,20 +1,27 @@
-import Verify from '@/app/components/auth/verify/Verify';
-import { findUser } from '@/utils/helper/findUser';
+import Verify from '@/app/(auth)/verify/components/Verify';
+import connectMongo from '@/lib/connection';
 
 export const metadata = {
   title: 'Verify Request',
 };
 
 export default async function VerifyPage({ searchParams }) {
-  const user = await findUser(searchParams.email);
+  const { token, email, mode, callbackUrl } = searchParams;
 
-  if (!user) {
-    throw new Error('Internal Server Error');
+  try {
+    await connectMongo();
+  } catch (error) {
+    throw error;
   }
 
   return (
     <>
-      <Verify />
+      <Verify
+        token={token}
+        email={email}
+        mode={mode}
+        callbackUrl={callbackUrl}
+      />
     </>
   );
 }
