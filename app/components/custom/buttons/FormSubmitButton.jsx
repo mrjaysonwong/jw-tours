@@ -22,7 +22,10 @@ export default function FormSubmitButton(props) {
           disabled={isSubmitting || captcha}
           variant="contained"
           onClick={handleSubmit}
-          sx={{ mt: 2 }}
+          sx={{
+            mt: 2,
+            pointerEvents: !hasError && isSubmitSuccessful && 'none',
+          }}
           color={
             hasError
               ? 'error'

@@ -88,5 +88,4 @@ export const navRoutes = [
     pathName: 'Contact',
     path: '/contact',
   },
-  
 ];

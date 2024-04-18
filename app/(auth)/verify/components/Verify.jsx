@@ -33,7 +33,7 @@ export default function Verify(props) {
   }, [email, token]);
 
   return (
-    <MainContainer>
+    <MainContainer sx={{ minHeight: '80vh' }}>
       <PageSpinner />
     </MainContainer>
   );

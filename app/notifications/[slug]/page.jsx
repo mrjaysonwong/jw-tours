@@ -20,7 +20,7 @@ export default function NotificationsPage({ params }) {
   };
 
   return (
-    <MainContainer sx={{ mx: 2, textAlign: 'center' }}>
+    <MainContainer sx={{ minHeight: '80vh', px: 4, textAlign: 'center' }}>
       {renderNotificationComponent(slug)}
     </MainContainer>
   );

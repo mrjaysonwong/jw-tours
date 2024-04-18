@@ -13,7 +13,7 @@ import OAuth from './oauth/OAuth';
 export default function SignIn() {
   return (
     <>
-      <MainContainer>
+      <MainContainer sx={{ minHeight: '80vh' }}>
         <AuthCard sx={{ width: 'clamp(280px, 50%, 280px)', mt: 5 }}>
           <Typography variant="h5">Sign in</Typography>
           <CredentialsForm />

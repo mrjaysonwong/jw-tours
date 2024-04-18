@@ -5,6 +5,7 @@ import { useNavDrawerStore } from '@/stores/drawerStore';
 
 export default function Logo() {
   const { toggleNavDrawer } = useNavDrawerStore();
+
   return (
     <Box
       sx={{ a: { display: 'flex' } }}

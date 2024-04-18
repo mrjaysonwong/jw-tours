@@ -8,7 +8,7 @@ export const MainContainer = styled(Box)({
   flexDirection: 'column',
   alignItems: 'center',
   justifyContent: 'center',
-  minHeight: '100vh',
+  width: ' calc(100vw - 1px)',
 
   h5: {
     fontWeight: 500,
@@ -34,10 +34,9 @@ export const AuthCard = styled(Box)(({ theme }) => ({
     transformOrigin: '0 0',
   },
 
-
   '.legal': {
-    color: 'var(--text-link-color-blue)'
-  }
+    color: 'var(--text-link-color-blue)',
+  },
 }));
 
 export const StyledDialog = styled(Dialog)(({ theme }) => ({

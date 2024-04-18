@@ -132,7 +132,7 @@ export default function EmailLink() {
             <Link href="/signin">
               <Button
                 fullWidth
-                disabled={isSubmitting}
+                disabled={isSubmitting || isSubmitSuccessful}
                 variant="text"
                 sx={{ mt: 2 }}
               >

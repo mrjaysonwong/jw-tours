@@ -67,6 +67,7 @@ export default function ConfirmSendLink(props) {
         handleAlertMessage(errorMessage, 'error');
       } else {
         setIsSubmitting(false);
+     
         handleAlertMessage('An error occured. Try again.', 'error');
       }
     }

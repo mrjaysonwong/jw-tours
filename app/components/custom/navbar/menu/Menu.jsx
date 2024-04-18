@@ -115,7 +115,6 @@ export default function Menu() {
         }}
       >
         <IconButton
-          edge="start"
           aria-label="menu"
           onClick={() => toggleNavDrawer('right', state.right ? false : true)}
         >

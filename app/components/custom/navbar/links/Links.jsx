@@ -18,10 +18,6 @@ import { LinkContainer, NestedLinkContainer } from '../styles';
 import { ClickAwayListener } from '@mui/base/ClickAwayListener';
 import { checkPath } from '@/utils/common';
 
-// should have single source of links elements when desktop or mobile view
-// try useMediaQuery then render or not
-
-
 export default function NavbarLinks() {
   const [open, setOpen] = useState(false);
   const [selectedPathName, setSelectedPathName] = useState('');
@@ -30,25 +26,7 @@ export default function NavbarLinks() {
   const isAuthPage = checkPath(pathname);
 
   if (isAuthPage) {
-    return (
-      <Box sx={{ ml: 'auto', a: { color: 'inherit' } }}>
-        <Box>
-          <Link href="/contact">
-            <Button
-              variant="text"
-              sx={{
-                color: 'inherit',
-                textTransform: 'none',
-                padding: '8px 12px',
-                borderRadius: '24px',
-              }}
-            >
-              Contact
-            </Button>
-          </Link>
-        </Box>
-      </Box>
-    );
+    return null;
   }
 
   const handleClick = (e) => {
@@ -101,10 +79,7 @@ export default function NavbarLinks() {
               {item.nestedPathName.map((item) => (
                 <List key={item.pathName} component="div" disablePadding>
                   <Link href={`${item.path}`}>
-                    <ListItemButton
-                      sx={{ borderRadius: '8px' }}
-                      onClick={handleClick}
-                    >
+                    <ListItemButton sx={{ my: 1 }} onClick={handleClick}>
                       <Icon fontSize="small">{item.icon}</Icon>
 
                       <ListItemText
@@ -132,22 +107,13 @@ export default function NavbarLinks() {
             md: 'none',
             lg: 'flex',
           },
-          width: '75vw',
+          width: '70vw',
           alignItems: 'center',
           overflow: 'auto',
-          // border: '1px solid red',
+          mx: 4,
         }}
       >
-        <Box
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            mx: 4,
-            // border: '1px solid red',
-          }}
-        >
-          {list}
-        </Box>
+        {list}
       </Box>
     </>
   );

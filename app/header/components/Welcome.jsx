@@ -5,12 +5,12 @@ import { Typography } from '@mui/material';
 import { MainContainer } from '@/app/components/global-styles/globals';
 import { UserSessionContext } from '@/context/UserSessionWrapper';
 
-export default function Home() {
+export default function Welcome() {
   const session = useContext(UserSessionContext);
   const user = session?.user;
 
   return (
-    <MainContainer>
+    <MainContainer sx={{ minHeight: '80vh' }}>
       <Typography sx={{ my: 4 }}>
         Welcome {user ? user?.name : 'Guest'}
       </Typography>

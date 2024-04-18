@@ -1,9 +1,9 @@
-import Home from './Home';
+import Header from './header/Header';
 
 export default async function HomePage() {
   return (
     <>
-      <Home />
+      <Header />
     </>
   );
 }

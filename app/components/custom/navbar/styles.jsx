@@ -23,7 +23,7 @@ export const NestedLinkContainer = styled(Box)(({ theme }) => ({
   position: 'absolute',
   backgroundColor:
     theme.palette.mode === 'dark'
-      ? 'var(--background-color-list)'
+      ? 'var(--palette-dark2)'
       : 'var(--palette-light-main)',
   borderRadius: '8px',
   marginTop: '8px',

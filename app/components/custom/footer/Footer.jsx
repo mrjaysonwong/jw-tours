@@ -9,8 +9,9 @@ export default function Footer() {
       sx={{
         display: 'flex',
         justifyContent: 'center',
+        width: ' calc(100vw - 1px)',
         py: 4,
-        mt: 10,
+        mt: 8,
         color: 'gray',
 
         '& p:not(:last-child):after': {

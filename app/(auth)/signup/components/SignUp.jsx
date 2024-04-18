@@ -72,8 +72,8 @@ export default function SignUp() {
   };
 
   return (
-    <MainContainer>
-      <AuthCard sx={{ width: 'clamp(300px, 90vw, 360px)', mt: 10 }}>
+    <MainContainer sx={{ minHeight: '90vh' }}>
+      <AuthCard sx={{ width: 'clamp(300px, 90vw, 360px)' }}>
         <Typography variant="h5">Create an account</Typography>
         <form>
           <Grid container spacing={2}>

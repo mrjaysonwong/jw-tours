@@ -46,9 +46,10 @@ export function AuthButtonsNonMobile() {
   return (
     <Box
       sx={{
+        ml: 'auto',
         display: { xs: 'none', md: 'none', lg: 'flex' },
         alignItems: 'center',
-        ml: 'auto',
+
         button: {
           textTransform: 'none',
         },
