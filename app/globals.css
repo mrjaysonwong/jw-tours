@@ -3,7 +3,6 @@
   --palette-dark-main: rgb(0, 0, 0);
   --palette-light: rgb(255, 255, 255);
   --palette-dark: rgb(45, 45, 45);
-  --palette-dark2: #2a2c31;
   --palette-light-blue: #42a5f5;
   --palette-purple: #9f70fd;
   --palette-pastel-blue: #2f579c;
@@ -21,6 +20,7 @@
   );
   --border-color: rgba(113, 113, 113, 0.5);
   --hover-bgcolor: rgba(163, 163, 163, 0.3);
+  --icon-bgcolor: rgba(162, 162, 162, 0.2);
 }
 
 * {
@@ -38,4 +38,33 @@ body {
 a {
   color: var(--text-link-color-blue);
   text-decoration: none;
+  cursor: pointer;
+}
+
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: gray;
+  scroll-behavior: smooth;
+}
+
+/* Works on Chrome, Edge, and Safari */
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 4px;
+}
+
+*::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 2px rgb(118, 118, 118);
+  border-radius: 20px;
+}
+
+*::-webkit-scrollbar-thumb:vertical {
+  background-color: var(--scrollbar-color);
+  border-radius: 20px;
+}
+
+*::-webkit-scrollbar-thumb:horizontal {
+  background-color: var(--scrollbar-color);
+  border-radius: 10px;
 }

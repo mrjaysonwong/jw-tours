@@ -12,8 +12,8 @@ import {
   IconButton,
 } from '@mui/material';
 import {
-  MainContainer,
-  AuthCard,
+  StyledContainer as MainContainer,
+  StyledCard,
 } from '@/app/components/global-styles/globals';
 import FormSubmitButton from '@/app/components/custom/buttons/FormSubmitButton';
 import { useForm } from 'react-hook-form';
@@ -21,7 +21,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { sigUpSchema } from '@/lib/validation/yup/signUpSchema';
 import { FieldErrorMessage } from '@/app/components/custom/messages';
 import axios from 'axios';
-import { errorHandler } from '@/utils/errorHandler';
+import { errorHandler } from '@/utils/helper/errorHandler';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { AlertMessage } from '@/app/components/custom/messages';
@@ -72,15 +72,30 @@ export default function SignUp() {
   };
 
   return (
-    <MainContainer sx={{ minHeight: '90vh' }}>
-      <AuthCard sx={{ width: 'clamp(300px, 90vw, 360px)' }}>
-        <Typography variant="h5">Create an account</Typography>
+    <MainContainer
+      sx={{
+        mt: 5,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
+      <StyledCard
+        sx={{
+          width: 'clamp(300px, 90vw, 350px)',
+        }}
+      >
+        <Typography variant="h5" sx={{ mb: 2 }}>
+          Create an account
+        </Typography>
         <form>
           <Grid container spacing={2}>
             <Grid item xs={6}>
               <TextField
                 {...register('firstName')}
                 fullWidth
+                size="small"
                 label="First Name"
                 name="firstName"
                 error={!!errors.firstName}
@@ -91,6 +106,7 @@ export default function SignUp() {
               <TextField
                 {...register('lastName')}
                 fullWidth
+                size="small"
                 label="Last Name"
                 name="lastName"
                 error={!!errors.lastName}
@@ -102,6 +118,7 @@ export default function SignUp() {
               <TextField
                 {...register('email')}
                 fullWidth
+                size="small"
                 label="Email"
                 name="email"
                 error={!!errors.email}
@@ -112,6 +129,7 @@ export default function SignUp() {
               <TextField
                 {...register('password')}
                 fullWidth
+                size="small"
                 label="Password"
                 name="password"
                 error={!!errors.password}
@@ -132,6 +150,7 @@ export default function SignUp() {
               <TextField
                 {...register('confirmPassword')}
                 fullWidth
+                size="small"
                 label="Confirm Password"
                 name="confirmPassword"
                 error={!!errors.confirmPassword}
@@ -176,7 +195,7 @@ export default function SignUp() {
             </Grid>
           </Grid>
         </form>
-      </AuthCard>
+      </StyledCard>
 
       <Box sx={{ my: 2, display: 'flex' }}>
         <Typography>Already have an account?</Typography>

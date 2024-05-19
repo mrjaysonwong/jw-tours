@@ -1,9 +1,20 @@
-import Header from './header/Header';
+import React, { Suspense } from 'react';
+import Home from './(homepage)/Home';
+import { StyledContainer as MainContainer } from '@/app/components/global-styles/globals';
+import { Typography } from '@mui/material';
 
-export default async function HomePage() {
+export default function HomePage() {
   return (
     <>
-      <Header />
+      {/* <Suspense
+        fallback={
+          <MainContainer>
+            <Typography>Loading...</Typography>
+          </MainContainer>
+        }
+      > */}
+        <Home />
+      {/* </Suspense> */}
     </>
   );
 }

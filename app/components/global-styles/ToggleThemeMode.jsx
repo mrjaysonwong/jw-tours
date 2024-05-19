@@ -17,14 +17,14 @@ const inter = Inter({
 export default function ToggleThemeMode(props) {
   const { storedTheme } = props;
 
-  const [mode, setMode] = useState(storedTheme?.value || 'dark');
+  const [mode, setMode] = useState(storedTheme?.value || 'light');
 
-  const [cookies, setCookies] = useCookies(['themeMode']);
+  const [cookies, setCookie] = useCookies(['themeMode']);
 
   const colorMode = useMemo(
     () => ({
       toggleColorMode: () => {
-        setMode((prevMode) => (prevMode === 'dark' ? 'light' : 'dark'));
+        setMode((prevMode) => (prevMode === 'light' ? 'dark' : 'light'));
       },
     }),
     []
@@ -45,8 +45,8 @@ export default function ToggleThemeMode(props) {
 
   useEffect(() => {
     // use '/' as the path if you want your cookie to be accessible on all pages
-    setCookies('themeMode', mode, { path: '/', secure: true });
-  }, [mode, setCookies]);
+    setCookie('themeMode', mode, { path: '/', secure: true });
+  }, [mode, setCookie]);
 
   return (
     <ColorModeContext.Provider value={colorMode}>

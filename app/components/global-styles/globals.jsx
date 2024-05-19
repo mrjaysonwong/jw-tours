@@ -1,22 +1,26 @@
 'use client';
 
-import { Box, Dialog, Button } from '@mui/material';
+import { Box, Dialog, Button, Container } from '@mui/material';
 import { styled } from '@mui/system';
 
-export const MainContainer = styled(Box)({
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  justifyContent: 'center',
-  width: ' calc(100vw - 1px)',
+export const MainContainer = ({ children }) => {
+  return (
+    <StyledContainer>
+      <div>{children}</div>
+    </StyledContainer>
+  );
+};
 
-  h5: {
-    fontWeight: 500,
-    marginBottom: '1rem',
+export const StyledContainer = styled(Container)({
+  marginTop: '4rem',
+  minHeight: '100vh',
+
+  'h6, h5, h4, h3': {
+    fontWeight: 600,
   },
 });
 
-export const AuthCard = styled(Box)(({ theme }) => ({
+export const StyledCard = styled(Box)(({ theme }) => ({
   padding: '1rem',
   backgroundColor:
     theme.palette.mode === 'dark'

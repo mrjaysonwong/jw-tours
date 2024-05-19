@@ -25,19 +25,19 @@ export default function ThemeModeIconButton() {
           arrow
           placement="left"
           title={
-            theme.palette.mode === 'dark'
-              ? 'Toggle light mode'
-              : 'Toggle dark mode'
+            theme.palette.mode === 'light'
+              ? 'Toggle dark mode'
+              : 'Toggle light mode'
           }
         >
           <IconButton onClick={colorMode.toggleColorMode} color="inherit">
-            {theme.palette.mode === 'dark' ? (
+            {theme.palette.mode === 'light' ? (
               <>
-                <Brightness7Icon />
+                <Brightness4Icon />
               </>
             ) : (
               <>
-                <Brightness4Icon />
+                <Brightness7Icon />
               </>
             )}
           </IconButton>

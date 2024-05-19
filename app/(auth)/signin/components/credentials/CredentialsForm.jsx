@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { TextField, InputAdornment, IconButton } from '@mui/material';
 import FormSubmitButton from '@/app/components/custom/buttons/FormSubmitButton';
 import { useForm } from 'react-hook-form';
@@ -71,6 +71,7 @@ export default function CredForm() {
         <TextField
           {...register('email')}
           fullWidth
+          size="small"
           id="email"
           name="email"
           label="Email"
@@ -84,6 +85,7 @@ export default function CredForm() {
         <TextField
           {...register('password')}
           fullWidth
+          size="small"
           id="password"
           name="password"
           label="Password"

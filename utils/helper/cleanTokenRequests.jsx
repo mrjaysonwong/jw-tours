@@ -1,4 +1,4 @@
-import Token from '@/app/model/tokenModel';
+import Token from '@/model/tokenModel';
 
 export async function cleanTokenRequests() {
   const currentTimestamp = Date.now();

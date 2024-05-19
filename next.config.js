@@ -14,8 +14,11 @@ const nextConfig = {
         // protocol: 'https',
         hostname: 'flagcdn.com',
       },
+      {
+        // protocol: 'https',
+        hostname: 'images.pexels.com',
+      },
     ],
-
   },
 };
 

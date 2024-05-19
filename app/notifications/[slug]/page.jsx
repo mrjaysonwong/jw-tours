@@ -1,7 +1,7 @@
-import { MainContainer } from '@/app/components/global-styles/globals';
+import { StyledContainer as MainContainer } from '@/app/components/global-styles/globals';
 import AuthenticationFailed from '@/app/notifications/components/AuthenticationFailed';
-import Custom404 from '@/app/components/custom/error/404';
-import { formatMetadata } from '@/utils/formatMetadata';
+import { Custom404Page } from '@/app/components/custom/error/404';
+import { formatMetadata } from '@/utils/helper/formatMetadata';
 
 export async function generateMetadata({ params }) {
   return formatMetadata(params);
@@ -15,12 +15,21 @@ export default function NotificationsPage({ params }) {
       case 'authentication-failed':
         return <AuthenticationFailed />;
       default:
-        return <Custom404 />;
+        return <Custom404Page />;
     }
   };
 
   return (
-    <MainContainer sx={{ minHeight: '80vh', px: 4, textAlign: 'center' }}>
+    <MainContainer
+      sx={{
+        mt: 0,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        textAlign: 'center',
+      }}
+    >
       {renderNotificationComponent(slug)}
     </MainContainer>
   );

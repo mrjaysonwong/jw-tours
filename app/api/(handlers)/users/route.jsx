@@ -1,12 +1,16 @@
-export function GET(Request) {
-  // console.log(Request);
+import User from '@/model/userModel';
+import Token from '@/model/tokenModel';
+import connectMongo from '@/lib/connection';
 
-  return Response.json({
-    error: {
-      status_code: 404,
-      message: 'I am GET message',
-    },
-  });
+export async function GET(Request) {
+  const searchParams = Request.nextUrl.searchParams;
+  const userId = searchParams.get('userId');
+
+  await connectMongo();
+
+  const userExists = await User.findById(userId);
+
+  return Response.json({ data: userExists }, { status: 200 });
 }
 
 // export function POST(Request) {

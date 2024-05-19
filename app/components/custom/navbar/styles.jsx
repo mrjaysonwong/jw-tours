@@ -6,6 +6,7 @@ export const LinkContainer = styled(Box)(
     display: 'flex',
     alignItems: 'center',
     padding: '8px',
+
     backgroundColor:
       open && nested && selected === pathname
         ? 'var(--hover-bgcolor)'
@@ -23,9 +24,9 @@ export const NestedLinkContainer = styled(Box)(({ theme }) => ({
   position: 'absolute',
   backgroundColor:
     theme.palette.mode === 'dark'
-      ? 'var(--palette-dark2)'
+      ? 'var(--palette-dark)'
       : 'var(--palette-light-main)',
-  borderRadius: '8px',
+  borderRadius: '4px',
   marginTop: '8px',
 }));
 

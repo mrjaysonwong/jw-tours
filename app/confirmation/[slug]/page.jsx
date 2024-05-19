@@ -1,6 +1,6 @@
-import { MainContainer } from '@/app/components/global-styles/globals';
-import Custom404 from '@/app/components/custom/error/404';
-import { formatMetadata } from '@/utils/formatMetadata';
+import { StyledContainer as MainContainer } from '@/app/components/global-styles/globals';
+import { Custom404Page } from '@/app/components/custom/error/404';
+import { formatMetadata } from '@/utils/helper/formatMetadata';
 import ConfirmSendLink from '../components/ConfirmSendLink';
 import { auth } from '@/auth';
 import { redirect } from 'next/navigation';
@@ -22,6 +22,7 @@ export default async function ConfirmationPage({ params, searchParams }) {
   const isVerified = user?.isVerified === true;
 
   const userTokenExists = await findTokenUser(searchParams.email);
+
   const renderConfirmationComponent = () => {
     switch (slug) {
       case 'send-link':
@@ -31,12 +32,20 @@ export default async function ConfirmationPage({ params, searchParams }) {
 
         return <ConfirmSendLink email={email} mode={mode} />;
       default:
-        return <Custom404 />;
+        return <Custom404Page />;
     }
   };
 
   return (
-    <MainContainer sx={{ mx: 2, textAlign: 'center' }}>
+    <MainContainer
+      sx={{
+        mt: 0,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
       {renderConfirmationComponent(slug)}
     </MainContainer>
   );

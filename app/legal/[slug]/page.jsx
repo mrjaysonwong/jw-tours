@@ -1,6 +1,6 @@
-import { MainContainer } from '@/app/components/global-styles/globals';
-import Custom404 from '@/app/components/custom/error/404';
-import { formatMetadata } from '@/utils/formatMetadata';
+import { StyledContainer as MainContainer } from '@/app/components/global-styles/globals';
+import { Custom404Page } from '@/app/components/custom/error/404';
+import { formatMetadata } from '@/utils/helper/formatMetadata';
 import TermsOfUse from '@/app/legal/components/UserAgreement';
 import PrivacyPolicy from '@/app/legal/components/PrivacyPolicy';
 
@@ -17,15 +17,21 @@ export default function LegalPage({ params }) {
         return <TermsOfUse />;
 
       case 'privacy-policy':
-        return <PrivacyPolicy />
+        return <PrivacyPolicy />;
 
       default:
-        return <Custom404 />;
+        return <Custom404Page />;
     }
   };
 
   return (
-    <MainContainer>
+    <MainContainer
+      sx={{
+        mt: 0,
+        display: 'flex',
+        justifyContent: 'center',
+      }}
+    >
       {renderLegalComponent(slug)}
     </MainContainer>
   );

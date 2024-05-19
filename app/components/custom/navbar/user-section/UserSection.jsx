@@ -1,116 +1,138 @@
 import React, { useContext, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import {
   Box,
-  Button,
   Typography,
   IconButton,
   Avatar,
-  Grid,
+  Drawer,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
   Menu,
   MenuItem,
-  ListItemIcon,
   Divider,
   useTheme,
 } from '@mui/material';
 import { signOut } from 'next-auth/react';
 import { UserSessionContext } from '@/context/UserSessionWrapper';
 import { usePathname } from 'next/navigation';
-import { checkPath } from '@/utils/common';
+import { authPage } from '@/utils/helper/common';
+import { userSectionRoutes } from '@/src/routes/user-section-routes';
+import { useNavDrawerStore } from '@/stores/drawerStore';
 import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
-import ConfirmationNumberOutlinedIcon from '@mui/icons-material/ConfirmationNumberOutlined';
-import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium';
-import BookmarksOutlinedIcon from '@mui/icons-material/BookmarksOutlined';
-import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
+import CloseIcon from '@mui/icons-material/Close';
 
-// proceed user section onClick UI/UX on NonMobile
-// proceed profile settings
+const drawerWidth = '100%';
 
-export function UserSectionMobile() {
+export function ProfileMenuDrawerMobile() {
   const session = useContext(UserSessionContext);
-  const user = session?.user;
+  const router = useRouter();
+
+  const { state, toggleNavDrawer } = useNavDrawerStore();
+
+  const handleClick = (path) => {
+    toggleNavDrawer('right', false);
+    router.push(path);
+  };
 
   const handleSignOut = () => {
     localStorage.setItem('signed-out', 'true');
-    signOut();
+    signOut({ callbackUrl: '/signin' });
   };
 
-  return (
-    <Box sx={{ py: 2 }}>
+  const DrawerList = (
+    <Box role="presentation">
+      <IconButton
+        onClick={() => toggleNavDrawer('right', false)}
+        sx={{ position: 'absolute', top: 12, right: 15, color: 'inherit' }}
+      >
+        <CloseIcon />
+      </IconButton>
+
       <Box
         sx={{
-          py: 1,
+          mt: 3,
+          p: 3,
           display: 'flex',
           alignItems: 'center',
         }}
       >
         <Avatar
-          alt="User Avatar Image"
-          src={user?.image}
+          alt={`${session?.user?.name} profile image`}
+          src={session?.user?.image}
           referrerPolicy="no-referrer"
           sx={{ width: 56, height: 56 }}
         />
         <Box>
-          <Typography sx={{ ml: 2 }}>{user?.name}</Typography>
-          <Typography sx={{ ml: 2 }}>{user?.email}</Typography>
+          <Typography sx={{ ml: 2, userSelect: 'all' }}>
+            {session?.user?.name}
+          </Typography>
+          <Typography sx={{ ml: 2, userSelect: 'all' }}>
+            {session?.user?.email}
+          </Typography>
         </Box>
       </Box>
 
-      <Box
-        sx={{
-          py: 2,
-          border: '1px solid var(--border-color)',
-          borderWidth: '0px 0px 1px 0px',
-        }}
-      >
-        <Grid container>
-          <Grid item xs={6}>
-            <Button fullWidth startIcon={<ConfirmationNumberOutlinedIcon />}>
-              Bookings
-            </Button>
-          </Grid>
-          <Grid item xs={6}>
-            <Button fullWidth startIcon={<WorkspacePremiumIcon />}>
-              View Rewards
-            </Button>
-          </Grid>
-          <Grid item xs={6}>
-            <Button fullWidth startIcon={<BookmarksOutlinedIcon />}>
-              Wish List
-            </Button>
-          </Grid>
-          <Grid item xs={6}>
-            <Button fullWidth startIcon={<SettingsOutlinedIcon />}>
-              Settings
-            </Button>
-          </Grid>
-        </Grid>
-      </Box>
-
-      <Box sx={{ textAlign: 'right', py: 2 }}>
-        <Button
-          variant="contained"
-          onClick={handleSignOut}
-          startIcon={<LogoutOutlinedIcon />}
-        >
-          Sign Out
-        </Button>
-      </Box>
+      <List sx={{ px: 3 }}>
+        {userSectionRoutes.map((item) => (
+          <ListItem key={item.pathName} disablePadding>
+            <ListItemButton onClick={() => handleClick(item.path)}>
+              <ListItemIcon>{item.icon}</ListItemIcon>
+              <ListItemText primary={item.pathName} />
+            </ListItemButton>
+          </ListItem>
+        ))}
+      </List>
+      <Divider />
+      <List sx={{ px: 3 }}>
+        <ListItem disablePadding>
+          <ListItemButton onClick={handleSignOut}>
+            <ListItemIcon>
+              <LogoutOutlinedIcon />
+            </ListItemIcon>
+            <ListItemText primary="Sign Out" />
+          </ListItemButton>
+        </ListItem>
+      </List>
     </Box>
+  );
+
+  return (
+    <Drawer
+      hideBackdrop={true}
+      variant="temporary"
+      transitionDuration={0}
+      anchor="right"
+      open={state['right']}
+      sx={{
+        '& .MuiDrawer-paper': {
+          boxSizing: 'border-box',
+          minWidth: drawerWidth,
+          backgroundImage: 'none',
+        },
+      }}
+    >
+      {DrawerList}
+    </Drawer>
   );
 }
 
-export function UserSectionNonMobile() {
+export function ProfileMenu() {
   const [anchorEl, setAnchorEl] = useState(null);
+  const router = useRouter();
+
   const open = Boolean(anchorEl);
 
   const theme = useTheme();
   const isLightTheme = theme.palette.mode === 'light';
 
   const session = useContext(UserSessionContext);
-  const user = session?.user;
 
   const pathname = usePathname();
-  const isAuthPage = checkPath(pathname);
+  const isAuthPage = authPage(pathname);
 
   if (isAuthPage) {
     return null;
@@ -119,7 +141,19 @@ export function UserSectionNonMobile() {
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
+
+  const handleItemClick = (path) => {
+    router.push(path);
+    setAnchorEl(null);
+  };
+
   const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleSignOut = () => {
+    localStorage.setItem('signed-out', 'true');
+    signOut({ callbackUrl: '/signin' });
     setAnchorEl(null);
   };
 
@@ -127,8 +161,7 @@ export function UserSectionNonMobile() {
     <>
       <Box
         sx={{
-          position: 'fixed',
-          right: '2rem',
+          ml: 'auto',
           display: { xs: 'none', md: 'none', lg: 'flex' },
         }}
       >
@@ -137,20 +170,22 @@ export function UserSectionNonMobile() {
           aria-controls={open ? 'profile-menu' : undefined}
           aria-haspopup="true"
           aria-expanded={open ? 'true' : undefined}
-          sx={{ p: 0 }}
+          sx={{ p: 0.5, bgcolor: 'var(--icon-bgcolor)' }}
         >
           <Avatar
-            alt="User Avatar Image"
-            src={user?.image}
+            alt={`${session?.user?.name}`}
+            src={session?.user?.image}
             referrerPolicy="no-referrer"
-            sx={{ width: 42, height: 42 }}
+            sx={{ width: 38, height: 38 }}
           />
         </IconButton>
       </Box>
 
       <Menu
+        disableScrollLock={true}
         anchorEl={anchorEl}
         id="profile-menu"
+        className="profile-menu"
         open={open}
         onClose={handleClose}
         transformOrigin={{ horizontal: 'right', vertical: 'top' }}
@@ -162,7 +197,7 @@ export function UserSectionNonMobile() {
             mt: 1.5,
             bgcolor: isLightTheme
               ? 'var(--palette-light-main)'
-              : 'var(--palette-dark2)',
+              : 'var(--palette-dark)',
             '& .MuiAvatar-root': {
               width: 42,
               height: 42,
@@ -179,7 +214,7 @@ export function UserSectionNonMobile() {
               height: 10,
               bgcolor: isLightTheme
                 ? 'var(--palette-light-main)'
-                : 'var(--palette-dark2)',
+                : 'var(--palette-dark)',
               transform: 'translateY(-50%) rotate(45deg)',
               zIndex: 0,
             },
@@ -196,51 +231,35 @@ export function UserSectionNonMobile() {
           }}
         >
           <Avatar
-            alt="User Avatar Image"
-            src={user?.image}
+            alt={`${session?.user?.name} profile image`}
+            src={session?.user?.image}
             referrerPolicy="no-referrer"
             sx={{ cursor: 'default' }}
           />
           <Box sx={{ userSelect: 'text' }}>
-            <Typography>{user?.name}</Typography>
-            <Typography variant="body2">{user?.email}</Typography>
+            <Typography>{session?.user?.name}</Typography>
+            <Typography variant="body2">{session?.user?.email}</Typography>
           </Box>
         </MenuItem>
         <Divider />
-        <MenuItem>
-          <ListItemIcon>
-            <ConfirmationNumberOutlinedIcon />
-          </ListItemIcon>
-          Bookings
-        </MenuItem>
-        <MenuItem>
-          <ListItemIcon>
-            <WorkspacePremiumIcon />
-          </ListItemIcon>
-          View Rewards
-        </MenuItem>
-        <MenuItem>
-          <ListItemIcon>
-            <BookmarksOutlinedIcon />
-          </ListItemIcon>
-          Wish List
-        </MenuItem>
-        <MenuItem
-          onClick={() => {
-            signOut(), handleClose();
-          }}
-        >
+
+        {userSectionRoutes.map((item) => (
+          <MenuItem
+            key={item.pathName}
+            onClick={() => handleItemClick(item.path)}
+          >
+            <ListItemIcon>{item.icon}</ListItemIcon>
+            {item.pathName}
+          </MenuItem>
+        ))}
+
+        <Divider />
+
+        <MenuItem onClick={handleSignOut}>
           <ListItemIcon>
             <LogoutOutlinedIcon />
           </ListItemIcon>
           Sign Out
-        </MenuItem>
-        <Divider />
-        <MenuItem>
-          <ListItemIcon>
-            <SettingsOutlinedIcon />
-          </ListItemIcon>
-          Settings
         </MenuItem>
       </Menu>
     </>

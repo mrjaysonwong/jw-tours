@@ -26,6 +26,7 @@ export default async function RootLayout({ children }) {
   return (
     <SessionWrapper>
       <html lang="en">
+        <link rel="icon" href="/app-icon.svg" />
         <body>
           <AppRouterCacheProvider options={{ key: 'css' }}>
             <ToggleThemeMode storedTheme={storedTheme}>

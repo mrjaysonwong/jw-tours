@@ -2,8 +2,8 @@
 
 import React, { useState, useRef } from 'react';
 import {
-  MainContainer,
-  AuthCard,
+  StyledContainer as MainContainer,
+  StyledCard,
 } from '@/app/components/global-styles/globals';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -14,7 +14,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { emailSignInSchema } from '@/lib/validation/yup/signInSchema';
 import { FieldErrorMessage } from '@/app/components/custom/messages';
 import axios from 'axios';
-import { errorHandler } from '@/utils/errorHandler';
+import { errorHandler } from '@/utils/helper/errorHandler';
 import ReCAPTCHA from 'react-google-recaptcha';
 import { AlertMessage } from '@/app/components/custom/messages';
 import { useMessageStore } from '@/stores/messageStore';
@@ -82,8 +82,16 @@ export default function EmailLink() {
   };
   return (
     <>
-      <MainContainer>
-        <AuthCard sx={{ width: 'clamp(280px, 50%, 340px)' }}>
+      <MainContainer
+        sx={{
+          mt: 0,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <StyledCard sx={{ width: 'clamp(280px, 50%, 340px)' }}>
           <Box sx={{ mb: 2 }}>
             <Typography variant="h5">
               Sign in to JW Tours with a one-time link
@@ -98,6 +106,7 @@ export default function EmailLink() {
             <TextField
               {...register('email')}
               fullWidth
+              size="small"
               autoFocus
               margin="dense"
               id="email"
@@ -132,7 +141,7 @@ export default function EmailLink() {
             <Link href="/signin">
               <Button
                 fullWidth
-                disabled={isSubmitting || isSubmitSuccessful}
+                disabled={isSubmitting}
                 variant="text"
                 sx={{ mt: 2 }}
               >
@@ -140,7 +149,7 @@ export default function EmailLink() {
               </Button>
             </Link>
           </form>
-        </AuthCard>
+        </StyledCard>
       </MainContainer>
 
       <AlertMessage

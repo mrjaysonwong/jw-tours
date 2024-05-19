@@ -5,6 +5,7 @@ export const useNavDrawerStore = create((set) => ({
       left: false,
       right: false,
       top: false,
+      bottom: false,
     },
   
     toggleNavDrawer: (anchor, open) => {

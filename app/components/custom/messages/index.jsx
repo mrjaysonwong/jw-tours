@@ -30,7 +30,7 @@ export const AlertMessage = ({ open, onClose, message, severity }) => {
 
 export const FieldErrorMessage = ({ error }) =>
   error && (
-    <Typography color="error" className="error">
+    <Typography color="error" className="error" variant="body2">
       {error.message}
     </Typography>
   );

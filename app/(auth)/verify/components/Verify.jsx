@@ -3,7 +3,7 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { signIn } from 'next-auth/react';
-import { MainContainer } from '@/app/components/global-styles/globals';
+import { StyledContainer as MainContainer } from '@/app/components/global-styles/globals';
 import PageSpinner from '@/app/components/custom/loaders/PageSpinner';
 
 export default function Verify(props) {
@@ -33,7 +33,15 @@ export default function Verify(props) {
   }, [email, token]);
 
   return (
-    <MainContainer sx={{ minHeight: '80vh' }}>
+    <MainContainer
+      sx={{
+        mt: 0,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
       <PageSpinner />
     </MainContainer>
   );

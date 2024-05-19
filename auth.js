@@ -82,6 +82,7 @@ export const {
         const userExists = await findUser(token.user.email);
 
         session.user = token.user;
+        session.user.id = userExists.id;
         session.user.role = userExists.role;
 
         return session;
@@ -91,6 +92,7 @@ export const {
   secret: process.env.AUTH_SECRET,
   pages: {
     signIn: '/signin',
+    error: '/error',
   },
   trustHost: true,
 });

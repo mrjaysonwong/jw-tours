@@ -1,6 +1,6 @@
 import connectMongo from '@/lib/connection';
-import User from '@/app/model/userModel';
-import Token from '@/app/model/tokenModel';
+import User from '@/model/userModel';
+import Token from '@/model/tokenModel';
 
 export async function findUser(email) {
   try {
@@ -14,10 +14,10 @@ export async function findUser(email) {
       return null;
     }
 
-    const userEmail = userExists.email.find((e) => e.email === email);
-    const role = userExists.role;
+    const { _id: id, role, email: userEmail } = userExists;
 
     const userObj = {
+      id,
       userEmail,
       role,
     };

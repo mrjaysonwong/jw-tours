@@ -1,6 +1,6 @@
 import connectMongo from '@/lib/connection';
-import User from '@/app/model/userModel';
-import Token from '@/app/model/tokenModel';
+import User from '@/model/userModel';
+import Token from '@/model/tokenModel';
 import { compare } from 'bcryptjs';
 
 export async function authSignInCredentials(credentials, req) {
@@ -46,7 +46,7 @@ export async function authSignInCredentials(credentials, req) {
       { new: true }
     );
 
-    const { firstName, lastName, role, image, id } = userExists;
+    const { firstName, lastName, role, image, _id } = userExists;
     const foundPrimaryEmail = userExists.email.find(
       (e) => e.isPrimary === true
     );
@@ -57,7 +57,7 @@ export async function authSignInCredentials(credentials, req) {
       name,
       role,
       image: image.url,
-      id,
+      id: _id,
     };
 
     return user;
@@ -128,7 +128,7 @@ export async function authSignInEmail(credentials) {
       { new: true }
     );
 
-    const { firstName, lastName, role, image, id } = userExists;
+    const { firstName, lastName, role, image, _id } = userExists;
     const foundPrimaryEmail = userExists.email.find(
       (e) => e.isPrimary === true
     );
@@ -139,7 +139,7 @@ export async function authSignInEmail(credentials) {
       name,
       role,
       image: image.url,
-      id,
+      id: _id,
     };
 
     return userObj;
@@ -180,7 +180,7 @@ export async function authSignInOAuth(user, account) {
         { 'email.email': user.email },
         {
           $set: {
-            id: user.id,
+            id: userExists._id,
             'email.$.isPrimary': true,
             'email.$.isVerified': true,
             image: {

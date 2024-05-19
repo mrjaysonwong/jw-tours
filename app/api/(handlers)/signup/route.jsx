@@ -1,11 +1,11 @@
 import connectMongo from '@/lib/connection';
-import User from '@/app/model/userModel';
-import Token from '@/app/model/tokenModel';
+import User from '@/model/userModel';
+import Token from '@/model/tokenModel';
 import jwt from 'jsonwebtoken';
-import { generateToken } from '@/utils/generateToken';
+import { generateToken } from '@/utils/helper/generateToken';
 import { hash } from 'bcryptjs';
 import { sendEmail } from '@/utils/config/sendEmail';
-import { formattedDate } from '@/utils/formattedDate';
+import { formattedDate } from '@/utils/helper/formattedDate';
 import { render } from '@react-email/render';
 import { EmailTemplate } from '@/src/template/EmailTemplate';
 

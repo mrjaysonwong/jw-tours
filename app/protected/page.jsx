@@ -1,7 +1,12 @@
-export default function ProtectedPage() {
+import { Typography } from '@mui/material';
+import { StyledContainer as MainContainer } from '../components/global-styles/globals';
+
+export default async function ProtectedPage() {
   return (
-    <>
-      <h5>Protected Page</h5>
-    </>
+    <MainContainer>
+      <Typography variant="h4" sx={{ mt: 12 }}>
+        Protected Page
+      </Typography>
+    </MainContainer>
   );
 }

@@ -3,8 +3,8 @@
 import Link from 'next/link';
 import { Box, Typography, Divider, Chip } from '@mui/material';
 import {
-  MainContainer,
-  AuthCard,
+  StyledContainer as MainContainer,
+  StyledCard,
 } from '@/app/components/global-styles/globals';
 import { SignInWithContainer } from './styled';
 import CredentialsForm from './credentials/CredentialsForm';
@@ -13,9 +13,19 @@ import OAuth from './oauth/OAuth';
 export default function SignIn() {
   return (
     <>
-      <MainContainer sx={{ minHeight: '80vh' }}>
-        <AuthCard sx={{ width: 'clamp(280px, 50%, 280px)', mt: 5 }}>
-          <Typography variant="h5">Sign in</Typography>
+      <MainContainer
+        sx={{
+          mt: 0,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <StyledCard sx={{ width: 'clamp(280px, 50%, 280px)' }}>
+          <Typography variant="h5" sx={{ mb: 2 }}>
+            Sign in
+          </Typography>
           <CredentialsForm />
 
           <Divider sx={{ my: 2 }}>
@@ -27,7 +37,7 @@ export default function SignIn() {
           <SignInWithContainer>
             <OAuth />
           </SignInWithContainer>
-        </AuthCard>
+        </StyledCard>
 
         <Box sx={{ my: 2, display: 'flex' }}>
           <Typography>Don&apos;t have an account?</Typography>

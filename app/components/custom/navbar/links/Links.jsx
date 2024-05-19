@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
-import { usePathname } from 'next/navigation';
+import { usePathname, useParams } from 'next/navigation';
 import Link from 'next/link';
 import {
   Box,
-  Button,
   Typography,
   List,
   ListItemButton,
@@ -11,26 +10,28 @@ import {
   Collapse,
   Icon,
 } from '@mui/material';
-import { navRoutes } from '@/src/nav-routes';
+import { navRoutes } from '@/src/routes/nav-routes';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import { LinkContainer, NestedLinkContainer } from '../styles';
 import { ClickAwayListener } from '@mui/base/ClickAwayListener';
-import { checkPath } from '@/utils/common';
+import { authPage, hideNavLinks } from '@/utils/helper/common';
 
 export default function NavbarLinks() {
   const [open, setOpen] = useState(false);
   const [selectedPathName, setSelectedPathName] = useState('');
 
+  const params = useParams();
   const pathname = usePathname();
-  const isAuthPage = checkPath(pathname);
+  const isAuthPage = authPage(pathname);
+  const isHideOnSelectedPage = hideNavLinks(pathname, params);
 
-  if (isAuthPage) {
+  if (isHideOnSelectedPage || isAuthPage) {
     return null;
   }
 
   const handleClick = (e) => {
-    setSelectedPathName(e.currentTarget.getAttribute('id'));
+    setSelectedPathName(e.currentTarget.getAttribute('pathname'));
     setOpen(!open);
   };
 
@@ -39,18 +40,17 @@ export default function NavbarLinks() {
   };
 
   const handleMouseOver = (e) => {
-    setSelectedPathName(e.currentTarget.getAttribute('id'));
+    setSelectedPathName(e.currentTarget.getAttribute('pathname'));
     setOpen(true);
   };
 
-  const list = navRoutes.map((item) => (
+  const NavList = navRoutes.map((item) => (
     <Box
       key={item.pathName}
       sx={{ a: { color: 'inherit', textAlign: 'center' } }}
     >
       <Link href={`${item.nestedPathName ? '#' : item.path}`} passHref>
         <LinkContainer
-          id={item.pathName}
           open={open}
           nested={item.nestedPathName}
           selected={selectedPathName}
@@ -58,7 +58,7 @@ export default function NavbarLinks() {
           onClick={(e) => handleClick(e)}
           onMouseOver={(e) => handleMouseOver(e)}
         >
-          <Typography variant="body2" sx={{ width: '90px' }}>
+          <Typography variant="body2" sx={{ width: '95px' }}>
             {item.pathName}
           </Typography>
 
@@ -107,13 +107,12 @@ export default function NavbarLinks() {
             md: 'none',
             lg: 'flex',
           },
-          width: '70vw',
           alignItems: 'center',
           overflow: 'auto',
-          mx: 4,
+          mx: 3,
         }}
       >
-        {list}
+        {NavList}
       </Box>
     </>
   );

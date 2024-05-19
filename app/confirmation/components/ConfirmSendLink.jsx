@@ -4,10 +4,10 @@ import React, { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { Typography, Box, Button } from '@mui/material';
 import Image from 'next/image';
-import { AuthCard } from '@/app/components/global-styles/globals';
+import { StyledCard } from '@/app/components/global-styles/globals';
 import ReCAPTCHA from 'react-google-recaptcha';
 import axios from 'axios';
-import { errorHandler } from '@/utils/errorHandler';
+import { errorHandler } from '@/utils/helper/errorHandler';
 import { useRouter } from 'next/navigation';
 import { AlertMessage } from '@/app/components/custom/messages';
 import { useMessageStore } from '@/stores/messageStore';
@@ -93,7 +93,7 @@ export default function ConfirmSendLink(props) {
 
   return (
     <>
-      <AuthCard sx={{ width: 'clamp(300px, 90vw, 380px)', textAlign: 'left' }}>
+      <StyledCard sx={{ width: 'clamp(300px, 90vw, 380px)', textAlign: 'left' }}>
         <Box>
           <Typography variant="h4">
             {mode === 'signin' ? 'Email Verification' : 'Account Verification'}
@@ -154,7 +154,7 @@ export default function ConfirmSendLink(props) {
             </Button>
           </Link>
         </Box>
-      </AuthCard>
+      </StyledCard>
 
       <AlertMessage
         open={alert.open}

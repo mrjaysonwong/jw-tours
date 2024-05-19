@@ -4,7 +4,7 @@ import { Typography, Box, List, ListItem } from '@mui/material';
 
 export default function PrivacyPolicy() {
   return (
-    <Box sx={{ width: 'clamp(min(90vw, 600px), 90vw, max(50vw, 600px ))' }}>
+    <Box sx={{ width: 'clamp(min(100vw, 600px), 90vw, max(50vw, 600px ))' }}>
       <Typography
         variant="h3"
         textAlign="center"
