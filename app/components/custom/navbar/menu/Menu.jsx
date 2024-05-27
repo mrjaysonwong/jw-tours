@@ -16,7 +16,7 @@ import { navRoutes } from '@/src/routes/nav-routes';
 import CloseIcon from '@mui/icons-material/Close';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
-import { StyledListItem } from '../styles';
+import { StyledListItem } from '../styled';
 import { authPage, hideNavLinks } from '@/utils/helper/common';
 const drawerWidth = '100%';
 
@@ -25,7 +25,7 @@ export default function Menu() {
 
   const { state, toggleNavDrawer } = useNavDrawerStore();
   const [open, setOpen] = useState(false);
-  const [selectedPathName, setSelectedPathName] = useState('');
+  const [selectedLabel, setSelectedLabel] = useState('');
 
   const params = useParams();
 
@@ -36,10 +36,10 @@ export default function Menu() {
   if (isHideOnSelectedPage || isAuthPage) {
     return null;
   }
-  
+
   const handleClick = (path, e) => {
     if (e) {
-      setSelectedPathName(e.currentTarget.getAttribute('pathname'));
+      setSelectedLabel(e.currentTarget.getAttribute('label'));
       setOpen(!open);
     } else {
       router.push(path);
@@ -58,37 +58,40 @@ export default function Menu() {
       </IconButton>
       <List>
         {navRoutes.map((item) => (
-          <StyledListItem key={item.pathName} disablePadding>
+          <StyledListItem key={item.label} disablePadding>
             <ListItemButton
-              pathname={item.pathName}
+              label={item.label}
               onClick={
-                item.nestedPathName
-                  ? (e) => handleClick(item.path, e)
-                  : () => handleClick(item.path)
+                item.nestedLabel
+                  ? (e) => handleClick(item.pathname, e)
+                  : () => handleClick(item.pathname)
               }
-              sx={{ width: '100%' }}
+              sx={{
+                width: '100%',
+                color: item.pathname === pathname && 'orchid',
+              }}
             >
-              <ListItemText primary={item.pathName} />
-              {open && selectedPathName === item.pathName
-                ? item.nestedPathName && <ExpandLess />
-                : item.nestedPathName && <ExpandMore />}
+              <ListItemText primary={item.label} />
+              {open && selectedLabel === item.label
+                ? item.nestedLabel && <ExpandLess />
+                : item.nestedLabel && <ExpandMore />}
             </ListItemButton>
 
-            {item.nestedPathName && selectedPathName === item.pathName && (
+            {item.nestedLabel && selectedLabel === item.label && (
               <Collapse
                 in={open}
                 timeout="auto"
                 unmountOnExit
                 sx={{ width: '100%' }}
               >
-                {item.nestedPathName.map((item) => (
-                  <List key={item.pathName} component="div" disablePadding>
+                {item.nestedLabel.map((item) => (
+                  <List key={item.label} component="div" disablePadding>
                     <ListItemButton
                       sx={{ pl: 4 }}
-                      onClick={() => handleClick(item.path)}
+                      onClick={() => handleClick(item.pathname)}
                     >
                       <Icon fontSize="small">{item.icon}</Icon>
-                      <ListItemText primary={item.pathName} sx={{ ml: 1 }} />
+                      <ListItemText primary={item.label} sx={{ ml: 1 }} />
                     </ListItemButton>
                   </List>
                 ))}

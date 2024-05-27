@@ -27,7 +27,8 @@ import { usePathname } from 'next/navigation';
 import { authPage } from '@/utils/helper/common';
 import { useNavDrawerStore } from '@/stores/drawerStore';
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
-import { useCookies } from 'react-cookie';
+import { useUserData } from '@/utils/hooks/useUserData';
+import { LoadingSkeletonAvatar } from '@/app/components/custom/loaders/Skeleton';
 
 function HideOnScroll({ children }) {
   return (
@@ -48,11 +49,7 @@ export default function Navbar() {
 
   const { toggleNavDrawer } = useNavDrawerStore();
 
-  const [cookies] = useCookies(['not-found']);
-
-  if (cookies['not-found']) {
-    return null;
-  }
+  const { data: user, isLoading } = useUserData(session?.user?.id);
 
   return (
     <>
@@ -86,12 +83,16 @@ export default function Navbar() {
                         aria-label="profile-menu"
                         onClick={() => toggleNavDrawer('right', true)}
                       >
-                        <Avatar
-                          alt={`${session?.user?.name}`}
-                          src={session?.user?.image}
-                          referrerPolicy="no-referrer"
-                          sx={{ width: 32, height: 32 }}
-                        />
+                        {isLoading ? (
+                          <LoadingSkeletonAvatar w={32} h={32} />
+                        ) : (
+                          <Avatar
+                            alt={`${session?.user?.name}`}
+                            src={user?.image?.url ?? session?.user?.image}
+                            referrerPolicy="no-referrer"
+                            sx={{ width: 32, height: 32 }}
+                          />
+                        )}
                       </IconButton>
 
                       <ProfileMenuDrawerMobile />

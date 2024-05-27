@@ -1,17 +1,15 @@
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
-import { sleep } from '../helper/common';
 
 export const useUserData = (userId) => {
-  const { isLoading, data, isError, error, refetch } = useQuery({
+  const { isLoading, data, isError, error, refetch, status } = useQuery({
     queryKey: ['user', userId],
     queryFn: () => fetchUser(userId),
+    enabled: !!userId, // set True only if userId present
   });
 
   const fetchUser = async (userId) => {
     try {
-      await sleep(1000);
-
       const url = `/api/users?userId=${userId}`;
       const { data } = await axios.get(url);
 
@@ -28,5 +26,6 @@ export const useUserData = (userId) => {
     isError,
     error,
     refetch,
+    status,
   };
 };

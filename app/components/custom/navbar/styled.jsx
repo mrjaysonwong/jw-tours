@@ -2,16 +2,16 @@ import { Box, ListItem } from '@mui/material';
 import { styled } from '@mui/system';
 
 export const LinkContainer = styled(Box)(
-  ({ open, nested, selected, pathname }) => ({
+  ({ open, nested, selected, label, itempathname, pathname }) => ({
     display: 'flex',
     alignItems: 'center',
     padding: '8px',
-
+    color: itempathname === pathname && 'orchid',
     backgroundColor:
-      open && nested && selected === pathname
+      open && nested && selected === label
         ? 'var(--hover-bgcolor)'
         : undefined,
-    borderRadius: open && selected === pathname ? '24px' : undefined,
+    borderRadius: open && selected === label ? '24px' : undefined,
 
     ':hover': {
       backgroundColor: 'var(--hover-bgcolor)',

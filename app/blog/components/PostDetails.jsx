@@ -14,7 +14,7 @@ export async function fetchPostDetails(slug) {
 
   if (res.status === 404) {
     notFound();
-  } else if (res.status > 499) {
+  } else if (!res.ok) {
     throw new Error('Something went wrong!');
   }
 

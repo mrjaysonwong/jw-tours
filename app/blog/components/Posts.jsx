@@ -20,9 +20,7 @@ async function fetchPosts(newOffset, pageLimit) {
     `https://pokeapi.co/api/v2/pokemon?offset=${newOffset}&limit=${pageLimit}`
   );
 
-  if (res.status === 404) {
-    throw new Error('Resource Not Found!');
-  } else if (res.status > 499) {
+  if (!res.ok) {
     throw new Error('Something went wrong!');
   }
 

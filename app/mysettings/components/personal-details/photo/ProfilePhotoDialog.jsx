@@ -11,22 +11,24 @@ import {
   Avatar,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import EditIcon from '@mui/icons-material/Edit';
 import CameraEnhanceIcon from '@mui/icons-material/CameraEnhance';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { DialogContext } from '../PersonalDetails';
 import AddPhotoDialog from './AddPhotoDialog';
 import EditProfilePhotoDialog from './EditProfilePhotoDialog';
+import { useMessageStore } from '@/stores/messageStore';
+import { AlertMessage } from '@/app/components/custom/messages';
+import DeleteProfilePhotoDialog from './DeleteProfilePhotoDialog';
 
 function ProfilePhotoContent(props) {
-  const { user, handleOnClick, handleClose } = props;
+  const { user, handleOnClickAdd, handleOnClose, handleOnClickDelete } = props;
 
   return (
     <>
       <Box sx={{ display: 'flex', position: 'relative' }}>
         <DialogTitle>Profile photo</DialogTitle>
         <IconButton
-          onClick={handleClose}
+          onClick={handleOnClose}
           sx={{ position: 'absolute', right: 10, top: 10 }}
         >
           <CloseIcon />
@@ -44,7 +46,7 @@ function ProfilePhotoContent(props) {
         {!user?.image.url ? (
           <Avatar
             alt={`${user?.firstName} ${user?.lastName}`}
-            src={user?.image.url}
+            src={user?.image?.url}
             referrerPolicy="no-referrer"
             sx={{ width: 168, height: 168 }}
           />
@@ -58,7 +60,7 @@ function ProfilePhotoContent(props) {
             }}
           >
             <Image
-              src={user?.image.url}
+              src={user?.image?.url}
               height={168}
               width={168}
               alt={`${user?.firstName} ${user?.lastName}`}
@@ -85,12 +87,12 @@ function ProfilePhotoContent(props) {
           },
         }}
       >
-        <Button onClick={handleOnClick} startIcon={<CameraEnhanceIcon />}>
+        <Button onClick={handleOnClickAdd} startIcon={<CameraEnhanceIcon />}>
           Add Photo
         </Button>
         <Button
-          onClick={handleClose}
-          disabled={!user?.image.url}
+          onClick={handleOnClickDelete}
+          disabled={!user?.image?.url}
           startIcon={<DeleteIcon />}
         >
           Delete
@@ -104,15 +106,22 @@ export default function ProfilePhotoDialog() {
   const { user, open, setOpen } = useContext(DialogContext);
   const [openAdd, setOpenAdd] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
+  const [openDelete, setOpenDelete] = useState(false);
 
   const [selectedImage, setSelectedImage] = useState(null);
 
-  const handleClose = () => {
+  const { alert, handleClose } = useMessageStore();
+
+  const handleOnClose = () => {
     setOpen(false);
   };
 
-  const handleOnClick = () => {
+  const handleOnClickAdd = () => {
     setOpenAdd(true);
+  };
+
+  const handleOnClickDelete = () => {
+    setOpenDelete(true);
   };
 
   return (
@@ -122,14 +131,15 @@ export default function ProfilePhotoDialog() {
           (!openAdd && !openEdit ? (
             <ProfilePhotoContent
               user={user}
-              handleOnClick={handleOnClick}
-              handleClose={handleClose}
+              handleOnClickAdd={handleOnClickAdd}
+              handleOnClose={handleOnClose}
+              handleOnClickDelete={handleOnClickDelete}
             />
           ) : openAdd ? (
             <AddPhotoDialog
               user={user}
-              setOpenEdit={setOpenEdit}
               setOpenAdd={setOpenAdd}
+              setOpenEdit={setOpenEdit}
               setSelectedImage={setSelectedImage}
             />
           ) : (
@@ -142,6 +152,18 @@ export default function ProfilePhotoDialog() {
             )
           ))}
       </Dialog>
+
+      <DeleteProfilePhotoDialog
+        open={openDelete}
+        setOpenDelete={setOpenDelete}
+      />
+
+      <AlertMessage
+        open={alert.open}
+        message={alert.message}
+        severity={alert.severity}
+        onClose={handleClose}
+      />
     </>
   );
 }

@@ -11,18 +11,27 @@ import {
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
-import { setFileToBase64 } from '@/utils/helper/image-upload/setFileToBase64';
+import { setFileToBase64 } from '@/app/mysettings/components/personal-details/photo/(image-handler)/setFileToBase64';
 import { StyledInput as UploadInput } from './styled';
+import { useMessageStore } from '@/stores/messageStore';
 
 export default function AddPhotoDialog(props) {
   const { user, setOpenAdd, setOpenEdit, setSelectedImage } = props;
 
-  const handleClose = () => {
+  const { handleAlertMessage } = useMessageStore();
+
+  const handleOnClose = () => {
     setOpenAdd(false);
   };
 
   const handleImage = (event) => {
-    setFileToBase64(event, setOpenEdit, setSelectedImage, setOpenAdd);
+    setFileToBase64(
+      event,
+      setOpenEdit,
+      setSelectedImage,
+      setOpenAdd,
+      handleAlertMessage
+    );
   };
 
   return (
@@ -30,7 +39,7 @@ export default function AddPhotoDialog(props) {
       <Box sx={{ display: 'flex', position: 'relative' }}>
         <DialogTitle>Change photo</DialogTitle>
         <IconButton
-          onClick={handleClose}
+          onClick={handleOnClose}
           sx={{ position: 'absolute', right: 10, top: 10 }}
         >
           <CloseIcon />
@@ -48,13 +57,13 @@ export default function AddPhotoDialog(props) {
         }}
       >
         <Typography variant="h6" sx={{ my: 2 }}>
-          {user.firstName}, help others recognize you!{' '}
+          {user?.firstName}, help others recognize you!{' '}
         </Typography>
 
         {!user.image.url ? (
           <Avatar
-            alt={`${user.firstName} ${user.lastName}`}
-            src={user.image.url}
+            src={user?.image?.url} // fallback image null
+            alt={`${user?.firstName} ${user?.lastName}`}
             referrerPolicy="no-referrer"
             sx={{ width: 168, height: 168 }}
           />
@@ -68,10 +77,10 @@ export default function AddPhotoDialog(props) {
             }}
           >
             <Image
-              src={user.image.url}
+              src={user?.image?.url ?? session?.user?.image}
               height={168}
               width={168}
-              alt={`${user.firstName} ${user.lastName}`}
+              alt={`${user?.firstName} ${user?.lastName}`}
               style={{
                 objectFit: 'cover',
               }}

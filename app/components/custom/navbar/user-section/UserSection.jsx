@@ -24,6 +24,8 @@ import { userSectionRoutes } from '@/src/routes/user-section-routes';
 import { useNavDrawerStore } from '@/stores/drawerStore';
 import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
 import CloseIcon from '@mui/icons-material/Close';
+import { useUserData } from '@/utils/hooks/useUserData';
+import { LoadingSkeletonAvatar } from '../../loaders/Skeleton';
 
 const drawerWidth = '100%';
 
@@ -32,6 +34,8 @@ export function ProfileMenuDrawerMobile() {
   const router = useRouter();
 
   const { state, toggleNavDrawer } = useNavDrawerStore();
+
+  const { data: user } = useUserData(session?.user?.id);
 
   const handleClick = (path) => {
     toggleNavDrawer('right', false);
@@ -62,7 +66,7 @@ export function ProfileMenuDrawerMobile() {
       >
         <Avatar
           alt={`${session?.user?.name} profile image`}
-          src={session?.user?.image}
+          src={user?.image?.url ?? session?.user?.image}
           referrerPolicy="no-referrer"
           sx={{ width: 56, height: 56 }}
         />
@@ -134,6 +138,8 @@ export function ProfileMenu() {
   const pathname = usePathname();
   const isAuthPage = authPage(pathname);
 
+  const { data: user, isLoading } = useUserData(session?.user?.id);
+
   if (isAuthPage) {
     return null;
   }
@@ -147,7 +153,7 @@ export function ProfileMenu() {
     setAnchorEl(null);
   };
 
-  const handleClose = () => {
+  const handleOnClose = () => {
     setAnchorEl(null);
   };
 
@@ -172,12 +178,16 @@ export function ProfileMenu() {
           aria-expanded={open ? 'true' : undefined}
           sx={{ p: 0.5, bgcolor: 'var(--icon-bgcolor)' }}
         >
-          <Avatar
-            alt={`${session?.user?.name}`}
-            src={session?.user?.image}
-            referrerPolicy="no-referrer"
-            sx={{ width: 38, height: 38 }}
-          />
+          {isLoading ? (
+            <LoadingSkeletonAvatar w={38} h={38} />
+          ) : (
+            <Avatar
+              alt={`${session?.user?.name}`}
+              src={user?.image?.url ?? session?.user?.image}
+              referrerPolicy="no-referrer"
+              sx={{ width: 38, height: 38 }}
+            />
+          )}
         </IconButton>
       </Box>
 
@@ -187,7 +197,7 @@ export function ProfileMenu() {
         id="profile-menu"
         className="profile-menu"
         open={open}
-        onClose={handleClose}
+        onClose={handleOnClose}
         transformOrigin={{ horizontal: 'right', vertical: 'top' }}
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
         PaperProps={{
@@ -232,7 +242,7 @@ export function ProfileMenu() {
         >
           <Avatar
             alt={`${session?.user?.name} profile image`}
-            src={session?.user?.image}
+            src={user?.image?.url ?? session?.user?.image}
             referrerPolicy="no-referrer"
             sx={{ cursor: 'default' }}
           />

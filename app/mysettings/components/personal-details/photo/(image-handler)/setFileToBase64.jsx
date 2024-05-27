@@ -4,7 +4,8 @@ export async function setFileToBase64(
   event,
   setOpenEdit,
   setSelectedImage,
-  setOpenAdd
+  setOpenAdd,
+  handleAlertMessage
 ) {
   const file = event.target.files[0];
 
@@ -15,7 +16,7 @@ export async function setFileToBase64(
   if (!allowedFileTypes.includes(file.type)) {
     // Check for allowedFileType
     emptyFileInput();
-    alert('File format must be *.JPG or *.PNG', 'error');
+    handleAlertMessage('File format must be .JPG or .PNG', 'error');
     return;
   }
 

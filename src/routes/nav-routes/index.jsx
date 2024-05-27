@@ -3,108 +3,108 @@ import TourIcon from '@mui/icons-material/Tour';
 
 export const navRoutes = [
   {
-    pathName: 'Home',
-    path: '/',
+    label: 'Home',
+    pathname: '/',
   },
   {
-    pathName: 'Travel Guides',
-    path: '/travel-guides',
+    label: 'Travel Guides',
+    pathname: '/travel-guides',
   },
   {
-    pathName: 'Trip Types',
-    nestedPathName: [
+    label: 'Trip Types',
+    nestedLabel: [
       {
-        pathName: 'Land Arrangements',
-        path: '/trip/land-arrangements',
+        label: 'Land Arrangements',
+        pathname: '/trip/land-arrangements',
         icon: <TourIcon />,
       },
       {
-        pathName: 'Shared Tours',
-        path: '/trip/shared-tours',
+        label: 'Shared Tours',
+        pathname: '/trip/shared-tours',
         icon: <TourIcon />,
       },
       {
-        pathName: 'Walking Tours',
-        path: '/trip/walking',
+        label: 'Walking Tours',
+        pathname: '/trip/walking',
         icon: <TourIcon />,
       },
       {
-        pathName: 'Historical Tours',
-        path: '/trip/historical',
+        label: 'Historical Tours',
+        pathname: '/trip/historical',
         icon: <TourIcon />,
       },
       {
-        pathName: 'Hiking Tours',
-        path: '/trip/hiking',
+        label: 'Hiking Tours',
+        pathname: '/trip/hiking',
         icon: <TourIcon />,
       },
       {
-        pathName: 'Private Tours',
-        path: '/trip/private-tours',
+        label: 'Private Tours',
+        pathname: '/trip/private-tours',
         icon: <TourIcon />,
       },
       {
-        pathName: 'Island Cruises',
-        path: '/trip/island-cruises',
+        label: 'Island Cruises',
+        pathname: '/trip/island-cruises',
         icon: <TourIcon />,
       },
     ],
   },
   {
-    pathName: 'Destinations',
-    nestedPathName: [
+    label: 'Destinations',
+    nestedLabel: [
       {
-        pathName: 'Palawan',
-        path: '/destinations/palawan',
+        label: 'Palawan',
+        pathname: '/destinations/palawan',
         icon: <TravelExploreIcon />,
       },
       {
-        pathName: 'Puerto Galera',
-        path: '/destinations/puerto-galera',
+        label: 'Puerto Galera',
+        pathname: '/destinations/puerto-galera',
         icon: <TravelExploreIcon />,
       },
       {
-        pathName: 'Boracay',
-        path: '/destinations/boracay',
+        label: 'Boracay',
+        pathname: '/destinations/boracay',
         icon: <TravelExploreIcon />,
       },
       {
-        pathName: 'Ilocos Region',
-        path: '/destinations/ilocos',
+        label: 'Ilocos Region',
+        pathname: '/destinations/ilocos',
         icon: <TravelExploreIcon />,
       },
       {
-        pathName: 'Cebu',
-        path: '/destinations/cebu',
+        label: 'Cebu',
+        pathname: '/destinations/cebu',
         icon: <TravelExploreIcon />,
       },
       {
-        pathName: 'Bohol',
-        path: '/destinations/bohol',
+        label: 'Bohol',
+        pathname: '/destinations/bohol',
         icon: <TravelExploreIcon />,
       },
       {
-        pathName: 'Davao',
-        path: '/destinations/davao',
+        label: 'Davao',
+        pathname: '/destinations/davao',
         icon: <TravelExploreIcon />,
       },
       {
-        pathName: 'Siargao',
-        path: '/destinations/siargao',
+        label: 'Siargao',
+        pathname: '/destinations/siargao',
         icon: <TravelExploreIcon />,
       },
     ],
   },
   {
-    pathName: 'About Us',
-    path: '/about',
+    label: 'About Us',
+    pathname: '/about',
   },
   {
-    pathName: 'Contact Us',
-    path: '/contact',
+    label: 'Contact Us',
+    pathname: '/contact',
   },
   {
-    pathName: 'Protected',
-    path: '/protected',
+    label: 'Protected',
+    pathname: '/protected',
   },
 ];

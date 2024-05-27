@@ -13,7 +13,7 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { AlertMessage } from '@/app/components/custom/messages';
 import { useMessageStore } from '@/stores/messageStore';
 
-export default function CredForm() {
+export default function CredentialsForm() {
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get('callbackUrl');
 

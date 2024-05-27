@@ -50,7 +50,7 @@ export default function SignUp() {
 
   const onSubmit = async (formData, event) => {
     try {
-      const mode = 'signup';
+      const action = 'signup';
       const url = '/api/signup';
 
       const { data } = await axios.post(url, formData);
@@ -61,7 +61,7 @@ export default function SignUp() {
         router.replace(
           `/confirmation/send-link?email=${encodeURIComponent(
             data.email
-          )}&mode=${mode}`
+          )}&action=${action}`
         );
       }
     } catch (error) {

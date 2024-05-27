@@ -18,9 +18,10 @@ export const DialogContext = createContext(null);
 
 export default function PersonalDetails() {
   const session = useContext(UserSessionContext);
+  const userId = session?.user?.id;
   const [open, setOpen] = useState(false);
 
-  const { data: user, isLoading } = useUserData(session?.user?.id);
+  const { data: user, isLoading, refetch } = useUserData(userId);
 
   const handleOnClickPhoto = () => {
     setOpen(true);
@@ -48,8 +49,8 @@ export default function PersonalDetails() {
             ) : (
               <>
                 <Avatar
-                  alt={`${user.firstName} ${user.lastName}`}
-                  src={user.image.url}
+                  alt={`${user?.firstName} ${user?.lastName}`}
+                  src={user?.image?.url}
                   referrerPolicy="no-referrer"
                   sx={{ width: 64, height: 64, position: 'relative' }}
                 />
@@ -74,7 +75,7 @@ export default function PersonalDetails() {
 
       <Divider sx={{ my: 3 }} />
 
-      <DialogContext.Provider value={{ user, open, setOpen }}>
+      <DialogContext.Provider value={{ user, open, setOpen, userId, refetch }}>
         <ProfilePhotoDialog />
       </DialogContext.Provider>
 

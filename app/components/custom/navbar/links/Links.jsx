@@ -13,16 +13,18 @@ import {
 import { navRoutes } from '@/src/routes/nav-routes';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
-import { LinkContainer, NestedLinkContainer } from '../styles';
+import { LinkContainer, NestedLinkContainer } from '../styled';
 import { ClickAwayListener } from '@mui/base/ClickAwayListener';
 import { authPage, hideNavLinks } from '@/utils/helper/common';
 
 export default function NavbarLinks() {
   const [open, setOpen] = useState(false);
-  const [selectedPathName, setSelectedPathName] = useState('');
+  const [selectedLabel, setSelectedLabel] = useState('');
 
   const params = useParams();
   const pathname = usePathname();
+
+
   const isAuthPage = authPage(pathname);
   const isHideOnSelectedPage = hideNavLinks(pathname, params);
 
@@ -31,7 +33,7 @@ export default function NavbarLinks() {
   }
 
   const handleClick = (e) => {
-    setSelectedPathName(e.currentTarget.getAttribute('pathname'));
+    setSelectedLabel(e.currentTarget.getAttribute('label'));
     setOpen(!open);
   };
 
@@ -40,35 +42,38 @@ export default function NavbarLinks() {
   };
 
   const handleMouseOver = (e) => {
-    setSelectedPathName(e.currentTarget.getAttribute('pathname'));
+    setSelectedLabel(e.currentTarget.getAttribute('label'));
+
     setOpen(true);
   };
 
   const NavList = navRoutes.map((item) => (
     <Box
-      key={item.pathName}
+      key={item.label}
       sx={{ a: { color: 'inherit', textAlign: 'center' } }}
     >
-      <Link href={`${item.nestedPathName ? '#' : item.path}`} passHref>
+      <Link href={`${item.nestedLabel ? '#' : item.pathname}`} passHref>
         <LinkContainer
           open={open}
-          nested={item.nestedPathName}
-          selected={selectedPathName}
-          pathname={item.pathName}
+          nested={item.nestedLabel}
+          selected={selectedLabel}
+          label={item.label}
+          itempathname={item.pathname}
+          pathname={pathname}
           onClick={(e) => handleClick(e)}
           onMouseOver={(e) => handleMouseOver(e)}
         >
           <Typography variant="body2" sx={{ width: '95px' }}>
-            {item.pathName}
+            {item.label}
           </Typography>
 
-          {open && selectedPathName === item.pathName
-            ? item.nestedPathName && <ExpandLess fontSize="small" />
-            : item.nestedPathName && <ExpandMore fontSize="small" />}
+          {open && selectedLabel === item.label
+            ? item.nestedLabel && <ExpandLess fontSize="small" />
+            : item.nestedLabel && <ExpandMore fontSize="small" />}
         </LinkContainer>
       </Link>
 
-      {item.nestedPathName && selectedPathName === item.pathName && (
+      {item.nestedLabel && selectedLabel === item.label && (
         <ClickAwayListener
           mouseEvent="onMouseDown"
           touchEvent="onTouchStart"
@@ -76,14 +81,14 @@ export default function NavbarLinks() {
         >
           <NestedLinkContainer onMouseLeave={() => setOpen(false)}>
             <Collapse in={open} timeout={0} unmountOnExit>
-              {item.nestedPathName.map((item) => (
-                <List key={item.pathName} component="div" disablePadding>
-                  <Link href={`${item.path}`}>
+              {item.nestedLabel.map((item) => (
+                <List key={item.label} component="div" disablePadding>
+                  <Link href={`${item.pathname}`}>
                     <ListItemButton sx={{ my: 1 }} onClick={handleClick}>
                       <Icon fontSize="small">{item.icon}</Icon>
 
                       <ListItemText
-                        primary={item.pathName}
+                        primary={item.label}
                         sx={{ ml: 1 }}
                         primaryTypographyProps={{ fontSize: '14px' }}
                       />

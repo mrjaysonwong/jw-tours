@@ -10,5 +10,13 @@ export const errorHandler = (error) => {
       status,
       errorMessage,
     };
+  } else {
+    // Handle unexpected errors
+
+    return {
+      status: 500,
+      statusText: 'Internal Server Error',
+      errorMessage: 'An error occurred. Try again.',
+    };
   }
 };

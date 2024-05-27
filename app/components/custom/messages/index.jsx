@@ -5,7 +5,9 @@ export const Alert = forwardRef(function Alert(props, ref) {
   return <MuiAlert {...props} ref={ref} elevation={2} variant="filled" />;
 });
 
-export const AlertMessage = ({ open, onClose, message, severity }) => {
+export const AlertMessage = (props) => {
+  const { open, onClose, message, severity } = props;
+
   const ariaAttributes = {
     'aria-live': 'assertive',
     'aria-atomic': 'true',
