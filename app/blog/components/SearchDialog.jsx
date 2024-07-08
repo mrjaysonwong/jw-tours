@@ -84,25 +84,26 @@ export default function SearchDialog({ open, setOpen }) {
   };
 
   const fetchSearch = async (startIndex = 0) => {
-    const url = `https://pokeapi.co/api/v2/pokemon?limit=100000`;
-    const { data } = await axios.get(url);
+    
+      const response = await axios.get('/api/pokemon');
 
-    const pokemonList = data.results.map((pokemon) => pokemon.name);
+      const pokemonList = response.data.results.map((pokemon) => pokemon.name);
 
-    const filteredList = pokemonList.filter((name) =>
-      name.includes(debouncedText.toLowerCase())
-    );
+      const filteredList = pokemonList.filter((name) =>
+        name.includes(debouncedText.toLowerCase())
+      );
 
-    const pokemonDetailsPromises = filteredList
-      .slice(startIndex, startIndex + 20)
-      .map(async (pokemonName) => {
-        const pokemonData = await fetchPostDetails(pokemonName);
-        return pokemonData;
-      });
+      const pokemonDetailsPromises = filteredList
+        .slice(startIndex, startIndex + 20)
+        .map(async (pokemonName) => {
+          const pokemonData = await fetchPostDetails(pokemonName);
+          return pokemonData;
+        });
 
-    const pokemonDetails = await Promise.all(pokemonDetailsPromises);
+      const pokemonDetails = await Promise.all(pokemonDetailsPromises);
 
-    return pokemonDetails;
+      return pokemonDetails;
+   
   };
 
   useEffect(() => {
@@ -165,7 +166,6 @@ export default function SearchDialog({ open, setOpen }) {
                     {...restProps}
                     onClick={() => handleOnClick(option.name)}
                     component="li"
-                    className="foo"
                     sx={{
                       '& > img': { mr: 2, flexShrink: 0 },
                       display: 'flex',
