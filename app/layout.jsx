@@ -3,7 +3,7 @@ import { cookies } from 'next/headers';
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v13-appRouter';
 import NavBar from './components/NavBar/NavBar';
 import ThemeModeIconButton from './components/global-styles/ThemeModeIconButton';
-import Footer from './components/custom/Footer/Footer';
+import Footer from './components/custom/footer/Footer';
 import ToggleThemeMode from './components/global-styles/ToggleThemeMode';
 import AuthRedirect from './(auth)/AuthRedirect';
 import SessionWrapper from './(auth)/SessionWrapper';
