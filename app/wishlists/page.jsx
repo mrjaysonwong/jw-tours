@@ -1,4 +1,4 @@
-import { MainContainer } from '../components/global-styles/globals';
+import { StyledContainer as MainContainer } from "../components/global-styles/globals";
 
 export default function WishListsPage() {
   return (

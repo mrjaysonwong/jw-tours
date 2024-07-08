@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { TextField, InputAdornment, IconButton } from '@mui/material';
+import { TextField, InputAdornment, IconButton, Button } from '@mui/material';
 import FormSubmitButton from '@/app/components/custom/buttons/FormSubmitButton';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -114,7 +114,7 @@ export default function CredentialsForm() {
         )}
 
         <FormSubmitButton
-          label="sign in"
+          label="Sign In"
           mode="auth"
           handleSubmit={handleSubmit(onSubmit)}
           isSubmitting={isSubmitting}

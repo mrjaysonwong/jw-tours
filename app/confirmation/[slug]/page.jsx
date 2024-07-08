@@ -1,10 +1,10 @@
 import { StyledContainer as MainContainer } from '@/app/components/global-styles/globals';
 import { Custom404Page } from '@/app/components/custom/error/404';
-import { formatMetadata } from '@/utils/helper/formatMetadata';
+import { formatMetadata } from '@/utils/helper/formats/formatMetadata';
 import ConfirmSendLink from '../components/ConfirmSendLink';
 import { auth } from '@/auth';
 import { redirect } from 'next/navigation';
-import { findTokenUser, findUser } from '@/utils/helper/findUser';
+import { findTokenUser, findUser } from '@/utils/helper/query/findUser';
 
 export async function generateMetadata({ params }) {
   return formatMetadata(params);

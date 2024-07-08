@@ -2,7 +2,7 @@ import React, { Suspense } from 'react';
 import { StyledContainer as MainContainer } from '@/app/components/global-styles/globals';
 import PostDetails from '../components/PostDetails';
 import { LoadingCircularProgress } from '../components/Loading';
-import { formatMetadata } from '@/utils/helper/formatMetadata';
+import { formatMetadata } from '@/utils/helper/formats/formatMetadata';
 
 export async function generateMetadata({ params }) {
   return formatMetadata(params);

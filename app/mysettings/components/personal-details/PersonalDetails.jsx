@@ -1,85 +1,113 @@
-import React, { useContext, useState, createContext } from 'react';
+import React, { useContext, createContext } from 'react';
+import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import {
   Typography,
   Divider,
   Box,
-  IconButton,
-  Avatar,
-  Tooltip,
+  Breadcrumbs,
 } from '@mui/material';
-import CameraAltOutlinedIcon from '@mui/icons-material/CameraAltOutlined';
 import { UserSessionContext } from '@/context/UserSessionWrapper';
 import { useUserData } from '@/utils/hooks/useUserData';
-import { LoadingSkeletonAvatar } from '@/app/components/custom/loaders/Skeleton';
-import EditableGrid from './EditableGrid';
-import ProfilePhotoDialog from './photo/ProfilePhotoDialog';
+import DetailsGrid from './DetailsGrid';
+import ProfilePhoto from './profile-photo/ProfilePhoto';
+import CustomError from '@/app/components/custom/error';
+import NavigateNextIcon from '@mui/icons-material/NavigateNext';
+import ContactInfo from './ContactInfo';
 
-export const DialogContext = createContext(null);
+export const PersonalSettingsContext = createContext(null);
 
 export default function PersonalDetails() {
   const session = useContext(UserSessionContext);
   const userId = session?.user?.id;
-  const [open, setOpen] = useState(false);
 
-  const { data: user, isLoading, refetch } = useUserData(userId);
+  const searchParams = useSearchParams();
+  const isContactInfo = searchParams.get('q') === 'contact-info';
 
-  const handleOnClickPhoto = () => {
-    setOpen(true);
+  const {
+    data: user,
+    isLoading,
+    refetch,
+    isError,
+    error,
+  } = useUserData(userId);
+
+  const values = {
+    user,
+    isLoading,
+    userId,
+    refetch,
   };
+
+  if (isError) {
+    return <CustomError />;
+  }
 
   return (
     <>
-      <Box
-        sx={{
-          display: 'flex',
-          justifyContent: 'space-between',
-        }}
-      >
-        <Box sx={{ mr: 1 }}>
-          <Typography variant="h5">Personal details</Typography>
-          <Typography>
-            Update your info and find out how it&apos;s used.
-          </Typography>
+      <PersonalSettingsContext.Provider value={values}>
+        <Breadcrumbs
+          aria-label="breadcrumb"
+          separator={<NavigateNextIcon fontSize="small" />}
+          sx={{
+            mb: 2,
+            '.personal': {
+              color: !isContactInfo ? '#ab47bc' : 'inherit',
+              ':hover': {
+                textDecoration: 'underline',
+              },
+            },
+            '.contact-info': {
+              color: isContactInfo ? '#ab47bc' : 'inherit',
+              ':hover': {
+                textDecoration: 'underline',
+              },
+            },
+          }}
+        >
+          <Link
+            className="personal"
+            href="/mysettings/personal"
+            aria-current={!isContactInfo ? 'page' : false}
+          >
+            Personal details
+          </Link>
+
+          <Link
+            className="contact-info"
+            href="/mysettings/personal?q=contact-info"
+            aria-current={isContactInfo ? 'page' : false}
+          >
+            Contact info
+          </Link>
+        </Breadcrumbs>
+
+        <Box
+          sx={{
+            display: isContactInfo ? 'none' : 'flex',
+            justifyContent: 'space-between',
+          }}
+        >
+          <Box>
+            <Typography variant="h5">Personal details</Typography>
+            <Typography>
+              Update your info and find out how it&apos;s used.
+            </Typography>
+          </Box>
+
+          <ProfilePhoto />
         </Box>
 
-        <Tooltip title="Profile photo settings" arrow placement="left">
-          <IconButton onClick={handleOnClickPhoto}>
-            {isLoading ? (
-              <LoadingSkeletonAvatar w={64} h={64} />
-            ) : (
-              <>
-                <Avatar
-                  alt={`${user?.firstName} ${user?.lastName}`}
-                  src={user?.image?.url}
-                  referrerPolicy="no-referrer"
-                  sx={{ width: 64, height: 64, position: 'relative' }}
-                />
+        <Divider sx={{ my: 3 }} />
 
-                <Box
-                  sx={{
-                    position: 'absolute',
-                    background: 'rgba(0,0,0,0.2)',
-                    display: 'flex',
-                    p: 2,
-                    borderRadius: '100%',
-                    color: 'white',
-                  }}
-                >
-                  <CameraAltOutlinedIcon sx={{ height: 32, width: 32 }} />
-                </Box>
-              </>
-            )}
-          </IconButton>
-        </Tooltip>
-      </Box>
+        <Box sx={{ display: isContactInfo ? 'none' : 'block' }}>
+          <DetailsGrid />
+        </Box>
 
-      <Divider sx={{ my: 3 }} />
-
-      <DialogContext.Provider value={{ user, open, setOpen, userId, refetch }}>
-        <ProfilePhotoDialog />
-      </DialogContext.Provider>
-
-      <EditableGrid user={user} isLoading={isLoading} />
+        <Box sx={{ display: isContactInfo ? 'flex' : 'none' }}>
+          <ContactInfo />
+        </Box>
+      </PersonalSettingsContext.Provider>
     </>
   );
 }

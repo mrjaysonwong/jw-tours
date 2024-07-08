@@ -2,7 +2,7 @@ import * as yup from 'yup';
 import { EMAIL_REGEX, PASSWORD_REGEX } from '@/lib/regex';
 
 
-export const sigUpSchema = yup.object().shape({
+export const signUpSchema = yup.object().shape({
     firstName: yup
       .string()
       .trim()

@@ -2,11 +2,18 @@ import { auth } from '@/auth';
 import User from '@/model/userModel';
 import Token from '@/model/tokenModel';
 import connectMongo from '@/lib/connection';
-import { changeProfilePhoto, deleteProfilePhoto } from './(CRUD)/Update';
+import {
+  changeProfilePhoto,
+  deleteProfilePhoto,
+  updatePersonalDetails,
+  addEmailAddress,
+} from './(CRUD)/Update';
+import { getErrorMessage } from '@/utils/helper/errorHandler';
 
 export async function GET(Request) {
   const searchParams = Request.nextUrl.searchParams;
   const userId = searchParams.get('userId');
+  const isMySettings = searchParams.get('settings');
 
   const session = await auth();
 
@@ -23,8 +30,7 @@ export async function GET(Request) {
   if (session?.user.id !== userId) {
     return Response.json(
       {
-        message:
-          'Forbidden. You dont have permission to access the requested resource.',
+        message: `You don't have permission to access the requested resource.`,
       },
       { status: 403 }
     );
@@ -32,14 +38,22 @@ export async function GET(Request) {
 
   await connectMongo();
 
-  const userExists = await User.findById(userId);
+  let userExists;
+
+  if (isMySettings) {
+    userExists = await User.findById(userId);
+  } else {
+    userExists = await User.findById(userId).select(
+      'firstName lastName email image'
+    );
+  }
 
   if (!userExists) {
     return Response.json(
       {
         message: 'User Not Found',
       },
-      { status: 403 }
+      { status: 404 }
     );
   }
 
@@ -57,9 +71,17 @@ export async function PATCH(Request) {
   const userId = searchParams.get('userId');
   const mode = searchParams.get('mode');
 
-  if (!mode || !['update-profilephoto', 'delete-profilephoto'].includes(mode)) {
+  if (
+    !mode ||
+    ![
+      'update-profilephoto',
+      'delete-profilephoto',
+      'update-personaldetails',
+      'add-email',
+    ].includes(mode)
+  ) {
     return Response.json(
-      { message: 'An error occured. Try again.' },
+      { message: getErrorMessage('Invalid or missing parameters.') },
       { status: 400 }
     );
   }
@@ -67,61 +89,28 @@ export async function PATCH(Request) {
   try {
     if (mode === 'update-profilephoto') {
       await changeProfilePhoto(userId, Request, Response);
-
-      return Response.json(
-        { message: 'Successfully Updated!' },
-        { status: 200 }
-      );
     } else if (mode === 'delete-profilephoto') {
-      await deleteProfilePhoto(userId, Response);
-
-      return Response.json(
-        { message: 'Successfully Updated!' },
-        { status: 200 }
-      );
+      await deleteProfilePhoto(userId);
+    } else if (mode === 'update-personaldetails') {
+      await updatePersonalDetails(userId, Request);
+    } else if (mode === 'add-email') {
+      await addEmailAddress(userId, Request);
     }
+
+    return Response.json(
+      { message: mode === 'add-email' ? 'OTP sent!' : 'Successfully Updated!' },
+      { status: 200 }
+    );
   } catch (error) {
     console.error(error);
 
     return Response.json(
-      { message: 'Internal Server Error. Try again.' },
-      { status: 500 }
+      {
+        message: error.status
+          ? error.message
+          : 'Internal Server Error. Try again.',
+      },
+      { status: error.status ?? 500 }
     );
   }
-
-  // if (mode === 'update-profilephoto') {
-  //   try {
-  //     await changeProfilePhoto(userId, Request, Response);
-
-  //     return Response.json(
-  //       { message: 'Successfully Updated!' },
-  //       { status: 200 }
-  //     );
-  //   } catch (error) {
-  //     console.error(error);
-
-  //     return Response.json(
-  //       { message: 'Internal Server Error. Try again.' },
-  //       { status: 500 }
-  //     );
-  //   }
-  // }
-
-  // if (mode === 'delete-profilephoto') {
-  //   try {
-  //     await deleteProfilePhoto(userId, Response);
-
-  //     return Response.json(
-  //       { message: 'Successfully Deleted!' },
-  //       { status: 200 }
-  //     );
-  //   } catch (error) {
-  //     console.error(error);
-
-  //     return Response.json(
-  //       { message: 'Internal Server Error. Try again.' },
-  //       { status: 500 }
-  //     );
-  //   }
-  // }
 }

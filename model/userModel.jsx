@@ -115,6 +115,10 @@ const userSchema = new Schema(
       type: String,
       default: 'English (US)',
     },
+    nationality: {
+      type: String,
+      default: '',
+    },
     currency: {
       type: String,
       default: '$ - USD',

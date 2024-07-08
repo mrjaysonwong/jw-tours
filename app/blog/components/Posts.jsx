@@ -12,7 +12,7 @@ import {
 import { sleep } from '@/utils/helper/common';
 import PaginationControls from './PaginationControls';
 import HistoryBackButton from '@/app/components/custom/buttons/HistoryBackButton';
-import { formatTitle } from '@/utils/helper/formatMetadata';
+import { formatTitle } from '@/utils/helper/formats/formatMetadata';
 
 async function fetchPosts(newOffset, pageLimit) {
   await sleep(1000);

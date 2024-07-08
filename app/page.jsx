@@ -1,7 +1,10 @@
 import React, { Suspense } from 'react';
 import Home from './(homepage)/Home';
-import { StyledContainer as MainContainer } from '@/app/components/global-styles/globals';
-import { Typography } from '@mui/material';
+import Image from 'next/image';
+
+import { Typography, Box } from '@mui/material';
+import HeroBanner from './(homepage)/components/HeroBanner';
+import SearchBooking from './(homepage)/components/SearchBooking';
 
 export default function HomePage() {
   return (
@@ -13,7 +16,12 @@ export default function HomePage() {
           </MainContainer>
         }
       > */}
-        <Home />
+
+      <Home>
+        <HeroBanner />
+        {/* <SearchBooking /> */}
+      </Home>
+
       {/* </Suspense> */}
     </>
   );

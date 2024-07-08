@@ -1,6 +1,5 @@
 import { auth } from '@/auth';
 import { redirect } from 'next/navigation';
-import Link from 'next/link';
 import { StyledContainer as MainContainer } from '@/app/components/global-styles/globals';
 import {
   Typography,
@@ -9,8 +8,9 @@ import {
   Card,
   CardContent,
   IconButton,
+  Link as MUILink
 } from '@mui/material';
-import { accountSettingsRoutes } from '@/src/routes/account-settings-routes';
+import { accountSettingsLinks } from '@/src/navigation-links/accountSettingsLinks';
 
 export default async function MySettingsPage() {
   const session = await auth();
@@ -25,9 +25,9 @@ export default async function MySettingsPage() {
       <Typography>Manage your JW Tours experience</Typography>
 
       <Grid container spacing={2} sx={{ mt: 2 }}>
-        {accountSettingsRoutes.map((item) => (
+        {accountSettingsLinks.map((item) => (
           <Grid key={item.tabName} item xs={12} md={6} lg={6}>
-            <Link href={`${item.path}`}>
+            <MUILink href={`${item.path}`}>
               <Card
                 sx={{
                   position: 'relative',
@@ -35,7 +35,7 @@ export default async function MySettingsPage() {
                   alignItem: 'center',
 
                   '&:hover': {
-                    color: 'var(--text-link-color-blue)',
+                    color: 'primary.dark',
                   },
                 }}
               >
@@ -73,7 +73,7 @@ export default async function MySettingsPage() {
                   </Box>
                 </CardContent>
               </Card>
-            </Link>
+            </MUILink>
           </Grid>
         ))}
       </Grid>

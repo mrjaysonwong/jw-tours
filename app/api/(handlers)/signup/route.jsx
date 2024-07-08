@@ -2,19 +2,23 @@ import connectMongo from '@/lib/connection';
 import User from '@/model/userModel';
 import Token from '@/model/tokenModel';
 import jwt from 'jsonwebtoken';
-import { generateToken } from '@/utils/helper/generateToken';
+import { generateToken } from '@/utils/helper/token-handlers/generateToken';
 import { hash } from 'bcryptjs';
 import { sendEmail } from '@/utils/config/sendEmail';
-import { formattedDate } from '@/utils/helper/formattedDate';
+import { formattedDate } from '@/utils/helper/formats/formattedDate';
 import { render } from '@react-email/render';
 import { EmailTemplate } from '@/src/template/EmailTemplate';
+import { signUpSchema } from '@/lib/validation/yup/signUpSchema';
+import { getValidationError } from '@/utils/helper/errorHandler';
 
 export async function POST(Request) {
-  const body = await Request.json();
-  const { firstName, lastName, email, password } = body;
-
   try {
     await connectMongo();
+
+    const body = await Request.json();
+    const { firstName, lastName, email, password, confirmPassword } = body;
+
+    await signUpSchema.validate({ ...body }, { abortEarly: false });
 
     const userExists = await User.findOne({ 'email.email': email });
 
@@ -84,7 +88,10 @@ export async function POST(Request) {
       { status: 201 }
     );
   } catch (error) {
+    getValidationError(error);
+
     console.error(error);
+
     return Response.json({ message: 'Internal Server Error' }, { status: 500 });
   }
 }

@@ -18,7 +18,7 @@ import {
 import FormSubmitButton from '@/app/components/custom/buttons/FormSubmitButton';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { sigUpSchema } from '@/lib/validation/yup/signUpSchema';
+import { signUpSchema } from '@/lib/validation/yup/signUpSchema';
 import { FieldErrorMessage } from '@/app/components/custom/messages';
 import axios from 'axios';
 import { errorHandler } from '@/utils/helper/errorHandler';
@@ -45,12 +45,12 @@ export default function SignUp() {
     handleSubmit,
     formState: { errors, isSubmitting, isSubmitSuccessful },
   } = useForm({
-    resolver: yupResolver(sigUpSchema),
+    resolver: yupResolver(signUpSchema),
   });
 
   const onSubmit = async (formData, event) => {
     try {
-      const action = 'signup';
+      const mode = 'signup';
       const url = '/api/signup';
 
       const { data } = await axios.post(url, formData);
@@ -61,7 +61,7 @@ export default function SignUp() {
         router.replace(
           `/confirmation/send-link?email=${encodeURIComponent(
             data.email
-          )}&action=${action}`
+          )}&mode=${mode}`
         );
       }
     } catch (error) {
@@ -74,7 +74,7 @@ export default function SignUp() {
   return (
     <MainContainer
       sx={{
-        mt: 5,
+        mt: { xs: 0, md: 6 },
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
@@ -197,7 +197,15 @@ export default function SignUp() {
         </form>
       </StyledCard>
 
-      <Box sx={{ my: 2, display: 'flex' }}>
+      <Box
+        sx={{
+          my: 2,
+          display: 'flex',
+          a: {
+            pointerEvents: isSubmitting ? 'none' : 'auto',
+          },
+        }}
+      >
         <Typography>Already have an account?</Typography>
         <Link href="/signin" replace>
           <Typography sx={{ ml: 1, color: 'var(--text-link-color-blue)' }}>

@@ -4,7 +4,7 @@ import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import ThumbUpOutlinedIcon from '@mui/icons-material/ThumbUpOutlined';
 import ShareIcon from '@mui/icons-material/Share';
 import { sleep } from '@/utils/helper/common';
-import { formatTitle } from '@/utils/helper/formatMetadata';
+import { formatTitle } from '@/utils/helper/formats/formatMetadata';
 import { notFound } from 'next/navigation';
 import SearchBar from '../components/SearchBar';
 

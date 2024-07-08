@@ -2,13 +2,16 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { Box, Typography, Grid, Divider } from '@mui/material';
+import { Box, Typography, Grid, Divider, useTheme } from '@mui/material';
 import FacebookIcon from '@mui/icons-material/Facebook';
 import XIcon from '@mui/icons-material/X';
 import YouTubeIcon from '@mui/icons-material/YouTube';
 import InstagramIcon from '@mui/icons-material/Instagram';
 
 export default function Footer() {
+  const theme = useTheme();
+  const isLightMode = theme.palette.mode === 'light';
+
   return (
     <Box
       sx={{
@@ -56,53 +59,41 @@ export default function Footer() {
           a: {
             color: 'inherit',
             '&:hover': {
-              color: 'Orchid',
+              color: 'var(--palette-light-orange)',
             },
           },
         }}
       >
         <Grid item xs={6} lg={2}>
           <Typography variant="body2">
-            <Link href="#">
-              About Us
-            </Link>
+            <Link href="#">About Us</Link>
           </Typography>
         </Grid>
         <Grid item xs={6} lg={2}>
           <Typography variant="body2">
-            <Link href="#">
-              Contact Us
-            </Link>
+            <Link href="#">Contact Us</Link>
           </Typography>
         </Grid>
         <Grid item xs={6} lg={2}>
           <Typography variant="body2">
-            <Link href="#">
-              Careers
-            </Link>
+            <Link href="#">Careers</Link>
           </Typography>
         </Grid>
         <Grid item xs={6} lg={2}>
           <Typography variant="body2">
-            <Link href="/blog">
-              Blog
-            </Link>
+            <Link href="/blog">Blog</Link>
           </Typography>
         </Grid>
 
         <Grid item xs={6} lg={2}>
           <Typography variant="body2">
-            <Link href="/legal/user-agreement">
-              User Agreement
-            </Link>
+            <Link href="/legal/user-agreement">User Agreement</Link>
           </Typography>
         </Grid>
 
         <Grid item xs={6} lg={2}>
           <Typography variant="body2">
-            <Link href="/legal/privacy-policy">
-              Privacy Policy
-            </Link>
+            <Link href="/legal/privacy-policy">Privacy Policy</Link>
           </Typography>
         </Grid>
       </Grid>
@@ -121,15 +112,17 @@ export default function Footer() {
           Developed by:
         </Typography>
         <Image
-          src={'/assets/tech-logo.png'}
-          width={64}
-          height={64}
+          src={
+            isLightMode
+              ? '/assets/mrjw-logo-dark.png'
+              : '/assets/mrjw-logo-light.png'
+          }
+          width={124}
+          height={65}
           priority
-          alt="website logo"
+          quality={100}
+          alt="app logo"
         />
-        <Typography variant="body2" sx={{ mr: 2 }}>
-          ©2024 - 2025 Jayson Wong
-        </Typography>
       </Box>
     </Box>
   );

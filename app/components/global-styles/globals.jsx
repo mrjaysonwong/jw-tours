@@ -3,16 +3,9 @@
 import { Box, Dialog, Button, Container } from '@mui/material';
 import { styled } from '@mui/system';
 
-export const MainContainer = ({ children }) => {
-  return (
-    <StyledContainer>
-      <div>{children}</div>
-    </StyledContainer>
-  );
-};
 
 export const StyledContainer = styled(Container)({
-  marginTop: '4rem',
+  marginTop: '7rem',
   minHeight: '100vh',
 
   'h6, h5, h4, h3': {

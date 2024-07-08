@@ -1,24 +1,29 @@
-import React, { forwardRef, useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import React, { forwardRef, useState, useEffect, useRef } from 'react';
+import { useRouter, useParams } from 'next/navigation';
 import { useDebounce } from 'use-debounce';
 import {
   Dialog,
-  AppBar,
-  Toolbar,
-  IconButton,
+  DialogContent,
+  DialogActions,
   Slide,
-  InputBase,
   Divider,
-  List,
-  ListItemButton,
-  ListItemText,
   Typography,
   Box,
   Avatar,
+  Button,
+  CircularProgress,
+  Autocomplete,
+  TextField,
+  Tooltip,
+  IconButton,
+  AppBar,
 } from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
 import SearchIcon from '@mui/icons-material/Search';
 import { fetchPostDetails } from './PostDetails';
+import { AlertMessage } from '@/app/components/custom/messages';
+import { useMessageStore } from '@/stores/messageStore';
+import axios from 'axios';
+import ClearIcon from '@mui/icons-material/Clear';
 
 const Transition = forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -26,107 +31,290 @@ const Transition = forwardRef(function Transition(props, ref) {
 
 export default function SearchDialog({ open, setOpen }) {
   const [text, setText] = useState('');
-  const [pokemons, setPokemons] = useState([]);
-  const router = useRouter();
-
+  const [suggestions, setSuggestions] = useState([]);
   const [debouncedText] = useDebounce(text, 1000);
 
-  const handleClose = () => {
+  const [loading, setLoading] = useState({
+    showMore: false,
+    initialData: false,
+  });
+
+  const [startIndex, setStartIndex] = useState(0);
+  const [showMore, setShowMore] = useState(false);
+
+  const resetRef = useRef(null);
+
+  const router = useRouter();
+  const { slug } = useParams();
+
+  const { alert, handleAlertMessage, handleClose } = useMessageStore();
+
+  const handleOnClose = () => {
     setOpen(false);
   };
 
-  const fetchSearch = async () => {
-    if (!debouncedText) {
-      return;
+  const handleOnClick = (searchTerm) => {
+    if (searchTerm === slug) {
+      setOpen(false);
     }
 
-    const res = await fetch(`https://pokeapi.co/api/v2/pokemon?limit=100000`);
+    router.push(`/blog/${searchTerm}`);
+  };
 
-    const data = await res.json();
+  const handleReset = () => {
+    setText('');
+    setShowMore(false);
+
+    if (resetRef.current) {
+      resetRef.current.querySelector('input').focus();
+      resetRef.current.querySelector('input').blur();
+    }
+  };
+
+  const handleShowMore = async () => {
+    setLoading({ showMore: true });
+
+    const result = await fetchSearch(startIndex + 20);
+
+    setSuggestions([...suggestions, ...result]);
+    setStartIndex(startIndex + 20);
+    setLoading({ showMore: false });
+
+    if (result.length < 20) setShowMore(false);
+  };
+
+  const fetchSearch = async (startIndex = 0) => {
+    const url = `https://pokeapi.co/api/v2/pokemon?limit=100000`;
+    const { data } = await axios.get(url);
+
     const pokemonList = data.results.map((pokemon) => pokemon.name);
+
     const filteredList = pokemonList.filter((name) =>
       name.includes(debouncedText.toLowerCase())
     );
 
-    // Fetch details for each filtered Pokémon
-    const pokemonDetailsPromises = filteredList.map(async (pokemonName) => {
-      const pokemonData = await fetchPostDetails(pokemonName);
-      return pokemonData;
-    });
+    const pokemonDetailsPromises = filteredList
+      .slice(startIndex, startIndex + 20)
+      .map(async (pokemonName) => {
+        const pokemonData = await fetchPostDetails(pokemonName);
+        return pokemonData;
+      });
 
-    // Wait for all details to be fetched
     const pokemonDetails = await Promise.all(pokemonDetailsPromises);
 
     return pokemonDetails;
   };
 
-  const handleOnClick = (pokemon) => {
-    router.push(`/blog/${pokemon}`);
-  };
-
   useEffect(() => {
-    const fetchPokemons = async () => {
-      const result = await fetchSearch(debouncedText);
+    const fetchSuggestions = async () => {
+      try {
+        if (!debouncedText) {
+          setSuggestions([]);
+          setStartIndex(0);
+          return;
+        }
 
-      setPokemons(result);
+        setLoading({ initialData: true });
+
+        const result = await fetchSearch();
+
+        setSuggestions(result);
+        setShowMore(result?.length >= 20);
+        setLoading({ initialData: false });
+      } catch (error) {
+        handleAlertMessage('An error occured. Try again.', 'error');
+      }
     };
 
-    fetchPokemons();
+    fetchSuggestions();
   }, [debouncedText]);
 
   return (
     <>
-      <Dialog disableRestoreFocus open={open} TransitionComponent={Transition}>
-        <AppBar position="sticky" color="inherit">
-          <Toolbar>
-            <SearchIcon />
-
-            <InputBase
-              autoFocus
-              placeholder="Search Blog"
-              inputProps={{ 'aria-label': 'search blog' }}
-              onChange={(e) => setText(e.target.value)}
-              sx={{ ml: 1, flex: 1 }}
-            />
-
-            <Divider sx={{ height: 28, mx: 1 }} orientation="vertical" />
-            <IconButton aria-label="close-modal" onClick={handleClose}>
-              <CloseIcon />
-            </IconButton>
-          </Toolbar>
-        </AppBar>
-
-        {pokemons &&
-          (pokemons.length < 1 ? (
-            <Box sx={{ mx: 2, my: 4 }}>
-              <Typography>
-                No results for &quot;<b>{debouncedText}</b>&quot;
-              </Typography>
-            </Box>
-          ) : (
-            <>
-              <List>
-                {pokemons.map((pokemon) => (
-                  <ListItemButton
-                    key={pokemon.name}
-                    onClick={() => handleOnClick(pokemon.name)}
+      <Dialog
+        disableRestoreFocus
+        open={open}
+        onClose={handleOnClose}
+        TransitionComponent={Transition}
+        PaperProps={{
+          style: {
+            height: suggestions?.length <= 1 ? '45vh' : '61vh',
+          },
+        }}
+      >
+        <DialogContent>
+          <AppBar
+            elevation={3}
+            position="sticky"
+            color="inherit"
+            sx={{ borderRadius: '6px' }}
+          >
+            <Autocomplete
+              loading={loading.initialData}
+              loadingText={`Loading...`}
+              noOptionsText={`Can't find it? Be specific in searching.`}
+              options={suggestions}
+              getOptionLabel={(option) => `${option.name}`}
+              renderOption={(props, option) => {
+                // destructure key from props
+                // Box key prop first
+                const { key, ...restProps } = props;
+                return (
+                  <Box
+                    key={key}
+                    {...restProps}
+                    onClick={() => handleOnClick(option.name)}
+                    component="li"
+                    className="foo"
+                    sx={{
+                      '& > img': { mr: 2, flexShrink: 0 },
+                      display: 'flex',
+                      alignItems: 'center',
+                      ':hover': {
+                        bgcolor: '	rgb(211,211,211, 0.4)',
+                        cursor: 'pointer',
+                      },
+                    }}
                   >
                     <Avatar
-                      alt={pokemon.name}
-                      src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemon.id}.png`}
-                      sx={{ width: 64, height: 64 }}
+                      alt={option.name}
+                      src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${option.id}.png`}
+                      sx={{ width: 32, height: 32, my: 1, mx: 2 }}
                     />
-                    <ListItemText
-                      primary={pokemon.name}
-                      secondary={`Weight: ${pokemon.weight}`}
-                      sx={{ ml: 1 }}
-                    />
-                  </ListItemButton>
-                ))}
-              </List>
-            </>
-          ))}
+                    {option.name}
+                  </Box>
+                );
+              }}
+              renderInput={(params) => (
+                <>
+                  <TextField
+                    {...params}
+                    fullWidth
+                    label="Search Blog"
+                    ref={resetRef}
+                    onChange={(e) => setText(e.target.value)}
+                    autoComplete="off"
+                    sx={{
+                      position: 'relative',
+                    }}
+                    inputProps={{ ...params.inputProps, autoFocus: true }}
+                    InputProps={{
+                      ...params.InputProps,
+                      startAdornment: (
+                        <>
+                          {showMore && (
+                            <Button
+                              size="small"
+                              color="inherit"
+                              variant="outlined"
+                              onClick={handleShowMore}
+                              disabled={loading.showMore}
+                              sx={{ fontSize: '10px' }}
+                              startIcon={
+                                loading.showMore ? (
+                                  <CircularProgress size={18} />
+                                ) : (
+                                  <SearchIcon />
+                                )
+                              }
+                            >
+                              Show More
+                            </Button>
+                          )}
+                        </>
+                      ),
+                    }}
+                  />
+
+                  {debouncedText && (
+                    <Tooltip title="Clear the query" arrow>
+                      <IconButton
+                        disableRipple
+                        onClick={handleReset}
+                        sx={{
+                          position: 'absolute',
+                          right: '40px',
+                          top: '12px',
+                          svg: {
+                            fontSize: '1rem',
+                          },
+                        }}
+                      >
+                        <ClearIcon />
+                      </IconButton>
+                    </Tooltip>
+                  )}
+                </>
+              )}
+              sx={{
+                width: {
+                  xs: '60vw',
+                  md: '30vw',
+                  input: {
+                    marginRight: '2rem',
+                  },
+                },
+              }}
+              slotProps={{
+                paper: {
+                  elevation: 5,
+                },
+              }}
+            />
+          </AppBar>
+
+          {!debouncedText && (
+            <Box
+              sx={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                height: '70%',
+                pt: 5,
+              }}
+            >
+              <Typography>No recent searches</Typography>
+            </Box>
+          )}
+
+          {debouncedText &&
+            !loading.initialData &&
+            suggestions?.length === 0 && (
+              <Box
+                sx={{
+                  width: { xs: '50vw', lg: '400px' },
+                  margin: 'auto',
+                  pt: 10,
+                  textAlign: 'center',
+                }}
+              >
+                <Typography>No results for</Typography>
+                <Typography>
+                  &quot;<b>{debouncedText}</b>&quot;
+                </Typography>
+              </Box>
+            )}
+        </DialogContent>
+        <Divider />
+        <DialogActions>
+          <Button
+            size="small"
+            variant="outlined"
+            color="inherit"
+            onClick={handleOnClose}
+            sx={{ mx: 2 }}
+          >
+            Close
+          </Button>
+        </DialogActions>
       </Dialog>
+
+      <AlertMessage
+        open={alert.open}
+        message={alert.message}
+        severity={alert.severity}
+        onClose={handleClose}
+      />
     </>
   );
 }

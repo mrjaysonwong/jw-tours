@@ -1,7 +1,7 @@
 import { StyledContainer as MainContainer } from '@/app/components/global-styles/globals';
 import AuthenticationFailed from '@/app/notifications/components/AuthenticationFailed';
 import { Custom404Page } from '@/app/components/custom/error/404';
-import { formatMetadata } from '@/utils/helper/formatMetadata';
+import { formatMetadata } from '@/utils/helper/formats/formatMetadata';
 
 export async function generateMetadata({ params }) {
   return formatMetadata(params);

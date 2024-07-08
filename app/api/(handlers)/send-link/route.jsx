@@ -2,13 +2,14 @@ import connectMongo from '@/lib/connection';
 import User from '@/model/userModel';
 import Token from '@/model/tokenModel';
 import jwt from 'jsonwebtoken';
-import { generateToken } from '@/utils/helper/generateToken';
-import { formattedDate } from '@/utils/helper/formattedDate';
+import { generateToken } from '@/utils/helper/token-handlers/generateToken';
+import { formattedDate } from '@/utils/helper/formats/formattedDate';
 import { render } from '@react-email/render';
 import { EmailTemplate } from '@/src/template/EmailTemplate';
 import { sendEmail } from '@/utils/config/sendEmail';
 import { RateLimiterMemory } from 'rate-limiter-flexible';
 import { unstable_noStore as noStore } from 'next/cache';
+import { getErrorMessage } from '@/utils/helper/errorHandler';
 
 const opts = {
   points: 1,
@@ -25,7 +26,15 @@ export async function PATCH(Request) {
 
     const requestUrl = new URL(Request.url);
     const mode = requestUrl.searchParams.get('mode');
-    const type = requestUrl.searchParams.get('type');
+
+    if (!mode) {
+      return Response.json(
+        {
+          message: getErrorMessage('Missing or invalid parameters.'),
+        },
+        { status: 400 }
+      );
+    }
 
     const { email } = await Request.json();
 
@@ -34,30 +43,10 @@ export async function PATCH(Request) {
     if (!userExists) {
       return Response.json(
         {
-          error: {
-            message: 'Bad Request',
-          },
+          message: getErrorMessage('User Not Found'),
         },
         { status: 403 }
       );
-    }
-
-    if (mode === 'signin' || (mode === 'signin' && type === 'resend')) {
-      const isVerified = await User.findOne({
-        'email.email': email,
-        'email.isVerified': true,
-      });
-
-      if (!isVerified) {
-        return Response.json(
-          {
-            error: {
-              message: 'Bad Request',
-            },
-          },
-          { status: 403 }
-        );
-      }
     }
 
     if (mode === 'signup') {
@@ -69,9 +58,21 @@ export async function PATCH(Request) {
       if (isVerified) {
         return Response.json(
           {
-            error: {
-              message: 'Bad Request',
-            },
+            message: getErrorMessage('Account has been already verified.'),
+          },
+          { status: 403 }
+        );
+      }
+    } else {
+      const isVerified = await User.findOne({
+        'email.email': email,
+        'email.isVerified': true,
+      });
+
+      if (!isVerified) {
+        return Response.json(
+          {
+            message: 'Verify Email First!',
           },
           { status: 403 }
         );
@@ -145,13 +146,14 @@ export async function PATCH(Request) {
         message:
           mode === 'signin'
             ? `A sign-in link has been sent to ${email}`
-            : `Verification link sent to ${email}`,
+            : `Verification link has been sent to ${email}`,
         email: email,
       },
       { status: 200 }
     );
   } catch (error) {
     console.error(error);
+
     const rateLimited = error?.remainingPoints === 0;
     const timeLeft = Math.floor(error?.msBeforeNext / 1000);
 

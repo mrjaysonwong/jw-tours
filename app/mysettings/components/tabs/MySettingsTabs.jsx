@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Box, Tabs, Tab, Button } from '@mui/material';
-import { accountSettingsRoutes } from '@/src/routes/account-settings-routes';
+import { accountSettingsLinks } from '@/src/navigation-links/accountSettingsLinks';
 import PersonalDetails from '../personal-details/PersonalDetails';
 import Preferences from '../preferences/Preferences';
 import Security from '../security/Security';
@@ -31,7 +31,7 @@ function TabPanel(props) {
 }
 
 export default function MySettingsTabs({ slug }) {
-  const currentIndex = accountSettingsRoutes.findIndex(
+  const currentIndex = accountSettingsLinks.findIndex(
     (item) => item.slug === slug
   );
 
@@ -40,7 +40,7 @@ export default function MySettingsTabs({ slug }) {
   const router = useRouter();
 
   const handleChange = (event, newValue) => {
-    const newSlug = accountSettingsRoutes[newValue].slug;
+    const newSlug = accountSettingsLinks[newValue].slug;
     setValue(newValue);
     router.replace(`/mysettings/${newSlug}`);
   };
@@ -74,7 +74,7 @@ export default function MySettingsTabs({ slug }) {
             display: { xs: 'none', lg: 'flex' },
           }}
         >
-          {accountSettingsRoutes.map((item) => (
+          {accountSettingsLinks.map((item) => (
             <Tab
               key={item.tabName}
               disableRipple
@@ -98,7 +98,7 @@ export default function MySettingsTabs({ slug }) {
           ))}
         </Tabs>
 
-        {accountSettingsRoutes.map((item, index) => (
+        {accountSettingsLinks.map((item, index) => (
           <TabPanel key={item.tabName} value={value} index={index}>
             {index === 0 && <PersonalDetails />}
             {index === 1 && <Preferences />}

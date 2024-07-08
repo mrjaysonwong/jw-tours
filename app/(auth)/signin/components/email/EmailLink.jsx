@@ -65,21 +65,17 @@ export default function EmailLink() {
         );
       }
     } catch (error) {
-      const { errorMessage, status } = errorHandler(error);
+      const { errorMessage } = errorHandler(error);
 
       if (submitAttemptRef.current === 5 && errorMessage) {
         setCaptcha(true);
       }
 
       setHasError(true);
-      handleAlertMessage(
-        status === 500 || status === 403
-          ? 'An error occured. Try again.'
-          : errorMessage,
-        'error'
-      );
+      handleAlertMessage(errorMessage, 'error');
     }
   };
+
   return (
     <>
       <MainContainer
@@ -128,7 +124,7 @@ export default function EmailLink() {
             )}
 
             <FormSubmitButton
-              label="send"
+              label="Send"
               mode="auth"
               handleSubmit={handleSubmit(onSubmit)}
               isSubmitting={isSubmitting}

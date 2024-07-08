@@ -15,7 +15,7 @@ export default function SignIn() {
     <>
       <MainContainer
         sx={{
-          mt: 0,
+          mt: { xs: 0, md: 5 },
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
@@ -26,7 +26,7 @@ export default function SignIn() {
           <Typography variant="h5" sx={{ mb: 2 }}>
             Sign in
           </Typography>
-          
+
           <CredentialsForm />
 
           <Divider sx={{ my: 2 }}>

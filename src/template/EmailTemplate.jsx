@@ -19,7 +19,7 @@ export function EmailTemplate(props) {
 
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
   const isSignUp = mode === 'signup';
-  const isEmailOTP = mode === 'otp';
+  const isEmailOTP = mode === 'email-otp';
   const isEmailSignIn = mode === 'signin';
 
   const links = [
@@ -51,7 +51,7 @@ export function EmailTemplate(props) {
         <Body style={main}>
           <Container style={container}>
             <Img
-              src="https://res.cloudinary.com/dpyxciwcu/image/upload/v1713597998/jwtours/logo/JW_Tours_Email_Logo_rahcr4.png"
+              src="https://res.cloudinary.com/dpyxciwcu/image/upload/v1719987246/jwtours/logo/jwtours-email-logo_l9o81m.png"
               width="42"
               height="42"
               alt="JW Tours"
@@ -146,7 +146,7 @@ const logo = {
 };
 
 const main = {
-  backgroundColor: '#ffffff',
+  backgroundColor: '#fff',
   fontFamily:
     '-apple-system,BlinkMacSystemFont,"Segoe UI","Roboto","Oxygen","Ubuntu","Cantarell","Fira Sans","Droid Sans","Helvetica Neue",sans-serif',
 };
@@ -200,7 +200,7 @@ const buttonContainer = {
 };
 
 const button = {
-  backgroundColor: '#5e6ad2',
+  backgroundColor: '#e3a393',
   borderRadius: '3px',
   fontWeight: '600',
   color: '#fff',

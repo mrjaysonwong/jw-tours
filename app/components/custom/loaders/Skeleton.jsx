@@ -1,4 +1,4 @@
-import { Box, Typography, Skeleton, Grid } from '@mui/material';
+import { Skeleton, Grid } from '@mui/material';
 
 function SkeletonGrid() {
   return (
@@ -24,7 +24,7 @@ export function LoadingSkeletonGrid() {
   return (
     <>
       <Grid container sx={{ mt: '4.5rem' }}>
-        {Array.from({ length: 4 }).map((_, index) => (
+        {Array.from({ length: 3 }).map((_, index) => (
           <SkeletonGrid key={index} />
         ))}
       </Grid>
@@ -35,7 +35,7 @@ export function LoadingSkeletonGrid() {
 export function LoadingSkeletonAvatar({ w, h }) {
   return (
     <>
-      <Skeleton variant="circular" width={w} height={h} />
+      <Skeleton variant="circular" width={w} height={h}  />
     </>
   );
 }

@@ -1,9 +1,9 @@
 import { auth } from '@/auth';
 import { cookies } from 'next/headers';
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v13-appRouter';
-import Navbar from './components/custom/navbar/Navbar';
+import NavBar from './components/NavBar/NavBar';
 import ThemeModeIconButton from './components/global-styles/ThemeModeIconButton';
-import Footer from './components/custom/footer/Footer';
+import Footer from './components/custom/Footer/Footer';
 import ToggleThemeMode from './components/global-styles/ToggleThemeMode';
 import AuthRedirect from './(auth)/AuthRedirect';
 import SessionWrapper from './(auth)/SessionWrapper';
@@ -26,13 +26,13 @@ export default async function RootLayout({ children }) {
   return (
     <SessionWrapper>
       <html lang="en">
-        <link rel="icon" href="/app-icon.svg" />
+        <link rel="icon" href="/icon.svg" />
         <body>
           <AppRouterCacheProvider options={{ key: 'css' }}>
             <ToggleThemeMode storedTheme={storedTheme}>
               <AuthRedirect>
                 <UserSessionWrapper session={session}>
-                  <Navbar />
+                  <NavBar />
                   {children}
                   <ThemeModeIconButton />
                   <Footer />

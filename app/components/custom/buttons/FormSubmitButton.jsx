@@ -49,7 +49,6 @@ export default function FormSubmitButton(props) {
             disabled={isSubmitting || captcha}
             variant="contained"
             onClick={handleSubmit}
-            sx={{ mt: 2 }}
             color={hasError ? 'error' : undefined}
           >
             {isSubmitting ? <CircularProgress size={25} /> : label}

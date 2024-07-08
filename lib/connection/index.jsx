@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { cleanTokenRequests } from '@/utils/helper/cleanTokenRequests';
+import { cleanTokenRequests } from '@/utils/helper/token-handlers/cleanTokenRequests';
 import { unstable_noStore as noStore } from 'next/cache';
 
 export default async function connectMongo() {

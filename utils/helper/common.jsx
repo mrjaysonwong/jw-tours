@@ -10,7 +10,7 @@ export function authPage(pathname) {
     '/verify',
     '/notifications/authentication-failed',
     '/confirmation/send-link',
-    '/error'
+    '/error',
   ];
 
   const hideOnAuthPage = authPages.includes(pathname);
@@ -19,12 +19,17 @@ export function authPage(pathname) {
 }
 
 export function hideNavLinks(pathname, params) {
-  const selectedPages = [
-    '/mysettings',
-    `/mysettings/${params.slug}`,
-  ];
+  const selectedPages = ['/mysettings', `/mysettings/${params.slug}`];
 
   const hideOnSelectedPage = selectedPages.includes(pathname);
 
   return hideOnSelectedPage;
+}
+
+export function homePage(pathname) {
+  const selectedPages = ['/'];
+
+  const nonBlur = selectedPages.includes(pathname);
+
+  return nonBlur;
 }

@@ -40,8 +40,7 @@ export default function ConfirmSendLink(props) {
     try {
       setIsSubmitting(true);
 
-      const type = 'resend';
-      const url = `/api/send-link?mode=${mode}&type=${type}`;
+      const url = `/api/send-link?mode=${mode}`;
 
       const formData = {
         email: email,
@@ -56,20 +55,14 @@ export default function ConfirmSendLink(props) {
         setIsCountdown(true);
       }
     } catch (error) {
-      const { errorMessage, status } = errorHandler(error);
+      const { errorMessage } = errorHandler(error);
 
       if (submitAttemptRef.current === 5 && errorMessage) {
         setCaptcha(true);
       }
 
-      if (status === 429) {
-        setIsSubmitting(false);
-        handleAlertMessage(errorMessage, 'error');
-      } else {
-        setIsSubmitting(false);
-     
-        handleAlertMessage('An error occured. Try again.', 'error');
-      }
+      setIsSubmitting(false);
+      handleAlertMessage(errorMessage, 'error');
     }
   };
 
@@ -93,7 +86,9 @@ export default function ConfirmSendLink(props) {
 
   return (
     <>
-      <StyledCard sx={{ width: 'clamp(300px, 90vw, 380px)', textAlign: 'left' }}>
+      <StyledCard
+        sx={{ width: 'clamp(300px, 90vw, 380px)', textAlign: 'left' }}
+      >
         <Box>
           <Typography variant="h4">
             {mode === 'signin' ? 'Email Verification' : 'Account Verification'}

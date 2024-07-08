@@ -8,7 +8,7 @@ import {
   authSignInEmail,
   authSignInOAuth,
 } from './utils/helper/authSignIn';
-import { findUser } from './utils/helper/findUser';
+import { findUser } from './utils/helper/query/findUser';
 
 export const {
   handlers: { GET, POST },

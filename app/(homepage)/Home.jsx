@@ -1,9 +1,3 @@
-import Welcome from './components/Welcome';
-
-export default function Home() {
-  return (
-    <>
-      <Welcome />
-    </>
-  );
+export default function Home({ children }) {
+  return <>{children}</>;
 }
