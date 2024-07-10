@@ -36,6 +36,7 @@ export default function ToggleThemeMode(props) {
         typography: {
           fontFamily: inter.style.fontFamily,
         },
+
         palette: {
           mode,
         },

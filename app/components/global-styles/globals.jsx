@@ -3,10 +3,13 @@
 import { Box, Dialog, Button, Container } from '@mui/material';
 import { styled } from '@mui/system';
 
-
 export const StyledContainer = styled(Container)({
   marginTop: '7rem',
   minHeight: '100vh',
+
+  a: {
+    textDecoration: 'none',
+  },
 
   'h6, h5, h4, h3': {
     fontWeight: 600,

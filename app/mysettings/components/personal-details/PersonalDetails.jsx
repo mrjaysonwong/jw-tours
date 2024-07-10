@@ -1,19 +1,14 @@
 import React, { useContext, createContext } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import {
-  Typography,
-  Divider,
-  Box,
-  Breadcrumbs,
-} from '@mui/material';
+import { Typography, Divider, Box, Breadcrumbs } from '@mui/material';
 import { UserSessionContext } from '@/context/UserSessionWrapper';
 import { useUserData } from '@/utils/hooks/useUserData';
-import DetailsGrid from './DetailsGrid';
+import DetailsGrid from './details-grid/DetailsGrid';
 import ProfilePhoto from './profile-photo/ProfilePhoto';
 import CustomError from '@/app/components/custom/error';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
-import ContactInfo from './ContactInfo';
+import ContactInfo from './contact-info/ContactInfo';
 
 export const PersonalSettingsContext = createContext(null);
 
@@ -52,13 +47,13 @@ export default function PersonalDetails() {
           sx={{
             mb: 2,
             '.personal': {
-              color: !isContactInfo ? '#ab47bc' : 'inherit',
+              color: !isContactInfo ? 'var(--palette-orange)' : 'inherit',
               ':hover': {
                 textDecoration: 'underline',
               },
             },
             '.contact-info': {
-              color: isContactInfo ? '#ab47bc' : 'inherit',
+              color: isContactInfo ? 'var(--palette-orange)' : 'inherit',
               ':hover': {
                 textDecoration: 'underline',
               },
@@ -96,6 +91,7 @@ export default function PersonalDetails() {
           </Box>
 
           <ProfilePhoto />
+
         </Box>
 
         <Divider sx={{ my: 3 }} />

@@ -36,6 +36,22 @@ export const menuLinks = [
         label: 'Siargao',
         href: '/destinations/siargao',
       },
+      {
+        label: 'Bicol',
+        href: '/destinations/bicol',
+      },
+      {
+        label: 'Northern Luzon',
+        href: '/destinations/northern-luzon',
+      },
+      {
+        label: 'Camiguin',
+        href: '/destinations/camiguin',
+      },
+      {
+        label: 'Visayas',
+        href: '/destinations/visayas',
+      },
     ],
   },
   {
@@ -43,16 +59,16 @@ export const menuLinks = [
     dropdown: 'trip-types',
     nestedLabel: [
       {
-        label: 'Land Arrangements',
-        href: '/trip/land-arrangements',
+        label: 'Adventure',
+        href: '/trip/adventure',
       },
       {
-        label: 'Shared Tours',
-        href: '/trip/shared-tours',
+        label: 'Culture',
+        href: '/trip/culture',
       },
       {
-        label: 'Walking Tours',
-        href: '/trip/walking',
+        label: 'Beach Time',
+        href: '/trip/beach-group-tours',
       },
       {
         label: 'Historical Tours',

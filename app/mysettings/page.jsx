@@ -8,7 +8,7 @@ import {
   Card,
   CardContent,
   IconButton,
-  Link as MUILink
+  Link as MUILink,
 } from '@mui/material';
 import { accountSettingsLinks } from '@/src/navigation-links/accountSettingsLinks';
 

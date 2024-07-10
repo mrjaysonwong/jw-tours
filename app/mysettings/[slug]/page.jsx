@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation';
 import { StyledContainer as MainContainer } from '@/app/components/global-styles/globals';
 import MySettingsTabs from '../components/tabs/MySettingsTabs';
 
-export default async function MySettingsComponent({ params }) {
+export default async function MySettingsSlugPage({ params }) {
   const session = await auth();
 
   if (!session) redirect('/signin');

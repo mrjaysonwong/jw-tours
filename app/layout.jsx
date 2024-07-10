@@ -1,7 +1,7 @@
 import { auth } from '@/auth';
 import { cookies } from 'next/headers';
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v13-appRouter';
-import NavBar from './components/NavBar/NavBar';
+import NavBar from './components/nav-bar/NavBar';
 import ThemeModeIconButton from './components/global-styles/ThemeModeIconButton';
 import Footer from './components/custom/footer/Footer';
 import ToggleThemeMode from './components/global-styles/ToggleThemeMode';

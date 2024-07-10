@@ -59,7 +59,7 @@ export default function Footer() {
           a: {
             color: 'inherit',
             '&:hover': {
-              color: 'var(--palette-light-orange)',
+              color: 'var(--palette-orange)',
             },
           },
         }}

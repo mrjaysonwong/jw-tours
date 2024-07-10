@@ -1,59 +1,155 @@
-import { auth } from '@/auth';
 import Image from 'next/image';
-import { Typography, Box, Button } from '@mui/material';
+import Link from 'next/link';
+import { Typography, Box, Grid } from '@mui/material';
+import PinDropIcon from '@mui/icons-material/PinDrop';
 
 export default async function HeroBanner() {
-  const session = await auth();
-
   return (
-    <Box
-      sx={{
-        mt: 10,
-        position: 'relative',
-        height: {
-          xs: '300px',
-          md: '400px',
-        },
-      }}
-    >
-      {/* <Typography>Welcome {session ? session?.user?.name : 'Guest'}</Typography>
-      <Typography>{session?.user?.email}</Typography> */}
-      <Image
-        src="https://res.cloudinary.com/dpyxciwcu/image/upload/v1719678889/samples/landscapes/el-nido_en0gxd.jpg"
-        alt="Picture of the author"
-        fill
-        sizes="100vw"
-        style={{ objectFit: 'cover', objectPosition: '10% 25%' }}
-        priority
-      />
-
+    <Link href="/destinations/boracay">
       <Box
         sx={{
-          position: 'absolute',
-          top: '30%',
-          width: '100%',
-          textAlign: 'left',
-          px: 1,
+          mt: 10,
+          position: 'relative',
+          color: 'white',
+          cursor: 'pointer',
+          height: {
+            xs: '300px',
+            md: '400px',
+          },
         }}
       >
+        <Image
+          src="/assets/hero-banner/boracay-bg.png"
+          alt="Picture of the author"
+          fill
+          sizes="100vw"
+          style={{ objectFit: 'cover', objectPosition: '10% 40%' }}
+          priority
+        />
+
         <Box
           sx={{
-            width: '80vw',
-            margin: 'auto',
-            color: 'white',
+            position: 'absolute',
+            top: '14%',
+            width: '100%',
           }}
         >
-          <Typography sx={{ typography: { xs: 'h5', md: 'h3' } }}>
-            Embark on Your Journey
-          </Typography>
-          <Typography sx={{ my: 2, typography: { xs: 'h6', md: 'h5' } }}>
-            Unveil Spectacular Tours
-          </Typography>
-          <Button size="small" variant="contained">
-            Find yours
-          </Button>
+          <Grid container>
+            <Grid item xs={12} md={6}>
+              <Box sx={{ p: 3 }}>
+                <Typography
+                  sx={{
+                    fontFamily: 'Gothic A1 !important',
+                    px: { xs: 'auto', md: 10 },
+                  }}
+                >
+                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut
+                  risus nisl, pretium quis tempus at, auctor sit amet velit.
+                </Typography>
+                <Typography
+                  variant="h1"
+                  sx={{
+                    fontFamily: 'Moirai One !important',
+                    textAlign: 'right',
+                    fontSize: { xs: '5rem', md: '10rem' },
+                  }}
+                >
+                  Relax
+                </Typography>
+
+                <Box
+                  sx={{
+                    display: { xs: 'flex', md: 'none' },
+                    alignItems: 'center',
+                    justifyContent: 'right',
+                  }}
+                >
+                  <Typography
+                    variant="h4"
+                    sx={{
+                      fontFamily: `Bodoni Moda SC
+                    !important`,
+                      fontWeight: 700,
+                      textTransform: 'capitalize',
+                    }}
+                  >
+                    Boracay
+                  </Typography>
+                  <PinDropIcon sx={{ fontSize: '3rem', color: 'tomato' }} />
+                </Box>
+              </Box>
+            </Grid>
+
+            <Grid
+              item
+              xs={6}
+              md={6}
+              sx={{ display: { xs: 'none', md: 'block' } }}
+            >
+              <Box
+                sx={{
+                  position: 'relative',
+
+                  textAlign: 'center',
+                }}
+              >
+                <Image
+                  src="/assets/hero-banner/boracay-2.png"
+                  alt="hero image"
+                  width={200}
+                  height={200}
+                  sizes="100vw"
+                  style={{
+                    objectFit: 'contain',
+                    objectPosition: '50%',
+                    width: 200,
+                    height: 200,
+                  }}
+                  priority
+                />
+
+                <Image
+                  src="/assets/hero-banner/boracay-3.png"
+                  alt="hero image"
+                  width={200}
+                  height={200}
+                  sizes="100vw"
+                  style={{
+                    objectFit: 'contain',
+                    objectPosition: '100%',
+                    width: 200,
+                    height: 200,
+                  }}
+                  priority
+                />
+
+                <Box
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    mt: 5,
+                    textAlign: 'right',
+                  }}
+                >
+                  <Typography
+                    variant="h3"
+                    sx={{
+                      fontFamily: `Bodoni Moda SC
+                    !important`,
+                      fontWeight: 700,
+                      textTransform: 'capitalize',
+                    }}
+                  >
+                    Boracay
+                  </Typography>
+                  <PinDropIcon sx={{ fontSize: '3rem', color: 'tomato' }} />
+                </Box>
+              </Box>
+            </Grid>
+          </Grid>
         </Box>
       </Box>
-    </Box>
+    </Link>
   );
 }
