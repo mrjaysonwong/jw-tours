@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { Typography, Box, Grid } from '@mui/material';
 import PinDropIcon from '@mui/icons-material/PinDrop';
 
-export default async function HeroBanner() {
+export default function HeroBanner() {
   return (
     <Link href="/destinations/boracay">
       <Box
@@ -12,6 +12,7 @@ export default async function HeroBanner() {
           position: 'relative',
           color: 'white',
           cursor: 'pointer',
+          width: '100%',
           height: {
             xs: '300px',
             md: '400px',
@@ -19,10 +20,9 @@ export default async function HeroBanner() {
         }}
       >
         <Image
-          src="/assets/hero-banner/boracay-bg.png"
+          src="https://res.cloudinary.com/dpyxciwcu/image/upload/v1720611572/jwtours/background/boracay_nbpnzd.jpg"
           alt="Picture of the author"
           fill
-          sizes="100vw"
           style={{ objectFit: 'cover', objectPosition: '10% 40%' }}
           priority
         />
@@ -89,12 +89,11 @@ export default async function HeroBanner() {
               <Box
                 sx={{
                   position: 'relative',
-
                   textAlign: 'center',
                 }}
               >
                 <Image
-                  src="/assets/hero-banner/boracay-2.png"
+                  src="https://res.cloudinary.com/dpyxciwcu/image/upload/v1720611904/jwtours/background/hero-image/boracay-2_fhr1oz.png"
                   alt="hero image"
                   width={200}
                   height={200}
@@ -109,7 +108,7 @@ export default async function HeroBanner() {
                 />
 
                 <Image
-                  src="/assets/hero-banner/boracay-3.png"
+                  src="https://res.cloudinary.com/dpyxciwcu/image/upload/v1720611900/jwtours/background/hero-image/boracay-3_qexqqr.png"
                   alt="hero image"
                   width={200}
                   height={200}

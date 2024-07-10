@@ -35,7 +35,15 @@ export function LoadingSkeletonGrid() {
 export function LoadingSkeletonAvatar({ w, h }) {
   return (
     <>
-      <Skeleton variant="circular" width={w} height={h}  />
+      <Skeleton variant="circular" width={w} height={h} />
+    </>
+  );
+}
+
+export function HeroBannerSkeleton({ w, h }) {
+  return (
+    <>
+      <Skeleton variant="rectangle" width={w} height={h} />
     </>
   );
 }
