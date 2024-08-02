@@ -8,7 +8,11 @@ import {
   authSignInEmail,
   authSignInOAuth,
 } from './utils/helper/authSignIn';
-import { findUser } from './utils/helper/query/findUser';
+import {
+  findUserByEmail,
+  findUserById,
+  constructUserObject,
+} from './utils/helper/query/User';
 
 export const {
   handlers: { GET, POST },
@@ -63,15 +67,22 @@ export const {
       // if signed in using OAuth
       if (user && profile) {
         await authSignInOAuth(user, account);
+
         return true;
-      } else if (user) {
+      } else {
         return true;
       }
     },
 
-    async jwt({ token, user, account, profile }) {
-      if (user) {
-        token.user = user;
+    async jwt({ token, user, trigger, account, profile, session }) {
+      // authenticated
+      if (trigger === 'update' && token.user) {
+        const userExists = await findUserById(token.user.id);
+        token.user = await constructUserObject(userExists);
+      } else if (user) {
+        // isAuthenticating
+        const userExists = await findUserById(user.id);
+        token.user = await constructUserObject(userExists);
       }
 
       return token;
@@ -79,14 +90,10 @@ export const {
 
     async session({ session, token }) {
       if (token) {
-        const userExists = await findUser(token.user.email);
-
         session.user = token.user;
-        session.user.id = userExists.id;
-        session.user.role = userExists.role;
-
-        return session;
       }
+
+      return session;
     },
   },
   secret: process.env.AUTH_SECRET,

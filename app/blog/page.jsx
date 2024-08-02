@@ -14,7 +14,7 @@ export default function BlogPage({ searchParams }) {
     <MainContainer>
       <Box
         sx={{
-          mt: 12,
+          mt: '7rem',
           display: 'flex',
           alignItems: 'center',
         }}

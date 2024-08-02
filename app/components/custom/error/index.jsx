@@ -1,8 +1,17 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { useSearchParams, usePathname } from 'next/navigation';
 import { StyledContainer as MainContainer } from '@/app/components/global-styles/globals';
-import { Box, Typography, Button } from '@mui/material';
-import Image from 'next/image';
+import { Box, Typography, Button, Tooltip } from '@mui/material';
+import ErrorIcon from '@mui/icons-material/Error';
+
+export function ErrorTooltip() {
+  return (
+    <Tooltip title="Error while fetching data." arrow>
+      <ErrorIcon color="error" sx={{ fontSize: '2rem' }} />
+    </Tooltip>
+  );
+}
 
 export default function CustomError({ error, reset }) {
   const searchParams = useSearchParams();
@@ -16,14 +25,14 @@ export default function CustomError({ error, reset }) {
       {isMySettings ? (
         <Box
           sx={{
-            height: '65vh',
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'center',
             alignItems: 'center',
+            my: 5,
           }}
         >
-          <Typography>An error occured. Try again.</Typography>
+          <Typography>{error.message}</Typography>
           <Button
             variant="contained"
             onClick={() => location.reload()}

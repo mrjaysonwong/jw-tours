@@ -9,6 +9,7 @@ import {
   IconButton,
   Button,
   Avatar,
+  Divider,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import CameraEnhanceIcon from '@mui/icons-material/CameraEnhance';
@@ -27,7 +28,7 @@ function ProfilePhotoContent(props) {
   return (
     <>
       <Box sx={{ display: 'flex', position: 'relative' }}>
-        <DialogTitle>Profile photo</DialogTitle>
+        <DialogTitle>Profile Photo</DialogTitle>
         <IconButton
           onClick={handleOnClose}
           sx={{ position: 'absolute', right: 10, top: 10 }}
@@ -44,10 +45,10 @@ function ProfilePhotoContent(props) {
           p: 5,
         }}
       >
-        {!user?.image.url ? (
+        {!user?.image?.url ? (
           <Avatar
             alt={`${user?.firstName} ${user?.lastName}`}
-            src={user?.image?.url}
+            src={user?.image?.url ?? '/assets/user.png'}
             referrerPolicy="no-referrer"
             sx={{ width: 168, height: 168 }}
           />
@@ -89,14 +90,16 @@ function ProfilePhotoContent(props) {
         }}
       >
         <Button onClick={handleOnClickAdd} startIcon={<CameraEnhanceIcon />}>
-          Add Photo
+          {user?.image?.url ? 'Change Photo' : 'Add Photo'}
         </Button>
+
+        <Divider orientation="vertical" variant="middle" flexItem />
         <Button
           onClick={handleOnClickDelete}
           disabled={!user?.image?.url}
           startIcon={<DeleteIcon />}
         >
-          Delete
+          Delete Photo
         </Button>
       </DialogActions>
     </>

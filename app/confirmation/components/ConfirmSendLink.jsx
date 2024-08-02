@@ -2,7 +2,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
-import { Typography, Box, Button } from '@mui/material';
+import { Typography, Box, Button, CircularProgress } from '@mui/material';
 import Image from 'next/image';
 import { StyledCard } from '@/app/components/global-styles/globals';
 import ReCAPTCHA from 'react-google-recaptcha';
@@ -13,7 +13,7 @@ import { AlertMessage } from '@/app/components/custom/messages';
 import { useMessageStore } from '@/stores/messageStore';
 
 export default function ConfirmSendLink(props) {
-  const { email, mode } = props;
+  const { email, action } = props;
   const router = useRouter();
 
   const { alert, handleAlertMessage, handleClose } = useMessageStore();
@@ -34,22 +34,20 @@ export default function ConfirmSendLink(props) {
       .forEach((a) => a.remove());
   };
 
-  const handleResendLink = async () => {
+  const handleSubmit = async () => {
     submitAttemptRef.current++;
-
+    setIsSubmitting(true);
     try {
-      setIsSubmitting(true);
-
-      const url = `/api/send-link?mode=${mode}`;
+      const url = `/api/send-link?action=${action}`;
 
       const formData = {
         email: email,
       };
 
-      const { data } = await axios.patch(url, formData);
+      const { data } = await axios.post(url, formData);
 
       if (data) {
-        handleAlertMessage(data.message, 'success');
+        handleAlertMessage(data.statusText, 'success');
         setTimeLeft(60);
         setIsSubmitting(false);
         setIsCountdown(true);
@@ -91,7 +89,7 @@ export default function ConfirmSendLink(props) {
       >
         <Box>
           <Typography variant="h4">
-            {mode === 'signin' ? 'Email Verification' : 'Account Verification'}
+            {action === 'signin' ? 'Email Verification' : 'Account Verification'}
           </Typography>
         </Box>
 
@@ -112,7 +110,7 @@ export default function ConfirmSendLink(props) {
           </Box>
           <Typography sx={{ my: 1 }}>
             Please check your email and click the{' '}
-            {mode === 'signin' ? 'sign-in link' : 'verify link'} to complete the
+            {action === 'signin' ? 'sign-in link' : 'verify link'} to complete the
             verification process.
           </Typography>
         </Box>
@@ -131,11 +129,19 @@ export default function ConfirmSendLink(props) {
 
           <Button
             fullWidth
+            type="submit"
             variant="contained"
-            onClick={handleResendLink}
             disabled={isSubmitting || captcha || (isCountdown && timeLeft > 0)}
+            onClick={handleSubmit}
+            autoFocus
           >
-            {isCountdown && timeLeft > 0 ? `Resend in ${timeLeft}s` : 'Resend'}
+            {isCountdown && timeLeft > 0 ? (
+              `Resend in ${timeLeft}s`
+            ) : isSubmitting ? (
+              <CircularProgress size="1.5rem" />
+            ) : (
+              'Resend'
+            )}
           </Button>
 
           <Link href="/signin/link">

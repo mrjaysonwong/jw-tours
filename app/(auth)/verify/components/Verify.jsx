@@ -7,15 +7,16 @@ import { StyledContainer as MainContainer } from '@/app/components/global-styles
 import PageSpinner from '@/app/components/custom/loaders/PageSpinner';
 
 export default function Verify(props) {
-  const { token, email, mode, callbackUrl } = props;
+  const { token, email, action, callbackUrl } = props;
   const router = useRouter();
 
   const handleSignIn = async () => {
+    // pass credentials to authSignInEmail function
     const res = await signIn('email', {
       redirect: false,
       token: token,
       email: email,
-      mode: mode,
+      action: action,
     });
 
     if (res.error) {

@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
+import { useSession } from 'next-auth/react';
+import { useMessageStore } from '@/stores/messageStore';
 import Cropper from 'react-easy-crop';
 import {
   Box,
@@ -8,27 +10,30 @@ import {
   IconButton,
   Button,
   Slider,
+  CircularProgress,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { CropperContainer, SliderContainer } from './styled';
 import { getCroppedImg } from '@/app/mysettings/components/personal-details/profile-photo/(image-handler)/getCroppedImg';
 import axios from 'axios';
 import { PersonalSettingsContext } from '../PersonalDetails';
-import { useMessageStore } from '@/stores/messageStore';
 import { errorHandler } from '@/utils/helper/errorHandler';
 import { emptyFileInput } from '@/app/mysettings/components/personal-details/profile-photo/(image-handler)/emptyFileInput';
 
 export default function EditProfilePhotoDialog(props) {
   const { setOpenEdit, selectedImage, setSelectedImage } = props;
-  const [loading, setLoading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [status, setStatus] = useState('');
 
-  const { userId, refetch } = useContext(PersonalSettingsContext);
-  const { handleAlertMessage } = useMessageStore();
+  const { refetch } = useContext(PersonalSettingsContext);
 
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
   const [croppedImage, setCroppedImage] = useState(null);
+
+  const { update } = useSession();
+
+  const { handleAlertMessage } = useMessageStore();
 
   const onCropChange = (crop) => {
     setCrop(crop);
@@ -38,7 +43,7 @@ export default function EditProfilePhotoDialog(props) {
     setZoom(zoom);
   };
 
-  const handleOnClose = () => {
+  const handleClose = () => {
     setSelectedImage(null);
     setOpenEdit(false);
   };
@@ -56,14 +61,14 @@ export default function EditProfilePhotoDialog(props) {
     }
   };
 
-  const handleOnSubmit = async (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
-    setLoading(true);
+    setIsSubmitting(true);
 
     try {
-      const mode = 'update-profilephoto';
-      const url = `/api/users?userId=${userId}&mode=${mode}`;
+      const action = 'update-profilephoto';
+      const url = `/api/account/details?action=${action}`;
 
       const { data } = await axios.patch(
         url,
@@ -73,12 +78,17 @@ export default function EditProfilePhotoDialog(props) {
 
       emptyFileInput();
       refetch();
-      setLoading(false);
-      handleAlertMessage(data.message, 'success');
+      setIsSubmitting(false);
       setOpenEdit(false);
+
+      // Trigger update session
+      update({});
+
+      handleAlertMessage(data.statusText, 'success');
     } catch (error) {
       const { status } = errorHandler(error);
       handleAlertMessage('An error occured. Try again.', 'error');
+      setIsSubmitting(false);
       setStatus(status);
     }
   };
@@ -90,9 +100,9 @@ export default function EditProfilePhotoDialog(props) {
   return (
     <>
       <Box sx={{ display: 'flex', position: 'relative' }}>
-        <DialogTitle>Edit photo</DialogTitle>
+        <DialogTitle>Edit Photo</DialogTitle>
         <IconButton
-          onClick={handleOnClose}
+          onClick={handleClose}
           sx={{ position: 'absolute', right: 10, top: 10 }}
         >
           <CloseIcon />
@@ -136,18 +146,27 @@ export default function EditProfilePhotoDialog(props) {
       </DialogContent>
       <DialogActions sx={{ m: 'auto', py: 2 }}>
         {status > 299 ? (
-          <Button variant="contained" color="error" onClick={handleOnClose}>
+          <Button variant="contained" color="error" onClick={handleClose}>
             Try again
           </Button>
         ) : (
           <>
-            <Box
-              component="form"
-              encType="multipart/form-data"
-              onSubmit={handleOnSubmit}
-            >
-              <Button variant="contained" type="submit" disabled={loading}>
-                {loading ? 'Saving...' : 'Save Photo'}
+            <Box component="form" encType="multipart/form-data">
+              <Button
+                variant="contained"
+                type="submit"
+                disabled={isSubmitting}
+                onClick={handleSubmit}
+              >
+                {isSubmitting ? (
+                  <CircularProgress
+                    aria-describedby="loading"
+                    aria-busy={true}
+                    size="1.5rem"
+                  />
+                ) : (
+                  'Save Photo'
+                )}
               </Button>
             </Box>
           </>

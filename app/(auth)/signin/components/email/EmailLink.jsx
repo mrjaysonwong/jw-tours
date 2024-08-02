@@ -22,8 +22,6 @@ import { useMessageStore } from '@/stores/messageStore';
 export default function EmailLink() {
   const router = useRouter();
 
-  const [hasError, setHasError] = useState(false);
-
   const { alert, handleAlertMessage, handleClose } = useMessageStore();
 
   let submitAttemptRef = useRef(0);
@@ -48,20 +46,18 @@ export default function EmailLink() {
 
   const onSubmit = async (formData, event) => {
     submitAttemptRef.current++;
-
+    
     try {
-      const mode = 'signin';
-      const url = `/api/send-link?mode=${mode}`;
+      const action = 'signin';
+      const url = `/api/send-link?action=${action}`;
 
-      const { data } = await axios.patch(url, formData);
+      const { data } = await axios.post(url, formData);
 
       if (data) {
-        setHasError(false);
-
         router.replace(
           `/confirmation/send-link?email=${encodeURIComponent(
             data.email
-          )}&mode=${mode}`
+          )}&action=${action}`
         );
       }
     } catch (error) {
@@ -71,7 +67,6 @@ export default function EmailLink() {
         setCaptcha(true);
       }
 
-      setHasError(true);
       handleAlertMessage(errorMessage, 'error');
     }
   };
@@ -109,7 +104,7 @@ export default function EmailLink() {
               name="email"
               label="Email"
               type="email"
-              autoComplete="on"
+              autoComplete='email'
               error={!!errors.email}
             />
 
@@ -125,11 +120,10 @@ export default function EmailLink() {
 
             <FormSubmitButton
               label="Send"
-              mode="auth"
+              action="auth"
               handleSubmit={handleSubmit(onSubmit)}
               isSubmitting={isSubmitting}
               isSubmitSuccessful={isSubmitSuccessful}
-              hasError={hasError}
               fullWidth={true}
               captcha={captcha}
             />

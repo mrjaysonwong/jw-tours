@@ -30,18 +30,24 @@ export const StyledNavMenuLinks = styled(Box)(({ theme }) => ({
   },
 
   '.dropdown-content': {
-    display: 'none',
+    // display: 'none',
+    opacity: 0,
+    visibility: 'hidden',
     position: 'absolute',
     maxWidth: '370px',
+    transition: 'max-height 1s ease, opacity 0.1s ease, visibility 0.3s ease',
+    maxHeight: 0,
+    overflow: 'hidden',
+    zIndex: 1, // Ensure dropdown is above other content
   },
 
   '.dropdown-content a': {
     color: 'inherit',
     padding: '12px 16px',
-    display: 'block',
     textAlign: 'left',
     textTransform: 'uppercase',
     fontSize: '0.9rem',
+    fontWeight: '500',
   },
 
   '.dropdown-content a:hover': {
@@ -49,6 +55,8 @@ export const StyledNavMenuLinks = styled(Box)(({ theme }) => ({
   },
 
   '.dropdown:hover .dropdown-content': {
-    display: 'block',
+    maxHeight: '500px', // Adjust as needed based on your content height
+    opacity: 1,
+    visibility: 'visible',
   },
 }));

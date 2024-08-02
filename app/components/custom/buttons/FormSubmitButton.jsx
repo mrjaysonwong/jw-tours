@@ -1,21 +1,19 @@
 import { Button, CircularProgress } from '@mui/material';
-import CheckIcon from '@mui/icons-material/Check';
 
 export default function FormSubmitButton(props) {
   const {
     label,
-    mode,
+    action,
     handleSubmit,
     isSubmitting,
     isSubmitSuccessful,
-    hasError,
     fullWidth,
     captcha,
   } = props;
 
   return (
     <>
-      {mode === 'auth' ? (
+      {action === 'auth' ? (
         <Button
           fullWidth={fullWidth}
           type="submit"
@@ -24,20 +22,14 @@ export default function FormSubmitButton(props) {
           onClick={handleSubmit}
           sx={{
             mt: 2,
-            pointerEvents: !hasError && isSubmitSuccessful && 'none',
           }}
-          color={
-            hasError
-              ? 'error'
-              : isSubmitSuccessful && !hasError
-              ? 'success'
-              : undefined
-          }
         >
           {isSubmitting ? (
-            <CircularProgress size={25} />
-          ) : isSubmitSuccessful && !hasError ? (
-            <CheckIcon />
+            <CircularProgress
+              aria-describedby="loading"
+              aria-busy={true}
+              size="1.5rem"
+            />
           ) : (
             label
           )}
@@ -49,9 +41,8 @@ export default function FormSubmitButton(props) {
             disabled={isSubmitting || captcha}
             variant="contained"
             onClick={handleSubmit}
-            color={hasError ? 'error' : undefined}
           >
-            {isSubmitting ? <CircularProgress size={25} /> : label}
+            {isSubmitting ? <CircularProgress size="1.5rem" /> : label}
           </Button>
         </>
       )}

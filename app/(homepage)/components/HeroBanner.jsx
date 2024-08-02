@@ -5,7 +5,7 @@ import PinDropIcon from '@mui/icons-material/PinDrop';
 
 export default function HeroBanner() {
   return (
-    <Link href="/destinations/boracay">
+    // <Link href="/destinations/boracay">
       <Box
         sx={{
           mt: 10,
@@ -30,13 +30,22 @@ export default function HeroBanner() {
         <Box
           sx={{
             position: 'absolute',
-            top: '14%',
             width: '100%',
+            height: '100%',
+            bgcolor: 'rgba(0,0,0,0.2)',
           }}
         >
-          <Grid container>
+          <Grid
+            container
+            sx={{
+              height: '100%',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+          >
             <Grid item xs={12} md={6}>
-              <Box sx={{ p: 3 }}>
+              <Box sx={{ px: 3 }}>
                 <Typography
                   sx={{
                     fontFamily: 'Gothic A1 !important',
@@ -149,6 +158,6 @@ export default function HeroBanner() {
           </Grid>
         </Box>
       </Box>
-    </Link>
+    // </Link>
   );
 }

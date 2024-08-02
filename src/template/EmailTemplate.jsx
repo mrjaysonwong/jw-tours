@@ -15,12 +15,12 @@ import {
 import React from 'react';
 
 export function EmailTemplate(props) {
-  const { url, email, otp, firstName, formattedDateString, mode } = props;
+  const { url, email, otp, firstName, formattedDateString, action } = props;
 
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
-  const isSignUp = mode === 'signup';
-  const isEmailOTP = mode === 'email-otp';
-  const isEmailSignIn = mode === 'signin';
+  const isSignUp = action === 'signup';
+  const isGenOTP = action === 'gen-otp';
+  const isEmailSignIn = action === 'signin';
 
   const links = [
     { href: `${baseUrl}/blog`, label: 'Blog' },
@@ -28,21 +28,13 @@ export function EmailTemplate(props) {
     { href: `${baseUrl}/contact`, label: 'Contact Us' },
   ];
 
-  //   const newUrl = new URL(url);
-
-  //   const baseUrl = newUrl.origin;
-  //   const pathName = newUrl.pathname;
-  //   const email = newUrl.searchParams.get('email');
-  //   const token = newUrl.searchParams.get('token');
-  //   const type = newUrl.searchParams.get('type');
-
   return (
     <>
       <Html>
         <Head />
         {isSignUp ? (
           <Preview>Your verification link for JW Tours</Preview>
-        ) : isEmailOTP ? (
+        ) : isGenOTP ? (
           <Preview>Your JW Tours OTP code</Preview>
         ) : (
           <Preview>Your sign-in link for JW Tours</Preview>
@@ -78,7 +70,7 @@ export function EmailTemplate(props) {
               </>
             )}
 
-            {isEmailOTP && (
+            {isGenOTP && (
               <>
                 <Heading style={heading}>Hi {firstName},</Heading>
 

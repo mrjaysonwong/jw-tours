@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useContext } from 'react';
+import React, { useContext, createContext } from 'react';
 import {
   AppBar,
   Container,
@@ -22,7 +22,11 @@ import { useUserData } from '@/utils/hooks/useUserData';
 import { LoadingSkeletonAvatar } from '@/app/components/custom/loaders/Skeleton';
 import AuthButton from './AuthButton';
 import AddToCart from './AddToCart';
-import SearchBar from './SearchBar';
+import Notifications from './Notifications';
+import { ErrorTooltip } from '../custom/error';
+
+
+export const UserDataContext = createContext(null);
 
 function HideOnScroll({ children }) {
   return (
@@ -41,7 +45,20 @@ export default function NavBar() {
   const pathname = usePathname();
   const isAuthPage = authPage(pathname);
 
-  const { isLoading } = useUserData(session?.user?.id);
+  const {
+    data: user,
+    isLoading,
+    isError,
+    error,
+  } = useUserData(session?.user?.id);
+
+  const values = {
+    session,
+    user,
+    isLoading,
+    isError,
+    error,
+  };
 
   return (
     <>
@@ -69,21 +86,27 @@ export default function NavBar() {
                 ml: 'auto',
               }}
             >
-              <SearchBar />
-
               <AddToCart />
 
               {session ? (
                 <>
-                  {isLoading ? (
-                    <LoadingSkeletonAvatar w={32} h={32} />
-                  ) : mobileView ? (
-                    <>
-                      <ProfileMenuMobile />
-                    </>
-                  ) : (
-                    <ProfileMenu />
-                  )}
+                  <UserDataContext.Provider value={values}>
+                    <Notifications />
+
+                    {isLoading ? (
+                      <LoadingSkeletonAvatar w={32} h={32} />
+                    ) : mobileView ? (
+                      isError ? (
+                        <ErrorTooltip />
+                      ) : (
+                        <ProfileMenuMobile />
+                      )
+                    ) : isError ? (
+                      <ErrorTooltip />
+                    ) : (
+                      <ProfileMenu />
+                    )}
+                  </UserDataContext.Provider>
                 </>
               ) : (
                 <AuthButton />

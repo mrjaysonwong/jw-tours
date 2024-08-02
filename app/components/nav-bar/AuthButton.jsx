@@ -5,8 +5,8 @@ import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined
 export default function AuthButton() {
   return (
     <>
-      <IconButton disableRipple onClick={() => signIn()} sx={{ mx: 0 }}>
-        <AccountCircleOutlinedIcon />
+      <IconButton disableRipple onClick={() => signIn()} sx={{ ml: 2 }}>
+        <AccountCircleOutlinedIcon sx={{ fontSize: '1.8rem' }} />
       </IconButton>
     </>
   );

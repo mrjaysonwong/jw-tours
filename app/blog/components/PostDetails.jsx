@@ -31,14 +31,13 @@ export default async function PostDetails({ slug }) {
     <>
       <Box
         sx={{
-          mt: '4rem',
+          mt: '7rem',
           minHeight: '100vh',
           width: 'clamp(min(100vw, 600px), 90vw, max(50vw, 600px ))',
         }}
       >
         <Box
           sx={{
-            mt: 3,
             display: 'flex',
             alignItems: 'center',
           }}

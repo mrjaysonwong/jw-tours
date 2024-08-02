@@ -6,7 +6,7 @@ export const metadata = {
 };
 
 export default async function VerifyPage({ searchParams }) {
-  const { token, email, mode, callbackUrl } = searchParams;
+  const { token, email, action, callbackUrl } = searchParams;
 
   try {
     await connectMongo();
@@ -19,7 +19,7 @@ export default async function VerifyPage({ searchParams }) {
       <Verify
         token={token}
         email={email}
-        mode={mode}
+        action={action}
         callbackUrl={callbackUrl}
       />
     </>

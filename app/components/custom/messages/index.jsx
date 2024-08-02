@@ -22,7 +22,12 @@ export const AlertMessage = (props) => {
         autoHideDuration={5000}
         onClose={onClose}
       >
-        <Alert onClose={onClose} severity={severity} {...ariaAttributes}>
+        <Alert
+          onClose={onClose}
+          severity={severity}
+          {...ariaAttributes}
+          sx={{ color: 'white' }}
+        >
           {message}
         </Alert>
       </Snackbar>

@@ -14,7 +14,7 @@ export default function Gender() {
           <Controller
             name="gender"
             control={control}
-            defaultValue={user?.gender}
+            defaultValue={user?.gender ?? ''}
             render={({ field }) => (
               <Select
                 {...field}

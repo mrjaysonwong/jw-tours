@@ -6,7 +6,6 @@ import { UserSessionContext } from '@/context/UserSessionWrapper';
 import { useUserData } from '@/utils/hooks/useUserData';
 import DetailsGrid from './details-grid/DetailsGrid';
 import ProfilePhoto from './profile-photo/ProfilePhoto';
-import CustomError from '@/app/components/custom/error';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import ContactInfo from './contact-info/ContactInfo';
 
@@ -32,11 +31,10 @@ export default function PersonalDetails() {
     isLoading,
     userId,
     refetch,
+    isError,
+    error
   };
 
-  if (isError) {
-    return <CustomError />;
-  }
 
   return (
     <>
@@ -77,6 +75,8 @@ export default function PersonalDetails() {
           </Link>
         </Breadcrumbs>
 
+        <Divider sx={{ my: 3 }} />
+
         <Box
           sx={{
             display: isContactInfo ? 'none' : 'flex',
@@ -84,17 +84,14 @@ export default function PersonalDetails() {
           }}
         >
           <Box>
-            <Typography variant="h5">Personal details</Typography>
+            <Typography variant="h5">Personal Details</Typography>
             <Typography>
               Update your info and find out how it&apos;s used.
             </Typography>
           </Box>
 
           <ProfilePhoto />
-
         </Box>
-
-        <Divider sx={{ my: 3 }} />
 
         <Box sx={{ display: isContactInfo ? 'none' : 'block' }}>
           <DetailsGrid />

@@ -12,13 +12,11 @@ import {
   useTheme,
 } from '@mui/material';
 import { signOut } from 'next-auth/react';
-import { UserSessionContext } from '@/context/UserSessionWrapper';
+import { UserDataContext } from '../NavBar';
 import { usePathname } from 'next/navigation';
 import { authPage } from '@/utils/helper/common';
 import { profileMenuLinks } from '@/src/navigation-links/profileMenuLinks';
 import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
-import { useUserData } from '@/utils/hooks/useUserData';
-import { LoadingSkeletonAvatar } from '../../custom/loaders/Skeleton';
 
 export default function ProfileMenu() {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -29,12 +27,11 @@ export default function ProfileMenu() {
   const theme = useTheme();
   const isLightTheme = theme.palette.mode === 'light';
 
-  const session = useContext(UserSessionContext);
+  const { user } = useContext(UserDataContext);
+  const primaryEmail = user?.email.find((e) => e.isPrimary === true);
 
   const pathname = usePathname();
   const isAuthPage = authPage(pathname);
-
-  const { data: user, isLoading } = useUserData(session?.user?.id);
 
   if (isAuthPage) {
     return null;
@@ -49,7 +46,7 @@ export default function ProfileMenu() {
     setAnchorEl(null);
   };
 
-  const handleOnClose = () => {
+  const handleClose = () => {
     setAnchorEl(null);
   };
 
@@ -74,16 +71,12 @@ export default function ProfileMenu() {
           aria-expanded={open ? 'true' : undefined}
           sx={{ p: 0 }}
         >
-          {isLoading ? (
-            <LoadingSkeletonAvatar w={32} h={32} />
-          ) : (
-            <Avatar
-              alt={`${session?.user?.name}`}
-              src={user?.image?.url ?? session?.user?.image}
-              referrerPolicy="no-referrer"
-              sx={{ width: 32, height: 32 }}
-            />
-          )}
+          <Avatar
+            alt={`${user?.firstName} ${user?.lastName}`}
+            src={user?.image?.url ?? '/assets/user.png'}
+            referrerPolicy="no-referrer"
+            sx={{ width: 32, height: 32 }}
+          />
         </IconButton>
       </Box>
 
@@ -93,7 +86,7 @@ export default function ProfileMenu() {
         id="profile-menu"
         className="profile-menu"
         open={open}
-        onClose={handleOnClose}
+        onClose={handleClose}
         transformOrigin={{ horizontal: 'right', vertical: 'top' }}
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
         PaperProps={{
@@ -137,14 +130,16 @@ export default function ProfileMenu() {
           }}
         >
           <Avatar
-            alt={`${session?.user?.name} profile image`}
-            src={user?.image?.url ?? session?.user?.image}
+            alt={`${user?.firstName} ${user?.lastName}`}
+            src={user?.image?.url ?? '/assets/user.png'}
             referrerPolicy="no-referrer"
             sx={{ cursor: 'default' }}
           />
           <Box sx={{ userSelect: 'text' }}>
-            <Typography>{session?.user?.name}</Typography>
-            <Typography variant="body2">{session?.user?.email}</Typography>
+            <Typography>
+              {user?.firstName} {user?.lastName}
+            </Typography>
+            <Typography variant="body2">{primaryEmail?.email}</Typography>
           </Box>
         </MenuItem>
         <Divider />

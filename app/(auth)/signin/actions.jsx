@@ -19,6 +19,14 @@ export async function authenticate(formData, callbackUrl) {
     const authError = error?.cause?.err;
 
     if (authError) {
+      if (authError.message.includes('sign-in method')) {
+        return {
+          error: {
+            message: authError.message,
+          },
+        };
+      }
+
       switch (authError.message) {
         case 'Invalid Credentials':
           return {
@@ -36,7 +44,7 @@ export async function authenticate(formData, callbackUrl) {
         default:
           return {
             error: {
-              message: 'An error occured. Try again.',
+              message: 'Internal Server Error',
             },
           };
       }

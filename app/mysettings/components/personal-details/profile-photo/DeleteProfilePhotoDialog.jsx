@@ -1,4 +1,6 @@
 import { useContext, useState } from 'react';
+import { useSession } from 'next-auth/react';
+import { useMessageStore } from '@/stores/messageStore';
 import {
   Dialog,
   DialogTitle,
@@ -6,61 +8,86 @@ import {
   DialogContentText,
   DialogActions,
   Button,
+  CircularProgress,
 } from '@mui/material';
 import axios from 'axios';
 import { PersonalSettingsContext } from '../PersonalDetails';
-import { useMessageStore } from '@/stores/messageStore';
 import { errorHandler } from '@/utils/helper/errorHandler';
 
 export default function DeleteProfilePhotoDialog({ open, setOpenDelete }) {
-  const { userId, refetch } = useContext(PersonalSettingsContext);
-  const [loading, setLoading] = useState(false);
+  const { refetch } = useContext(PersonalSettingsContext);
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const { update } = useSession();
+
   const { handleAlertMessage } = useMessageStore();
 
-  const handleOnClose = () => {
+  const handleClose = () => {
     setOpenDelete(false);
   };
 
-  const handleDelete = async () => {
-    setLoading(true);
+  const handleSubmit = async () => {
+    setIsSubmitting(true);
 
     try {
-      const mode = 'delete-profilephoto';
-      const url = `/api/users?userId=${userId}&mode=${mode}`;
+      const action = 'delete-profilephoto';
+      const url = `/api/account/details?action=${action}`;
 
       const { data } = await axios.patch(url);
 
       setOpenDelete(false);
-      setLoading(false);
+      setIsSubmitting(false);
       refetch();
-      handleAlertMessage(data.message, 'success');
+
+      // Trigger update session
+      update({});
+
+      handleAlertMessage(data.statusText, 'success');
     } catch (error) {
       const { errorMessage } = errorHandler(error);
       handleAlertMessage(errorMessage, 'error');
-      setLoading(false);
+      setIsSubmitting(false);
     }
   };
 
   return (
     <>
-      <Dialog open={open}>
+      <Dialog
+        open={open}
+        onKeyUp={(e) => {
+          const ENTER = 'Enter';
+
+          if (e.key === ENTER) {
+            handleSubmit();
+          }
+        }}
+      >
         <DialogTitle>Delete Photo</DialogTitle>
         <DialogContent>
           <DialogContentText>
             Are you sure you want to delete this profile photo?
           </DialogContentText>
         </DialogContent>
-        <DialogActions>
-          <Button onClick={handleOnClose} disabled={loading}>
+        <DialogActions sx={{ m: 2 }}>
+          <Button onClick={handleClose} disabled={isSubmitting}>
             Cancel
           </Button>
           <Button
-            onClick={handleDelete}
-            disabled={loading}
+            onClick={handleSubmit}
+            disabled={isSubmitting}
             variant="contained"
-            color="error"
+            type="submit"
           >
-            {loading ? 'Deleting...' : 'Delete'}
+            {isSubmitting ? (
+              <CircularProgress
+                aria-describedby="loading"
+                aria-busy={true}
+                size="1.5rem"
+              />
+            ) : (
+              'Delete'
+            )}
           </Button>
         </DialogActions>
       </Dialog>

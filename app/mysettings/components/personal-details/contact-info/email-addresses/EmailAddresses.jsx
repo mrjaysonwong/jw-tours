@@ -1,54 +1,45 @@
-import { useContext, useState } from 'react';
-import {
-  Typography,
-  Box,
-  Card,
-  Grid,
-  Skeleton,
-  Button,
-  Tooltip,
-} from '@mui/material';
+import React, { useContext, useState } from 'react';
+import { Typography, Box, Card, Tooltip, Button } from '@mui/material';
 import { PersonalSettingsContext } from '../../PersonalDetails';
 import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium';
-import EmailMenu from './EmailMenu';
-import AddEmailForm from './AddEmailForm';
-import VerifyEmailOTP from './VerifyEmailOTP';
+import CardMenu from './CardMenu';
+import { LoadingSkeletonEmailCard } from '@/app/components/custom/loaders/Skeleton';
+import CustomError from '@/app/components/custom/error';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 export default function EmailAddresses() {
-  const { user, isLoading } = useContext(PersonalSettingsContext);
+  const { user, isLoading, isError, error } = useContext(
+    PersonalSettingsContext
+  );
 
-  const [open, setOpen] = useState(false);
-  const [openOTP, setOpenOTP] = useState(false);
-  const [email, setEmail] = useState('');
-
-  const primaryEmail = user?.email.find((e) => e.isPrimary === true);
+  const [displayCount, setDisplayCount] = useState(4);
 
   const sortedEmailList = user?.email
     .slice()
     .sort((a, b) => b.isPrimary - a.isPrimary);
 
-  const emailListCard = sortedEmailList?.map((e) => {
+  const emailListCard = sortedEmailList?.slice(0, displayCount).map((item) => {
     return (
-      <Box key={e.email} sx={{ position: 'relative' }}>
+      <Box key={item.email} sx={{ position: 'relative' }}>
         <Card
           sx={{
             py: 2,
             pl: 3,
             pr: 7,
-            my: 4,
+            my: 2,
           }}
         >
           <Typography sx={{ overflow: 'auto', userSelect: 'all' }}>
-            {primaryEmail.email}
+            {item.email}
           </Typography>
         </Card>
 
-        <EmailMenu primaryEmail={primaryEmail} />
+        {!item.isPrimary && <CardMenu email={item.email} />}
 
-        {primaryEmail && (
+        {item.isPrimary && (
           <Tooltip title="Primary Email Address" arrow placement="right-end">
             <Box sx={{ position: 'absolute', top: -5 }}>
-              <WorkspacePremiumIcon color="primary" />
+              <WorkspacePremiumIcon />
             </Box>
           </Tooltip>
         )}
@@ -56,36 +47,37 @@ export default function EmailAddresses() {
     );
   });
 
-  const handleClickAdd = () => {
-    setOpen(true);
+  const handleShowMore = () => {
+    const nextDisplayCount = displayCount + 2;
+
+    if (nextDisplayCount >= sortedEmailList.length) {
+      setDisplayCount(sortedEmailList.length);
+    } else {
+      setDisplayCount(nextDisplayCount);
+    }
   };
 
   return (
     <>
-      <Grid item xs={12} md={6}>
-        <Typography variant="h5">My Email Addresses</Typography>
-        <Typography>
-          You can use the following email addresses to sign in to your account.
-        </Typography>
-
-        <Box sx={{ textAlign: 'right', my: 2 }}>
-          <Button size="small" variant="contained" onClick={handleClickAdd}>
-            Add Email
-          </Button>
-        </Box>
-
-        {isLoading ? <Skeleton height={80} /> : emailListCard}
-      </Grid>
-
-      {openOTP ? (
-        <VerifyEmailOTP open={openOTP} setOpen={setOpenOTP} email={email} />
+      {isLoading ? (
+        <LoadingSkeletonEmailCard h={56} />
+      ) : isError ? (
+        <CustomError error={error} />
       ) : (
-        <AddEmailForm
-          open={open}
-          setOpen={setOpen}
-          setOpenOTP={setOpenOTP}
-          setEmail={setEmail}
-        />
+        <>
+          {emailListCard}
+
+          {displayCount !== sortedEmailList.length &&
+            sortedEmailList.length > 4 && (
+              <Button
+                fullWidth
+                onClick={handleShowMore}
+                startIcon={<ExpandMoreIcon />}
+              >
+                Show More
+              </Button>
+            )}
+        </>
       )}
     </>
   );

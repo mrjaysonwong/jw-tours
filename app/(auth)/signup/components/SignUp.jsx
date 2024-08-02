@@ -30,8 +30,6 @@ import { useMessageStore } from '@/stores/messageStore';
 export default function SignUp() {
   const router = useRouter();
 
-  const [hasError, setHasError] = useState(false);
-
   const [showPassword, setShowPassword] = useState(false);
 
   const { alert, handleAlertMessage, handleClose } = useMessageStore();
@@ -50,23 +48,21 @@ export default function SignUp() {
 
   const onSubmit = async (formData, event) => {
     try {
-      const mode = 'signup';
+      const action = 'signup';
       const url = '/api/signup';
 
       const { data } = await axios.post(url, formData);
 
       if (data) {
-        setHasError(false);
-
         router.replace(
           `/confirmation/send-link?email=${encodeURIComponent(
             data.email
-          )}&mode=${mode}`
+          )}&action=${action}`
         );
       }
     } catch (error) {
       const { errorMessage } = errorHandler(error);
-      setHasError(true);
+
       handleAlertMessage(errorMessage, 'error');
     }
   };
@@ -122,9 +118,11 @@ export default function SignUp() {
                 label="Email"
                 name="email"
                 error={!!errors.email}
+                autoComplete="email"
               />
               <FieldErrorMessage error={errors.email} />
             </Grid>
+
             <Grid item xs={12}>
               <TextField
                 {...register('password')}
@@ -146,6 +144,7 @@ export default function SignUp() {
               />
               <FieldErrorMessage error={errors.password} />
             </Grid>
+
             <Grid item xs={12}>
               <TextField
                 {...register('confirmPassword')}
@@ -171,25 +170,19 @@ export default function SignUp() {
             <Grid item xs={12}>
               <Typography variant="body2">
                 By clicking Sign Up, you agree to our{' '}
-                <a href="/legal/user-agreement" className="legal">
-                  User Agreement
-                </a>{' '}
-                and acknowledge that you have read and understand our{' '}
-                <a href="/legal/privacy-policy" className="legal">
-                  Privacy Policy
-                </a>
-                .
+                <a href="/legal/user-agreement">User Agreement</a> and
+                acknowledge that you have read and understand our{' '}
+                <a href="/legal/privacy-policy">Privacy Policy</a>.
               </Typography>
             </Grid>
 
             <Grid item xs={12}>
               <FormSubmitButton
                 label="Sign Up"
-                mode="auth"
+                action="auth"
                 handleSubmit={handleSubmit(onSubmit)}
                 isSubmitting={isSubmitting}
                 isSubmitSuccessful={isSubmitSuccessful}
-                hasError={hasError}
                 fullWidth={true}
               />
             </Grid>
@@ -207,7 +200,7 @@ export default function SignUp() {
         }}
       >
         <Typography>Already have an account?</Typography>
-        <Link href="/signin" replace>
+        <Link href="/signin">
           <Typography sx={{ ml: 1, color: 'var(--text-link-color-blue)' }}>
             Sign In
           </Typography>

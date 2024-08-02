@@ -34,6 +34,8 @@ export default function SearchDialog({ open, setOpen }) {
   const [suggestions, setSuggestions] = useState([]);
   const [debouncedText] = useDebounce(text, 1000);
 
+  const [hasError, setHasError] = useState(false);
+
   const [loading, setLoading] = useState({
     showMore: false,
     initialData: false,
@@ -53,7 +55,7 @@ export default function SearchDialog({ open, setOpen }) {
     setOpen(false);
   };
 
-  const handleOnClick = (searchTerm) => {
+  const handleClick = (searchTerm) => {
     if (searchTerm === slug) {
       setOpen(false);
     }
@@ -84,24 +86,27 @@ export default function SearchDialog({ open, setOpen }) {
   };
 
   const fetchSearch = async (startIndex = 0) => {
-    const response = await axios.get('/api/pokemon');
+    try {
+      const response = await axios.get('/api/pokemon');
+      const pokemonList = response.data.results.map((pokemon) => pokemon.name);
 
-    const pokemonList = response.data.results.map((pokemon) => pokemon.name);
+      const filteredList = pokemonList.filter((name) =>
+        name.includes(debouncedText.toLowerCase())
+      );
 
-    const filteredList = pokemonList.filter((name) =>
-      name.includes(debouncedText.toLowerCase())
-    );
+      const pokemonDetailsPromises = filteredList
+        .slice(startIndex, startIndex + 20)
+        .map(async (pokemonName) => {
+          const pokemonData = await fetchPostDetails(pokemonName);
+          return pokemonData;
+        });
 
-    const pokemonDetailsPromises = filteredList
-      .slice(startIndex, startIndex + 20)
-      .map(async (pokemonName) => {
-        const pokemonData = await fetchPostDetails(pokemonName);
-        return pokemonData;
-      });
+      const pokemonDetails = await Promise.all(pokemonDetailsPromises);
 
-    const pokemonDetails = await Promise.all(pokemonDetailsPromises);
-
-    return pokemonDetails;
+      return pokemonDetails;
+    } catch (error) {
+      throw error;
+    }
   };
 
   useEffect(() => {
@@ -162,7 +167,7 @@ export default function SearchDialog({ open, setOpen }) {
                   <Box
                     key={key}
                     {...restProps}
-                    onClick={() => handleOnClick(option.name)}
+                    onClick={() => handleClick(option.name)}
                     component="li"
                     sx={{
                       '& > img': { mr: 2, flexShrink: 0 },

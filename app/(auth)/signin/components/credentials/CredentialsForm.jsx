@@ -1,10 +1,10 @@
 import React, { useState, useRef } from 'react';
-import { TextField, InputAdornment, IconButton, Button } from '@mui/material';
+import { useSearchParams } from 'next/navigation';
+import { TextField, InputAdornment, IconButton } from '@mui/material';
 import FormSubmitButton from '@/app/components/custom/buttons/FormSubmitButton';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { credentialsSignInSchema } from '@/lib/validation/yup/signInSchema';
-import { useSearchParams } from 'next/navigation';
 import { FieldErrorMessage } from '@/app/components/custom/messages';
 import { authenticate } from '@/app/(auth)/signin/actions';
 import ReCAPTCHA from 'react-google-recaptcha';
@@ -17,11 +17,9 @@ export default function CredentialsForm() {
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get('callbackUrl');
 
-  const [hasError, setHasError] = useState(false);
-
   const { alert, handleAlertMessage, handleClose } = useMessageStore();
 
-  let countRef = useRef(0);
+  let submitAttemptRef = useRef(0);
 
   const [captcha, setCaptcha] = useState('' || null);
 
@@ -33,7 +31,7 @@ export default function CredentialsForm() {
 
   const onChange = () => {
     setCaptcha(false);
-    countRef.current = 0;
+    submitAttemptRef.current = 0;
     document
       .querySelectorAll(`iframe[src*=recaptcha]`)
       .forEach((a) => a.remove());
@@ -48,20 +46,22 @@ export default function CredentialsForm() {
   });
 
   const onSubmit = async (formData, event) => {
-    countRef.current = countRef.current + 1;
+    submitAttemptRef.current++;
 
-    const res = await authenticate(formData, callbackUrl);
+    try {
+      const res = await authenticate(formData, callbackUrl);
 
-    if (countRef.current === 5 && res?.error) {
-      setCaptcha(true);
-    }
+      if (submitAttemptRef.current === 5 && res?.error) {
+        setCaptcha(true);
+      }
 
-    if (res?.error) {
-      setHasError(true);
-      handleAlertMessage(res.error.message, 'error');
-    } else {
-      localStorage.setItem('signed-in', 'true');
-      setHasError(false);
+      if (res?.error) {
+        handleAlertMessage(res?.error?.message, 'error');
+      } else {
+        localStorage.setItem('signed-in', 'true');
+      }
+    } catch (error) {
+      handleAlertMessage('An error occured. Try again.', 'error');
     }
   };
 
@@ -115,11 +115,10 @@ export default function CredentialsForm() {
 
         <FormSubmitButton
           label="Sign In"
-          mode="auth"
+          action="auth"
           handleSubmit={handleSubmit(onSubmit)}
           isSubmitting={isSubmitting}
           isSubmitSuccessful={isSubmitSuccessful}
-          hasError={hasError}
           fullWidth={true}
           captcha={captcha}
         />

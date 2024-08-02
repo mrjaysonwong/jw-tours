@@ -38,14 +38,14 @@ export default function Address() {
 
   const fetchSearch = async () => {
     try {
-      // return if suggestions value result is empty to avoid error
+      // Return if suggestions value result is empty to avoid error
       if (!debouncedText) {
         return;
       }
 
       setLoading(true);
 
-      // create api for search places
+      // Create api for search places
       const url = '/api/places';
 
       const options = {

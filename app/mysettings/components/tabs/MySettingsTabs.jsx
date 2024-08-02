@@ -52,7 +52,7 @@ export default function MySettingsTabs({ slug }) {
           startIcon={<ArrowBackIcon />}
           sx={{
             display: { lg: 'none' },
-            my: 3,
+            mb: 3,
           }}
         >
           Go Back

@@ -40,10 +40,12 @@ export function LoadingSkeletonAvatar({ w, h }) {
   );
 }
 
-export function HeroBannerSkeleton({ w, h }) {
+export function LoadingSkeletonEmailCard({ h }) {
   return (
     <>
-      <Skeleton variant="rectangle" width={w} height={h} />
+      {Array.from({ length: 4 }).map((_, index) => (
+        <Skeleton variant="rectangular" key={index} sx={{ height: h, my: 2 }} />
+      ))}
     </>
   );
 }

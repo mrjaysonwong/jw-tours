@@ -40,7 +40,7 @@ export default function AddPhotoDialog(props) {
   return (
     <>
       <Box sx={{ display: 'flex', position: 'relative' }}>
-        <DialogTitle>Change photo</DialogTitle>
+        <DialogTitle>Change Photo</DialogTitle>
         <IconButton
           onClick={handleOnClose}
           sx={{ position: 'absolute', right: 10, top: 10 }}
@@ -63,9 +63,9 @@ export default function AddPhotoDialog(props) {
           {user?.firstName}, help others recognize you!{' '}
         </Typography>
 
-        {!user.image.url ? (
+        {!user?.image?.url ? (
           <Avatar
-            src={user?.image?.url} // fallback image null
+            src={user?.image?.url ?? '/assets/user.png'}
             alt={`${user?.firstName} ${user?.lastName}`}
             referrerPolicy="no-referrer"
             sx={{ width: 168, height: 168 }}

@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext } from 'react';
+import { useSession } from 'next-auth/react';
 import {
   Grid,
   Button,
@@ -21,14 +22,13 @@ import axios from 'axios';
 import { AlertMessage } from '@/app/components/custom/messages';
 import { useMessageStore } from '@/stores/messageStore';
 import FormSubmitButton from '@/app/components/custom/buttons/FormSubmitButton';
-import { sleep } from '@/utils/helper/common';
 
 export const DetailsEditFormContext = createContext(null);
 
 export default function DetailsEditForm({ open, setOpen }) {
   const { user, refetch } = useContext(PersonalSettingsContext);
 
-  const [hasError, setHasError] = useState(false);
+  const { update } = useSession();
 
   const { alert, handleAlertMessage, handleClose } = useMessageStore();
 
@@ -43,24 +43,23 @@ export default function DetailsEditForm({ open, setOpen }) {
 
   const handleOnClose = () => {
     setOpen(false);
-    setHasError(false);
   };
 
   const onSubmit = async (formData) => {
-    await sleep(1000);
-
     try {
-      const mode = 'update-personaldetails';
-      const url = `/api/users?userId=${user._id}&mode=${mode}`;
+      const action = 'update-personaldetails';
+      const url = `/api/account/details?action=${action}`;
 
       const { data } = await axios.patch(url, formData);
 
       refetch();
-      handleAlertMessage(data.message, 'success');
       setOpen(false);
-      setHasError(false);
+
+      // Trigger update session
+      update({});
+
+      handleAlertMessage(data.statusText, 'success');
     } catch (error) {
-      setHasError(true);
       handleAlertMessage('An error occured. Try again.', 'error');
     }
   };
@@ -75,7 +74,7 @@ export default function DetailsEditForm({ open, setOpen }) {
   return (
     <>
       <Dialog open={open}>
-        <DialogTitle>Update Personal details</DialogTitle>
+        <DialogTitle>Update Personal Details</DialogTitle>
 
         <Divider sx={{ mx: 3 }} />
 
@@ -98,11 +97,10 @@ export default function DetailsEditForm({ open, setOpen }) {
 
             <FormSubmitButton
               label="Update"
-              mode="update"
+              action="update"
               handleSubmit={handleSubmit(onSubmit)}
               isSubmitting={isSubmitting}
               isSubmitSuccessful={isSubmitSuccessful}
-              hasError={hasError}
             />
           </DialogActions>
         </form>

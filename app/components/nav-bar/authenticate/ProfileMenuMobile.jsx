@@ -15,23 +15,21 @@ import {
   Divider,
 } from '@mui/material';
 import { signOut } from 'next-auth/react';
-import { UserSessionContext } from '@/context/UserSessionWrapper';
+import { UserDataContext } from '../NavBar';
 import { profileMenuLinks } from '@/src/navigation-links/profileMenuLinks';
 import { useNavDrawerStore } from '@/stores/drawerStore';
 import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
 import CloseIcon from '@mui/icons-material/Close';
-import { useUserData } from '@/utils/hooks/useUserData';
 
 const drawerWidth = '100%';
 
 export default function ProfileMenuMobile() {
-  const session = useContext(UserSessionContext);
+  const { user } = useContext(UserDataContext);
+  const primaryEmail = user.email.find((e) => e.isPrimary === true);
+
   const router = useRouter();
 
   const { state, toggleNavDrawer } = useNavDrawerStore();
-
-  const { data: user } = useUserData(session?.user?.id);
-  const fullName = `${user?.firstName} ${user?.lastName}`;
 
   const handleClick = (path) => {
     toggleNavDrawer('right', false);
@@ -69,17 +67,17 @@ export default function ProfileMenuMobile() {
           }}
         >
           <Avatar
-            alt={`${session?.user?.name} profile image`}
-            src={user?.image?.url ?? session?.user?.image}
+            alt={`${user.firstName} ${user.lastName}`}
+            src={user?.image?.url ?? '/assets/user.png'}
             referrerPolicy="no-referrer"
             sx={{ width: 56, height: 56 }}
           />
           <Box sx={{ py: 2 }}>
             <Typography sx={{ ml: 2, userSelect: 'all' }}>
-              {session?.user?.name}
+              {user.firstName} {user.lastName}
             </Typography>
             <Typography sx={{ ml: 2, userSelect: 'all' }}>
-              {session?.user?.email}
+              {primaryEmail.email}
             </Typography>
           </Box>
         </Box>
@@ -119,11 +117,11 @@ export default function ProfileMenuMobile() {
         disableRipple
         aria-label="profile-menu"
         onClick={() => toggleNavDrawer('right', true)}
-        sx={{ p: 0 }}
+        sx={{ p: 0, display: { xs: 'flex', lg: 'none' } }}
       >
         <Avatar
-          alt={`${fullName ?? session?.user?.name}`}
-          src={user?.image?.url ?? session?.user?.image}
+          alt={`${user.firstName} ${user.lastName}`}
+          src={user?.image?.url ?? '/assets/user.png'}
           referrerPolicy="no-referrer"
           sx={{ width: 32, height: 32 }}
         />
