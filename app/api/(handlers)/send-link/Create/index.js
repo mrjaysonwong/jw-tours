@@ -11,6 +11,7 @@ import { HttpError } from '@/utils/helper/errorHandler';
 import { emailSignInSchema } from '@/lib/validation/yup/signInSchema';
 import { getValidationError } from '@/utils/helper/errorHandler';
 import { handleRateLimitError } from '@/utils/helper/errorHandler';
+import { unstable_noStore as noStore } from 'next/cache';
 
 const opts = {
   points: 1,
@@ -20,6 +21,8 @@ const opts = {
 const rateLimiter = new RateLimiterMemory(opts);
 
 export async function createSigninLink(Request) {
+  noStore();
+
   try {
     const requestUrl = new URL(Request.url);
     const action = requestUrl.searchParams.get('action');
@@ -46,6 +49,13 @@ export async function createSigninLink(Request) {
     }
 
     const emailIsVerified = await findUserVerifiedEmail(email);
+
+    if (!emailIsVerified) {
+      throw new HttpError({
+        message: 'Email must be verified.',
+        status: 403,
+      });
+    }
 
     if (action === 'signup') {
       if (emailIsVerified) {

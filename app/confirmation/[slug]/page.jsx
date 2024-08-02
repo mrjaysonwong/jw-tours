@@ -1,8 +1,8 @@
+import { auth } from '@/auth';
 import { StyledContainer as MainContainer } from '@/app/components/global-styles/globals';
 import { Custom404Page } from '@/app/components/custom/error/404';
 import { formatMetadata } from '@/utils/helper/formats/formatMetadata';
 import ConfirmSendLink from '../components/ConfirmSendLink';
-import { auth } from '@/auth';
 import { redirect } from 'next/navigation';
 import { findUserVerifiedEmail } from '@/utils/helper/query/User';
 import {
@@ -10,7 +10,7 @@ import {
   findTokenRequestCount,
 } from '@/utils/helper/query/Token';
 
-export async function generateMetadata({ params }) {
+export function generateMetadata({ params }) {
   return formatMetadata(params);
 }
 
@@ -24,10 +24,10 @@ export default async function ConfirmationPage({ params, searchParams }) {
   const { slug } = params;
   const { email, action } = searchParams;
 
-  // Fetch data
+  // // Fetch data
   const emailIsVerified = await findUserVerifiedEmail(email);
   const userTokenExists = await findTokenByEmail(email);
-  const foundRequestCount = await findTokenRequestCount(email);
+  const verifiedOnce = await findTokenRequestCount(email);
 
   // Determine if redirection is needed
   const shouldRedirect =
@@ -35,9 +35,9 @@ export default async function ConfirmationPage({ params, searchParams }) {
     (!email ||
       !action ||
       (action === 'signin' && !emailIsVerified) ||
+      (action === 'signup' && emailIsVerified) ||
       (action === 'signin' && !userTokenExists) ||
-      (action === 'signin' && foundRequestCount) ||
-      (action === 'signup' && emailIsVerified));
+      (action === 'signin' && verifiedOnce));
 
   if (shouldRedirect) {
     redirect('/signin/link');

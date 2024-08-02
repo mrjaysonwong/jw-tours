@@ -9,7 +9,6 @@ import {
   authSignInOAuth,
 } from './utils/helper/authSignIn';
 import {
-  findUserByEmail,
   findUserById,
   constructUserObject,
 } from './utils/helper/query/User';

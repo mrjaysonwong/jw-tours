@@ -3,7 +3,7 @@ import AuthenticationFailed from '@/app/notifications/components/AuthenticationF
 import { Custom404Page } from '@/app/components/custom/error/404';
 import { formatMetadata } from '@/utils/helper/formats/formatMetadata';
 
-export async function generateMetadata({ params }) {
+export function generateMetadata({ params }) {
   return formatMetadata(params);
 }
 

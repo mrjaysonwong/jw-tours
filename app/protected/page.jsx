@@ -1,7 +1,7 @@
 import { Typography } from '@mui/material';
 import { StyledContainer as MainContainer } from '../components/global-styles/globals';
 
-export default async function ProtectedPage() {
+export default function ProtectedPage() {
   return (
     <MainContainer>
       <Typography variant="h4" sx={{ mt: 12 }}>

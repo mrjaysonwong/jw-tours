@@ -4,7 +4,7 @@ import { formatMetadata } from '@/utils/helper/formats/formatMetadata';
 import TermsOfUse from '@/app/legal/components/UserAgreement';
 import PrivacyPolicy from '@/app/legal/components/PrivacyPolicy';
 
-export async function generateMetadata({ params }) {
+export function generateMetadata({ params }) {
   return formatMetadata(params);
 }
 

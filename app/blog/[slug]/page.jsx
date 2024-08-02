@@ -4,11 +4,11 @@ import PostDetails from '../components/PostDetails';
 import { LoadingCircularProgress } from '../components/Loading';
 import { formatMetadata } from '@/utils/helper/formats/formatMetadata';
 
-export async function generateMetadata({ params }) {
+export function generateMetadata({ params }) {
   return formatMetadata(params);
 }
 
-export default async function BlogComponent({ params }) {
+export default function BlogComponent({ params }) {
   const { slug } = params;
 
   return (
