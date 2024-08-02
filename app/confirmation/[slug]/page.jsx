@@ -30,14 +30,16 @@ export default async function ConfirmationPage({ params, searchParams }) {
   const verifiedOnce = await findTokenRequestCount(email);
 
   // Determine if redirection is needed
-  const shouldRedirect =
-    slug === 'send-link' &&
-    (!email ||
-      !action ||
-      (action === 'signin' && !emailIsVerified) ||
-      (action === 'signup' && emailIsVerified) ||
-      (action === 'signin' && !userTokenExists) ||
-      (action === 'signin' && verifiedOnce));
+  const shouldRedirect = slug === 'send-link' && (!email || !action);
+
+  // const shouldRedirect =
+  //   slug === 'send-link' &&
+  //   (!email ||
+  //     !action ||
+  //     (action === 'signin' && !emailIsVerified) ||
+  //     (action === 'signup' && emailIsVerified) ||
+  //     (action === 'signin' && !userTokenExists) ||
+  //     (action === 'signin' && verifiedOnce));
 
   if (shouldRedirect) {
     redirect('/signin/link');

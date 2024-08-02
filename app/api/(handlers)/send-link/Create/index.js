@@ -20,6 +20,8 @@ const opts = {
 
 const rateLimiter = new RateLimiterMemory(opts);
 
+// 504: GATEWAY_TIMEOUT in production
+
 export async function createSigninLink(Request) {
   noStore();
 
