@@ -54,7 +54,7 @@ export async function GET(Request) {
     if (!userExists) {
       return Response.json(
         {
-          statusText: 'User Not Found',
+          statusText: 'User not found.',
         },
         { status: 404 }
       );

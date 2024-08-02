@@ -47,7 +47,7 @@ export async function addEmailAddress(Request, userId) {
     let epochTimeExpires;
     let statusCode;
 
-    const foundUserToken = await Token.findOne({ userId });
+    const foundUserToken = await Token.findOne({ 'email.email': email });
 
     if (!foundUserToken) {
       const { otp: genOTP, expires: genExpires } = await createOTP(

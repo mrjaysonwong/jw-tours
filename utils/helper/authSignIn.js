@@ -16,6 +16,7 @@ export async function authSignInCredentials(credentials, req) {
 
     const userExists = await findUserByEmail(email);
 
+
     if (!userExists) {
       throw new Error('Invalid Credentials');
     }

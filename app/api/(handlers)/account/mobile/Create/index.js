@@ -22,7 +22,7 @@ export async function addMobileNumber(Request, userId) {
   try {
     const user = await findUserById(userId);
 
-    if (user.phone.length >= 5) {
+    if (user?.phone?.length >= 5) {
       throw new HttpError({
         message:
           'Cannot add more numbers; the maximum limit of mobile numbers has been reached.',

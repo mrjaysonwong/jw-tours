@@ -11,7 +11,7 @@ import { HttpError } from '@/utils/helper/errorHandler';
 import { emailSignInSchema } from '@/lib/validation/yup/signInSchema';
 import { getValidationError } from '@/utils/helper/errorHandler';
 import { handleRateLimitError } from '@/utils/helper/errorHandler';
-import { unstable_noStore as noStore } from 'next/cache';
+
 
 const opts = {
   points: 1,
@@ -21,10 +21,9 @@ const opts = {
 const rateLimiter = new RateLimiterMemory(opts);
 
 // 504: GATEWAY_TIMEOUT in production
+// https://www.reddit.com/r/nextjs/comments/18wogoe/vercel_this_serverless_function_has_timed_out/
 
 export async function createSigninLink(Request) {
-  noStore();
-
   try {
     const requestUrl = new URL(Request.url);
     const action = requestUrl.searchParams.get('action');
@@ -51,6 +50,8 @@ export async function createSigninLink(Request) {
     }
 
     const emailIsVerified = await findUserVerifiedEmail(email);
+
+    console.log({emailIsVerified})
 
     if (!emailIsVerified) {
       throw new HttpError({
@@ -79,6 +80,8 @@ export async function createSigninLink(Request) {
     const userId = userExists._id;
 
     const userTokenExists = await Token.findOne({ userId });
+
+    console.log({userTokenExists})
     const targetEmail = userTokenExists?.email.find((e) => e.email === email);
 
     if (userTokenExists) {
@@ -147,6 +150,7 @@ export async function createSigninLink(Request) {
 
     return { message, statusCode, email };
   } catch (error) {
+    console.error(error)
     getValidationError(error);
     handleRateLimitError(error);
 
