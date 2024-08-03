@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   StyledContainer as MainContainer,
   StyledCard,
@@ -18,6 +18,7 @@ import { errorHandler } from '@/utils/helper/errorHandler';
 import ReCAPTCHA from 'react-google-recaptcha';
 import { AlertMessage } from '@/app/components/custom/messages';
 import { useMessageStore } from '@/stores/messageStore';
+import Confirmation from './Confirmation';
 
 export default function EmailLink() {
   const router = useRouter();
@@ -25,6 +26,8 @@ export default function EmailLink() {
   const { alert, handleAlertMessage, handleClose } = useMessageStore();
 
   let submitAttemptRef = useRef(0);
+
+  let emailRef = useRef('')
 
   const [captcha, setCaptcha] = useState('' || null);
 
@@ -53,17 +56,15 @@ export default function EmailLink() {
 
       const { data } = await axios.post(url, formData);
 
-      if (!data) {
-        
-      handleAlertMessage('Server Error', 'error');
-      }
-
       if (data) {
-        router.push(
-          `/confirmation/send-link?email=${encodeURIComponent(
-            data.email
-          )}&action=${action}`
-        );
+        // router.replace(
+        //   `/confirmation/send-link?email=${encodeURIComponent(
+        //     data.email
+        //   )}&action=${action}`
+        // );
+        emailRef.current = data.email
+
+        console.log(emailRef.current)
       }
     } catch (error) {
       const { errorMessage } = errorHandler(error);
@@ -76,6 +77,9 @@ export default function EmailLink() {
     }
   };
 
+
+
+
   return (
     <>
       <MainContainer
@@ -87,7 +91,12 @@ export default function EmailLink() {
           justifyContent: 'center',
         }}
       >
-        <StyledCard sx={{ width: 'clamp(280px, 50%, 340px)' }}>
+        {emailRef.current ? (
+          <Confirmation email={emailRef.current} />
+        ) : (
+          <>
+          
+          <StyledCard sx={{ width: 'clamp(280px, 50%, 340px)' }}>
           <Box sx={{ mb: 2 }}>
             <Typography variant="h5">
               Sign in to JW Tours with a one-time link
@@ -145,6 +154,8 @@ export default function EmailLink() {
             </Link>
           </form>
         </StyledCard>
+          </>
+        )}
       </MainContainer>
 
       <AlertMessage

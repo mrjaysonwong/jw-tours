@@ -15,27 +15,35 @@ export function generateMetadata({ params }) {
 }
 
 export default async function ConfirmationPage({ params, searchParams }) {
+  const session = await auth();
+
+  if (session) {
+    redirect('/');
+  }
+
   const { slug } = params;
   const { email, action } = searchParams;
 
-  const user = await findTokenByEmail(searchParams.email);
-  // const session = await auth();
+  // Fetch data
+  const emailIsVerified = await findUserVerifiedEmail(email);
+  const userTokenExists = await findTokenByEmail(email);
+  const verifiedOnce = await findTokenRequestCount(email);
 
-  // if (session) redirect('/');
+  // Determine if redirection is needed
+  const shouldRedirect =
+    slug === 'send-link' &&
+    (!email ||
+      !action ||
+      (action === 'signin' && !emailIsVerified) ||
+      (action === 'signup' && emailIsVerified) ||
+      (action === 'signin' && !userTokenExists) ||
+      (action === 'signin' && verifiedOnce));
 
-  const renderConfirmationComponent = () => {
-    switch (slug) {
-      case 'send-link':
-        if (!user) {
-          return <Custom404Page />;
-        }
+  if (shouldRedirect) {
+    redirect('/signin/link');
+  }
 
-        return <ConfirmSendLink email={email} action={action} />;
-      default:
-        return <Custom404Page />;
-    }
-  };
-
+  // Render component based on slug
   return (
     <MainContainer
       sx={{
@@ -46,7 +54,11 @@ export default async function ConfirmationPage({ params, searchParams }) {
         justifyContent: 'center',
       }}
     >
-      {renderConfirmationComponent(slug)}
+      {slug === 'send-link' ? (
+        <ConfirmSendLink email={email} action={action} />
+      ) : (
+        <Custom404Page />
+      )}
     </MainContainer>
   );
 }

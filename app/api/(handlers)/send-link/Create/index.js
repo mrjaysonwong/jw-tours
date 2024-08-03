@@ -12,12 +12,16 @@ import { emailSignInSchema } from '@/lib/validation/yup/signInSchema';
 import { getValidationError } from '@/utils/helper/errorHandler';
 import { handleRateLimitError } from '@/utils/helper/errorHandler';
 
+
 const opts = {
   points: 1,
   duration: 60, // 60 secs per request
 };
 
 const rateLimiter = new RateLimiterMemory(opts);
+
+// 504: GATEWAY_TIMEOUT in production
+// https://www.reddit.com/r/nextjs/comments/18wogoe/vercel_this_serverless_function_has_timed_out/
 
 export async function createSigninLink(Request) {
   try {
@@ -32,37 +36,38 @@ export async function createSigninLink(Request) {
       });
     }
 
-    const body = await Request.json();
-    const email = body.email;
+    const { email } = await Request.json();
 
-    await emailSignInSchema.validate({ ...body }, { abortEarly: false });
+    await emailSignInSchema.validate({ email }, { abortEarly: false });
 
     const userExists = await findUserByEmail(email);
 
-    // if (!userExists) {
-    //   throw new HttpError({
-    //     message: 'Email must be verified.',
-    //     status: 403,
-    //   });
-    // }
+    if (!userExists) {
+      throw new HttpError({
+        message: 'Email must be verified.',
+        status: 403,
+      });
+    }
 
-    // const emailIsVerified = await findUserVerifiedEmail(email);
+    const emailIsVerified = await findUserVerifiedEmail(email);
 
-    // if (!emailIsVerified) {
-    //   throw new HttpError({
-    //     message: 'Email must be verified.',
-    //     status: 403,
-    //   });
-    // }
+    console.log({emailIsVerified})
 
-    // if (action === 'signup') {
-    //   if (emailIsVerified) {
-    //     throw new HttpError({
-    //       message: getLocalMessage('Account has been already verified.'),
-    //       status: 422,
-    //     });
-    //   }
-    // }
+    if (!emailIsVerified) {
+      throw new HttpError({
+        message: 'Email must be verified.',
+        status: 403,
+      });
+    }
+
+    if (action === 'signup') {
+      if (emailIsVerified) {
+        throw new HttpError({
+          message: getLocalMessage('Account has been already verified.'),
+          status: 422,
+        });
+      }
+    }
 
     await rateLimiter.consume(email, 1);
 
@@ -74,44 +79,43 @@ export async function createSigninLink(Request) {
 
     const userId = userExists._id;
 
-    // const userTokenExists = await Token.findOne({ userId });
+    const userTokenExists = await Token.findOne({ userId });
 
-    // const targetEmail = userTokenExists?.email.find((e) => e.email === email);
+    console.log({userTokenExists})
+    const targetEmail = userTokenExists?.email.find((e) => e.email === email);
 
-    // if (userTokenExists) {
-    //   if (targetEmail) {
-    //     // Update the existing email object
-    //     // Use field.$ positional operator
-    //     await Token.updateOne(
-    //       { userId, 'email.email': email },
-    //       {
-    //         $set: {
-    //           'email.$': {
-    //             email,
-    //             token,
-    //             expireTimestamp,
-    //           },
-    //         },
-    //       }
-    //     );
-    //   } else {
-    //     // Add a new email object
-    //     await Token.updateOne(
-    //       { userId },
-    //       {
-    //         $addToSet: {
-    //           email: {
-    //             email,
-    //             token,
-    //             expireTimestamp,
-    //           },
-    //         },
-    //       }
-    //     );
-    //   }
-    // } else {
-
-
+    if (userTokenExists) {
+      if (targetEmail) {
+        // Update the existing email object
+        // Use field.$ positional operator
+        await Token.updateOne(
+          { userId, 'email.email': email },
+          {
+            $set: {
+              'email.$': {
+                email,
+                token,
+                expireTimestamp,
+              },
+            },
+          }
+        );
+      } else {
+        // Add a new email object
+        await Token.updateOne(
+          { userId },
+          {
+            $addToSet: {
+              email: {
+                email,
+                token,
+                expireTimestamp,
+              },
+            },
+          }
+        );
+      }
+    } else {
       // Create a new document
       await Token.create({
         userId,
@@ -123,7 +127,7 @@ export async function createSigninLink(Request) {
           },
         ],
       });
-    
+    }
 
     const subjectText =
       action === 'signin'
@@ -142,11 +146,11 @@ export async function createSigninLink(Request) {
         ? `A sign-in link has been sent to ${email}`
         : `Verification link has been sent to ${email}`;
 
-    // const statusCode = userTokenExists ? 200 : 201;
+    const statusCode = userTokenExists ? 200 : 201;
 
-    return { message, email };
+    return { message, statusCode, email };
   } catch (error) {
-    console.error(error);
+    console.error(error)
     getValidationError(error);
     handleRateLimitError(error);
 
