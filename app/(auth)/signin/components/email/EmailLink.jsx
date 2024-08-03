@@ -53,8 +53,13 @@ export default function EmailLink() {
 
       const { data } = await axios.post(url, formData);
 
+      if (!data) {
+        
+      handleAlertMessage('Server Error', 'error');
+      }
+
       if (data) {
-        router.replace(
+        router.push(
           `/confirmation/send-link?email=${encodeURIComponent(
             data.email
           )}&action=${action}`
