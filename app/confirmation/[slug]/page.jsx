@@ -32,7 +32,7 @@ export default async function ConfirmationPage({ params, searchParams }) {
 
         return <ConfirmSendLink email={email} action={action} />;
       default:
-        return <Custom404 />;
+        return <Custom404Page />;
     }
   };
 
