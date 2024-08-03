@@ -24,7 +24,7 @@ export async function isUserEmailVerified(email) {
   ]);
 }
 
-export async function constructUserObject(user) {
+export function constructUserObject(user) {
   const { _id, firstName, lastName, role, image } = user;
   const primaryEmail = user.email.find((e) => e.isPrimary === true);
   const name = `${firstName} ${lastName}`;

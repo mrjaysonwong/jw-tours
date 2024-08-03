@@ -104,6 +104,10 @@ async function updateMobileOTP(userId, dialCode, phoneNumber) {
   }
 }
 
+
+// Error creating OTP: TypeError: Cannot read properties of undefined (reading 'replace')
+// try simplify helpers
+
 export async function createOTP(userId, email, dialCode, phoneNumber) {
   try {
     if (email) {

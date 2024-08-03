@@ -9,6 +9,7 @@ import {
   authSignInOAuth,
 } from './utils/helper/authSignIn';
 import {
+  findUserByEmail,
   findUserById,
   constructUserObject,
 } from './utils/helper/query/User';
@@ -77,11 +78,13 @@ export const {
       // authenticated
       if (trigger === 'update' && token.user) {
         const userExists = await findUserById(token.user.id);
-        token.user = await constructUserObject(userExists);
+        token.user = constructUserObject(userExists);
       } else if (user) {
         // isAuthenticating
-        const userExists = await findUserById(user.id);
-        token.user = await constructUserObject(userExists);
+        const userExists = await findUserByEmail(user.email);
+
+        const userObj = await findUserById(userExists._id);
+        token.user = constructUserObject(userObj);
       }
 
       return token;

@@ -16,7 +16,6 @@ export async function authSignInCredentials(credentials, req) {
 
     const userExists = await findUserByEmail(email);
 
-
     if (!userExists) {
       throw new Error('Invalid Credentials');
     }
@@ -52,7 +51,7 @@ export async function authSignInCredentials(credentials, req) {
       }
     );
 
-    const user = await constructUserObject(userExists);
+    const user = constructUserObject(userExists);
 
     return user;
   } catch (error) {
@@ -121,7 +120,7 @@ export async function authSignInEmail(credentials) {
       );
     }
 
-    const user = await constructUserObject(userExists);
+    const user = constructUserObject(userExists);
 
     return user;
   } catch (error) {
@@ -131,9 +130,9 @@ export async function authSignInEmail(credentials) {
 }
 
 export async function authSignInOAuth(user, account) {
-  const [firstName, lastName] = user.name.split(' ');
-
   try {
+    const [firstName, lastName] = user?.name.split(' ');
+
     await connectMongo();
 
     const userExists = await User.findOne({ 'email.email': user.email });
