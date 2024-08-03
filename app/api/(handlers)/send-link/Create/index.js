@@ -70,7 +70,7 @@ export async function createSigninLink(Request) {
       token,
       epochTime: expireTimestamp,
       emailHtml,
-    } = await authEmailToken(email, Request, action);
+    } = authEmailToken(email, Request, action);
 
     const userId = userExists._id;
 
