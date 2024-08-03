@@ -74,13 +74,13 @@ export default function ConfirmSendLink(props) {
     }
   }, [isCountdown, timeLeft]);
 
-  // useEffect(() => {
-  //   const intervalId = setInterval(() => {
-  //     router.refresh();
-  //   }, 10000);
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      router.refresh();
+    }, 10000);
 
-  //   return () => clearTimeout(intervalId);
-  // }, [router]);
+    return () => clearTimeout(intervalId);
+  }, [router]);
 
   return (
     <>

@@ -162,7 +162,7 @@ export async function updateOTP(userId, email, dialCode, phoneNumber) {
 }
 
 /* Use case '/api/send-link' */
-export function authEmailToken(email, Request, action) {
+export async function authEmailToken(email, Request, action) {
   // Generate and Authenticate Email Token
   const token = generateToken(email);
   const decoded = jwt.verify(token, process.env.JWT_SECRET);

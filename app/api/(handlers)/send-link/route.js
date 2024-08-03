@@ -1,25 +1,25 @@
 import connectMongo from '@/lib/connection';
 import { createSigninLink } from './Create';
-import { unstable_noStore as noStore } from 'next/cache';
+// import { unstable_noStore as noStore } from 'next/cache';
 
-// export const maxDuration = 60; // Vercel functions Hobby: 10s (default) - configurable up to 60s
-// export const dynamic = 'force-dynamic';
+export const maxDuration = 5; // Vercel functions Hobby: 10s (default) - configurable up to 60s
+export const dynamic = 'force-dynamic';
 
 
 /* baseUrl/api/send-link */
 export async function POST(Request) {
-  noStore();
+  // noStore();
   try {
     await connectMongo();
 
-    const { message, statusCode, email } = await createSigninLink(Request);
+    const { message, email } = await createSigninLink(Request);
 
     return Response.json(
       {
         statusText: message,
         email: email,
       },
-      { status: statusCode }
+      { status: 201 }
     );
   } catch (error) {
     console.error(error);
