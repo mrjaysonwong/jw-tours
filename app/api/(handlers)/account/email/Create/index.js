@@ -15,7 +15,6 @@ import { sendEmail } from '@/utils/config/sendEmail';
 import { RateLimiterMemory } from 'rate-limiter-flexible';
 import { findUserByEmail, findUserById } from '@/utils/helper/query/User';
 import { HttpError } from '@/utils/helper/errorHandler';
-import { generateOTP } from '@/utils/helper/token-handlers/generateOTP';
 
 const opts = {
   points: 1,
@@ -23,7 +22,6 @@ const opts = {
 };
 
 const rateLimiter = new RateLimiterMemory(opts);
-
 
 export async function addEmailAddress(Request, userId) {
   try {
@@ -43,38 +41,33 @@ export async function addEmailAddress(Request, userId) {
 
     const userExists = await findUserById(userId);
 
-    console.log({userExists})
-
     await rateLimiter.consume(email, 1);
 
     let otp;
     let epochTimeExpires;
-
+    let statusCode;
 
     const foundUserToken = await Token.findOne({ 'email.email': email });
 
-    console.log({foundUserToken})
-
     if (!foundUserToken) {
-      const { otp: genOTP, expires: genExpires } = generateOTP();
-
-      await Token.create({
+      const { otp: genOTP, expires: genExpires } = await createOTP(
         userId,
-        email: [
-          {
-            email: email,
-            token: genOTP,
-            expireTimestamp: genExpires,
-          },
-        ],
-      });
+        email
+      );
 
       otp = genOTP;
       epochTimeExpires = genExpires;
+      statusCode = 201;
+    } else {
+      const { otp: genOTP, expires: genExpires } = await updateOTP(
+        userId,
+        email
+      );
 
-
-
-    } 
+      otp = genOTP;
+      epochTimeExpires = genExpires;
+      statusCode = 200;
+    }
 
     const formattedDateString = formattedDate(epochTimeExpires);
 
@@ -96,7 +89,7 @@ export async function addEmailAddress(Request, userId) {
       html: emailHtml,
     });
 
- 
+    return { statusCode };
   } catch (error) {
     console.error(error);
 
