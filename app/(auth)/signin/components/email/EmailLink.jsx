@@ -18,7 +18,7 @@ import { errorHandler } from '@/utils/helper/errorHandler';
 import ReCAPTCHA from 'react-google-recaptcha';
 import { AlertMessage } from '@/app/components/custom/messages';
 import { useMessageStore } from '@/stores/messageStore';
-import Confirmation from './Confirmation';
+import Confirmation from '@/app/components/confirmation/Confirmation';
 
 export default function EmailLink() {
   const router = useRouter();
@@ -27,7 +27,7 @@ export default function EmailLink() {
 
   let submitAttemptRef = useRef(0);
 
-  let emailRef = useRef('')
+  let emailRef = useRef('');
 
   const [captcha, setCaptcha] = useState('' || null);
 
@@ -49,7 +49,7 @@ export default function EmailLink() {
 
   const onSubmit = async (formData, event) => {
     submitAttemptRef.current++;
-    
+
     try {
       const action = 'signin';
       const url = `/api/send-link?action=${action}`;
@@ -57,14 +57,7 @@ export default function EmailLink() {
       const { data } = await axios.post(url, formData);
 
       if (data) {
-        // router.replace(
-        //   `/confirmation/send-link?email=${encodeURIComponent(
-        //     data.email
-        //   )}&action=${action}`
-        // );
-        emailRef.current = data.email
-
-        console.log(emailRef.current)
+        emailRef.current = data.email;
       }
     } catch (error) {
       const { errorMessage } = errorHandler(error);
@@ -76,9 +69,6 @@ export default function EmailLink() {
       handleAlertMessage(errorMessage, 'error');
     }
   };
-
-
-
 
   return (
     <>
@@ -92,68 +82,67 @@ export default function EmailLink() {
         }}
       >
         {emailRef.current ? (
-          <Confirmation email={emailRef.current} />
+          <Confirmation email={emailRef.current} action="signin" />
         ) : (
           <>
-          
-          <StyledCard sx={{ width: 'clamp(280px, 50%, 340px)' }}>
-          <Box sx={{ mb: 2 }}>
-            <Typography variant="h5">
-              Sign in to JW Tours with a one-time link
-            </Typography>
+            <StyledCard sx={{ width: 'clamp(280px, 50%, 340px)' }}>
+              <Box sx={{ mb: 2 }}>
+                <Typography variant="h5">
+                  Sign in to JW Tours with a one-time link
+                </Typography>
 
-            <Typography color="gray">
-              Enter the verified email address registered with your JW Tours
-              account, and we&apos;ll send you a link to sign in.
-            </Typography>
-          </Box>
-          <form>
-            <TextField
-              {...register('email')}
-              fullWidth
-              size="small"
-              autoFocus
-              margin="dense"
-              id="email"
-              name="email"
-              label="Email"
-              type="email"
-              autoComplete='email'
-              error={!!errors.email}
-            />
+                <Typography color="gray">
+                  Enter the verified email address registered with your JW Tours
+                  account, and we&apos;ll send you a link to sign in.
+                </Typography>
+              </Box>
+              <form>
+                <TextField
+                  {...register('email')}
+                  fullWidth
+                  size="small"
+                  autoFocus
+                  margin="dense"
+                  id="email"
+                  name="email"
+                  label="Email"
+                  type="email"
+                  autoComplete="email"
+                  error={!!errors.email}
+                />
 
-            <FieldErrorMessage error={errors.email} />
+                <FieldErrorMessage error={errors.email} />
 
-            {captcha && (
-              <ReCAPTCHA
-                sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}
-                onChange={onChange}
-                className="recaptcha"
-              />
-            )}
+                {captcha && (
+                  <ReCAPTCHA
+                    sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}
+                    onChange={onChange}
+                    className="recaptcha"
+                  />
+                )}
 
-            <FormSubmitButton
-              label="Send"
-              action="auth"
-              handleSubmit={handleSubmit(onSubmit)}
-              isSubmitting={isSubmitting}
-              isSubmitSuccessful={isSubmitSuccessful}
-              fullWidth={true}
-              captcha={captcha}
-            />
+                <FormSubmitButton
+                  label="Send"
+                  action="auth"
+                  handleSubmit={handleSubmit(onSubmit)}
+                  isSubmitting={isSubmitting}
+                  isSubmitSuccessful={isSubmitSuccessful}
+                  fullWidth={true}
+                  captcha={captcha}
+                />
 
-            <Link href="/signin">
-              <Button
-                fullWidth
-                disabled={isSubmitting}
-                variant="text"
-                sx={{ mt: 2 }}
-              >
-                Go Back
-              </Button>
-            </Link>
-          </form>
-        </StyledCard>
+                <Link href="/signin">
+                  <Button
+                    fullWidth
+                    disabled={isSubmitting}
+                    variant="text"
+                    sx={{ mt: 2 }}
+                  >
+                    Go Back
+                  </Button>
+                </Link>
+              </form>
+            </StyledCard>
           </>
         )}
       </MainContainer>

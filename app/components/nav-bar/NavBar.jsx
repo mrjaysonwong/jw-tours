@@ -73,6 +73,7 @@ export default function NavBar() {
             sx={{
               display: 'flex',
               alignItems: 'center',
+           
             }}
           >
             <Logo />

@@ -12,7 +12,6 @@ import { emailSignInSchema } from '@/lib/validation/yup/signInSchema';
 import { getValidationError } from '@/utils/helper/errorHandler';
 import { handleRateLimitError } from '@/utils/helper/errorHandler';
 
-
 const opts = {
   points: 1,
   duration: 60, // 60 secs per request
@@ -51,16 +50,16 @@ export async function createSigninLink(Request) {
 
     const emailIsVerified = await findUserVerifiedEmail(email);
 
-    console.log({emailIsVerified})
+    console.log({ emailIsVerified });
 
-    if (!emailIsVerified) {
-      throw new HttpError({
-        message: 'Email must be verified.',
-        status: 403,
-      });
-    }
-
-    if (action === 'signup') {
+    if (action === 'signin') {
+      if (!emailIsVerified) {
+        throw new HttpError({
+          message: 'Email must be verified.',
+          status: 403,
+        });
+      }
+    } else if (action === 'signup') {
       if (emailIsVerified) {
         throw new HttpError({
           message: getLocalMessage('Account has been already verified.'),
@@ -81,7 +80,7 @@ export async function createSigninLink(Request) {
 
     const userTokenExists = await Token.findOne({ userId });
 
-    console.log({userTokenExists})
+    console.log({ userTokenExists });
     const targetEmail = userTokenExists?.email.find((e) => e.email === email);
 
     if (userTokenExists) {
@@ -150,7 +149,7 @@ export async function createSigninLink(Request) {
 
     return { message, statusCode, email };
   } catch (error) {
-    console.error(error)
+    console.error(error);
     getValidationError(error);
     handleRateLimitError(error);
 

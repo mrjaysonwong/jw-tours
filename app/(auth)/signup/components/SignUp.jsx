@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import {
@@ -26,11 +26,15 @@ import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { AlertMessage } from '@/app/components/custom/messages';
 import { useMessageStore } from '@/stores/messageStore';
+import Confirmation from '@/app/components/confirmation/Confirmation';
+
 
 export default function SignUp() {
   const router = useRouter();
 
   const [showPassword, setShowPassword] = useState(false);
+
+  let emailRef = useRef('');
 
   const { alert, handleAlertMessage, handleClose } = useMessageStore();
 
@@ -54,11 +58,7 @@ export default function SignUp() {
       const { data } = await axios.post(url, formData);
 
       if (data) {
-        router.replace(
-          `/confirmation/send-link?email=${encodeURIComponent(
-            data.email
-          )}&action=${action}`
-        );
+        emailRef.current = data.email;
       }
     } catch (error) {
       const { errorMessage } = errorHandler(error);
@@ -70,142 +70,150 @@ export default function SignUp() {
   return (
     <MainContainer
       sx={{
-        mt: { xs: 0, md: 6 },
+        mt: emailRef.current ? 0 : 5,
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
       }}
     >
-      <StyledCard
-        sx={{
-          width: 'clamp(300px, 90vw, 350px)',
-        }}
-      >
-        <Typography variant="h5" sx={{ mb: 2 }}>
-          Create an account
-        </Typography>
-        <form>
-          <Grid container spacing={2}>
-            <Grid item xs={6}>
-              <TextField
-                {...register('firstName')}
-                fullWidth
-                size="small"
-                label="First Name"
-                name="firstName"
-                error={!!errors.firstName}
-              />
-              <FieldErrorMessage error={errors.firstName} />
-            </Grid>
-            <Grid item xs={6}>
-              <TextField
-                {...register('lastName')}
-                fullWidth
-                size="small"
-                label="Last Name"
-                name="lastName"
-                error={!!errors.lastName}
-              />
-              <FieldErrorMessage error={errors.lastName} />
-            </Grid>
+      {emailRef.current ? (
+        <Confirmation email={emailRef.current} action={'signup'} />
+      ) : (
+        <>
+          <StyledCard
+            sx={{
+              width: 'clamp(300px, 90vw, 350px)',
+              height: { lg: '460px' },
+              overflowY: { lg: 'auto' },
+            }}
+          >
+            <Typography variant="h5" sx={{ mb: 2 }}>
+              Create an account
+            </Typography>
+            <form>
+              <Grid container spacing={2}>
+                <Grid item xs={6}>
+                  <TextField
+                    {...register('firstName')}
+                    fullWidth
+                    size="small"
+                    label="First Name"
+                    name="firstName"
+                    error={!!errors.firstName}
+                  />
+                  <FieldErrorMessage error={errors.firstName} />
+                </Grid>
+                <Grid item xs={6}>
+                  <TextField
+                    {...register('lastName')}
+                    fullWidth
+                    size="small"
+                    label="Last Name"
+                    name="lastName"
+                    error={!!errors.lastName}
+                  />
+                  <FieldErrorMessage error={errors.lastName} />
+                </Grid>
 
-            <Grid item xs={12}>
-              <TextField
-                {...register('email')}
-                fullWidth
-                size="small"
-                label="Email"
-                name="email"
-                error={!!errors.email}
-                autoComplete="email"
-              />
-              <FieldErrorMessage error={errors.email} />
-            </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    {...register('email')}
+                    fullWidth
+                    size="small"
+                    label="Email"
+                    name="email"
+                    error={!!errors.email}
+                    autoComplete="email"
+                  />
+                  <FieldErrorMessage error={errors.email} />
+                </Grid>
 
-            <Grid item xs={12}>
-              <TextField
-                {...register('password')}
-                fullWidth
-                size="small"
-                label="Password"
-                name="password"
-                error={!!errors.password}
-                type={showPassword ? 'text' : 'password'}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton onClick={handleShowPassword}>
-                        {showPassword ? <VisibilityOff /> : <Visibility />}
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
-              />
-              <FieldErrorMessage error={errors.password} />
-            </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    {...register('password')}
+                    fullWidth
+                    size="small"
+                    label="Password"
+                    name="password"
+                    error={!!errors.password}
+                    type={showPassword ? 'text' : 'password'}
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <IconButton onClick={handleShowPassword}>
+                            {showPassword ? <VisibilityOff /> : <Visibility />}
+                          </IconButton>
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                  <FieldErrorMessage error={errors.password} />
+                </Grid>
 
-            <Grid item xs={12}>
-              <TextField
-                {...register('confirmPassword')}
-                fullWidth
-                size="small"
-                label="Confirm Password"
-                name="confirmPassword"
-                error={!!errors.confirmPassword}
-                type={showPassword ? 'text' : 'password'}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton onClick={handleShowPassword}>
-                        {showPassword ? <VisibilityOff /> : <Visibility />}
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
-              />
-              <FieldErrorMessage error={errors.confirmPassword} />
-            </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    {...register('confirmPassword')}
+                    fullWidth
+                    size="small"
+                    label="Confirm Password"
+                    name="confirmPassword"
+                    error={!!errors.confirmPassword}
+                    type={showPassword ? 'text' : 'password'}
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <IconButton onClick={handleShowPassword}>
+                            {showPassword ? <VisibilityOff /> : <Visibility />}
+                          </IconButton>
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                  <FieldErrorMessage error={errors.confirmPassword} />
+                </Grid>
 
-            <Grid item xs={12}>
-              <Typography variant="body2">
-                By clicking Sign Up, you agree to our{' '}
-                <a href="/legal/user-agreement">User Agreement</a> and
-                acknowledge that you have read and understand our{' '}
-                <a href="/legal/privacy-policy">Privacy Policy</a>.
+                <Grid item xs={12}>
+                  <Typography variant="body2">
+                    By clicking Sign Up, you agree to our{' '}
+                    <a href="/legal/user-agreement">User Agreement</a> and
+                    acknowledge that you have read and understand our{' '}
+                    <a href="/legal/privacy-policy">Privacy Policy</a>.
+                  </Typography>
+                </Grid>
+
+                <Grid item xs={12}>
+                  <FormSubmitButton
+                    label="Sign Up"
+                    action="auth"
+                    handleSubmit={handleSubmit(onSubmit)}
+                    isSubmitting={isSubmitting}
+                    isSubmitSuccessful={isSubmitSuccessful}
+                    fullWidth={true}
+                  />
+                </Grid>
+              </Grid>
+            </form>
+          </StyledCard>
+
+          <Box
+            sx={{
+              my: 2,
+              display: 'flex',
+              a: {
+                pointerEvents: isSubmitting ? 'none' : 'auto',
+              },
+            }}
+          >
+            <Typography>Already have an account?</Typography>
+            <Link href="/signin">
+              <Typography sx={{ ml: 1, color: 'var(--text-link-color-blue)' }}>
+                Sign In
               </Typography>
-            </Grid>
-
-            <Grid item xs={12}>
-              <FormSubmitButton
-                label="Sign Up"
-                action="auth"
-                handleSubmit={handleSubmit(onSubmit)}
-                isSubmitting={isSubmitting}
-                isSubmitSuccessful={isSubmitSuccessful}
-                fullWidth={true}
-              />
-            </Grid>
-          </Grid>
-        </form>
-      </StyledCard>
-
-      <Box
-        sx={{
-          my: 2,
-          display: 'flex',
-          a: {
-            pointerEvents: isSubmitting ? 'none' : 'auto',
-          },
-        }}
-      >
-        <Typography>Already have an account?</Typography>
-        <Link href="/signin">
-          <Typography sx={{ ml: 1, color: 'var(--text-link-color-blue)' }}>
-            Sign In
-          </Typography>
-        </Link>
-      </Box>
+            </Link>
+          </Box>
+        </>
+      )}
 
       <AlertMessage
         open={alert.open}

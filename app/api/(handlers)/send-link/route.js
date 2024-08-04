@@ -11,14 +11,14 @@ export async function POST(Request) {
   try {
     await connectMongo();
 
-    const { message, email } = await createSigninLink(Request);
+    const { message, statusCode, email } = await createSigninLink(Request);
 
     return Response.json(
       {
         statusText: message,
         email: email,
       },
-      { status: 201 }
+      { status: statusCode }
     );
   } catch (error) {
     console.error(error);
