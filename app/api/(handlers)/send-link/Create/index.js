@@ -19,9 +19,6 @@ const opts = {
 
 const rateLimiter = new RateLimiterMemory(opts);
 
-// 504: GATEWAY_TIMEOUT in production
-// https://www.reddit.com/r/nextjs/comments/18wogoe/vercel_this_serverless_function_has_timed_out/
-
 export async function createSigninLink(Request) {
   try {
     const requestUrl = new URL(Request.url);
@@ -49,8 +46,6 @@ export async function createSigninLink(Request) {
     }
 
     const emailIsVerified = await findUserVerifiedEmail(email);
-
-    console.log({ emailIsVerified });
 
     if (action === 'signin') {
       if (!emailIsVerified) {
@@ -80,7 +75,6 @@ export async function createSigninLink(Request) {
 
     const userTokenExists = await Token.findOne({ userId });
 
-    console.log({ userTokenExists });
     const targetEmail = userTokenExists?.email.find((e) => e.email === email);
 
     if (userTokenExists) {

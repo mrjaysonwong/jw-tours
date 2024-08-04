@@ -1,13 +1,8 @@
 import connectMongo from '@/lib/connection';
 import { createSigninLink } from './Create';
-// import { unstable_noStore as noStore } from 'next/cache';
-
-
-
 
 /* baseUrl/api/send-link */
 export async function POST(Request) {
-  // noStore();
   try {
     await connectMongo();
 

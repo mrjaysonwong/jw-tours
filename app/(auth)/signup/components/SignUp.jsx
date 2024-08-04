@@ -2,7 +2,6 @@
 
 import React, { useState, useRef } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import {
   Box,
   Typography,
@@ -28,10 +27,7 @@ import { AlertMessage } from '@/app/components/custom/messages';
 import { useMessageStore } from '@/stores/messageStore';
 import Confirmation from '@/app/components/confirmation/Confirmation';
 
-
 export default function SignUp() {
-  const router = useRouter();
-
   const [showPassword, setShowPassword] = useState(false);
 
   let emailRef = useRef('');
@@ -52,7 +48,6 @@ export default function SignUp() {
 
   const onSubmit = async (formData, event) => {
     try {
-      const action = 'signup';
       const url = '/api/signup';
 
       const { data } = await axios.post(url, formData);

@@ -1,12 +1,11 @@
 'use client';
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   StyledContainer as MainContainer,
   StyledCard,
 } from '@/app/components/global-styles/globals';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { Box, Button, TextField, Typography } from '@mui/material';
 import FormSubmitButton from '@/app/components/custom/buttons/FormSubmitButton';
 import { useForm } from 'react-hook-form';
@@ -21,8 +20,6 @@ import { useMessageStore } from '@/stores/messageStore';
 import Confirmation from '@/app/components/confirmation/Confirmation';
 
 export default function EmailLink() {
-  const router = useRouter();
-
   const { alert, handleAlertMessage, handleClose } = useMessageStore();
 
   let submitAttemptRef = useRef(0);

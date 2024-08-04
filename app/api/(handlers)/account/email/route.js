@@ -19,9 +19,9 @@ export async function POST(Request) {
 
     await connectMongo();
 
-    const { statusCode } = await addEmailAddress(Request, userId);
+   await addEmailAddress(Request, userId);
 
-    return Response.json({ statusText: 'OTP sent!' }, { status: statusCode });
+    return Response.json({ statusText: 'OTP sent!' }, { status: 201 });
   } catch (error) {
     console.error(error);
 
