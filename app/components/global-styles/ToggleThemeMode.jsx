@@ -6,7 +6,6 @@ import { CssBaseline } from '@mui/material';
 import { useState, useMemo, createContext, useEffect } from 'react';
 import { useCookies } from 'react-cookie';
 
-
 export const ColorModeContext = createContext({ toggleColorMode: () => {} });
 
 const inter = Inter({

@@ -1,6 +1,6 @@
 'use client';
 
-import Link from 'next/link';
+import { Link } from '@/navigation';
 import Image from 'next/image';
 import { Box, Typography, Grid, Divider, useTheme } from '@mui/material';
 import FacebookIcon from '@mui/icons-material/Facebook';

@@ -1,3 +1,5 @@
+import { locales } from '@/navigation';
+
 export function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
@@ -13,7 +15,15 @@ export function authPage(pathname) {
     '/error',
   ];
 
-  const hideOnAuthPage = authPages.includes(pathname);
+  const hasLocale = locales.some((locale) =>
+    pathname.startsWith(`/${locale}/`)
+  );
+
+  const hideOnAuthPage = authPages.some(
+    (page) =>
+      pathname === page ||
+      (hasLocale && pathname.replace(/^\/[^/]+\//, '/') === page) // Strips out the locale prefix from the path, normalizing the URL.
+  );
 
   return hideOnAuthPage;
 }
@@ -24,12 +34,4 @@ export function hideNavLinks(pathname, params) {
   const hideOnSelectedPage = selectedPages.includes(pathname);
 
   return hideOnSelectedPage;
-}
-
-export function homePage(pathname) {
-  const selectedPages = ['/'];
-
-  const nonBlur = selectedPages.includes(pathname);
-
-  return nonBlur;
 }

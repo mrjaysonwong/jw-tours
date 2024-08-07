@@ -3,7 +3,6 @@ import Token from '@/model/tokenModel/tokenModel';
 import { findUserById } from '@/utils/helper/query/User';
 import { HttpError } from '@/utils/helper/errorHandler';
 import { getLocalMessage } from '@/utils/helper/errorHandler';
-import { findUserToken } from '@/utils/helper/query/Token';
 
 export async function verifyMobileOTP(Request, userId) {
   try {

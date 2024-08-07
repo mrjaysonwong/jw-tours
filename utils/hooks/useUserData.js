@@ -1,11 +1,16 @@
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { usePathname } from 'next/navigation';
+import { locales } from '@/navigation';
 
 export const useUserData = (userId) => {
   const pathname = usePathname();
 
-  const isMySettings = pathname.startsWith('/mysettings');
+  const hasLocale = locales.some((locale) =>
+    pathname.startsWith(`/${locale}/`)
+  );
+
+  const isMySettings = hasLocale || pathname.startsWith('/mysettings');
   const hasSubpath = pathname.split('/').length > 2;
   const settings = isMySettings && hasSubpath;
 

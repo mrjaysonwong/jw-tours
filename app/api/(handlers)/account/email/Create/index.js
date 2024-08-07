@@ -25,10 +25,9 @@ const rateLimiter = new RateLimiterMemory(opts);
 
 export async function addEmailAddress(Request, userId) {
   try {
-    const body = await Request.json();
-    const email = body.email;
+    const { email } = await Request.json();
 
-    await emailSchema.validate({ ...body }, { abortEarly: false });
+    await emailSchema.validate({ email }, { abortEarly: false });
 
     const emailTaken = await findUserByEmail(email);
 
