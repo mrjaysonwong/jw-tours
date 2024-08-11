@@ -1,5 +1,115 @@
 {
-  "SignInPage": {
-    "header": "Se connecter"
+  "layout": {
+    "meta_title": {
+      "jw_tours": "JW Tours"
+    }
+  },
+  "common": {
+    "button_labels": { "goback": "Retourner", "send": "Envoyer" },
+    "errors": {
+      "email_taken": "Email déjà pris",
+      "internal_server": "Erreur interne du serveur",
+      "missing_or_invalid_parameters": "Paramètres manquants ou non valides.",
+      "rate_limit": "Une requête par minute. Réessayez dans {timeLeft} secondes.",
+      "try_again": "Une erreur s'est produite. Veuillez réessayer.",
+      "unexpected_error": "Une erreur inattendue s'est produite."
+    },
+    "headers": { "auth_failed": "L'authentification a échoué" },
+    "labels": {
+      "confirm_pw": "Confirmez le mot de passe",
+      "email": "E-mail",
+      "fname": "Prénom",
+      "goback": "Retourner",
+      "lname": "Nom de famille",
+      "password": "Mot de passe"
+    },
+    "paragraphs": {
+      "enter_verified_email": "Saisissez l'adresse e-mail vérifiée enregistrée avec votre compte JW Tours et nous vous enverrons un lien pour vous connecter.",
+      "invalid_verification_link": "Il semble que vous ayez cliqué sur un lien de vérification d'e-mail non valide."
+    },
+    "subheaders": {
+      "try_auth_again": "Veuillez fermer cette fenêtre et essayer de vous authentifier à nouveau."
+    },
+    "validations": {
+      "email_required": "L'e-mail est obligatoire.",
+      "enter_valid_name": "Veuillez entrer un nom valide.",
+      "fname_required": "Le prénom est obligatoire.",
+      "invalid_email": "Adresse email invalide.",
+      "lname_required": "Le nom de famille est obligatoire.",
+      "max_pw": "Le mot de passe ne doit pas dépasser 40 caractères.",
+      "min_pw": "Le mot de passe doit comporter au moins 8 caractères.",
+      "pw_required": "Le mot de passe est requis."
+    }
+  },
+  "signin_page": {
+    "button_labels": { "signin": "Se connecter" },
+    "errors": {
+      "already_verified": "Le compte a déjà été vérifié.",
+      "email_must_verified": "L'e-mail doit être vérifié.",
+      "invalid_credentials": "Informations d'identification non valides",
+      "invalid_signin_link": "Lien de connexion non valide ou expiré.",
+      "use_signin_method": "Veuillez utiliser la méthode de connexion {accountProvider}."
+    },
+    "headers": {
+      "one_time_link": "Connectez-vous à JW Tours avec un lien unique",
+      "signin": "Se connecter"
+    },
+    "labels": { "or": "Ou" },
+    "meta_title": { "signin": "Se connecter" },
+    "paragraphs": {
+      "dont_have_account": "Vous n'avez pas de compte ?",
+      "enter_verified_email": "Saisissez l'adresse e-mail vérifiée enregistrée avec votre compte JW Tours et nous vous enverrons un lien pour vous connecter.",
+      "signin_with": "Connectez-vous avec",
+      "signup": "S'inscrire"
+    },
+    "success_messages": {
+      "signin_link_sent": "Un lien de connexion a été envoyé à {email}",
+      "verification_link_sent": "Le lien de vérification a été envoyé à {email}"
+    }
+  },
+  "confirmation_page": {
+    "button_labels": {
+      "resend": "Renvoyer",
+      "resend_timeleft": "Renvoyer dans {timeLeft}s"
+    },
+    "headers": { "check_your_email": "Vérifiez votre email" },
+    "paragraphs": { "did_not_receive_email": "Vous n'avez pas reçu l'email ?" }
+  },
+  "notifications_page": {
+    "meta_title": {
+      "notifications": "Notifications"
+    }
+  },
+
+  "verify_page": {
+    "meta_title": {
+      "verify_request": "Vérifier la demande"
+    }
+  },
+  "signup_page": {
+    "button_labels": { "signup": "S'inscrire" },
+    "errors": {
+      "email_taken": "Email déjà pris",
+      "internal_server": "Erreur interne du serveur",
+      "missing_or_invalid_parameters": "Paramètres manquants ou invalides.",
+      "rate_limit": "Une requête par minute. Réessayez dans {timeLeft} secondes.",
+      "try_again": "Une erreur s'est produite. Veuillez réessayer.",
+      "unexpected_error": "Une erreur inattendue s'est produite."
+    },
+    "headers": { "signup": "S'inscrire" },
+    "meta_title": { "signup": "S'inscrire" },
+    "paragraphs": {
+      "already_have_account": "Vous avez déjà un compte ?",
+      "and_acknowledge": "et reconnaissez que vous avez lu et compris notre",
+      "by_clicking": "En cliquant sur S'inscrire, vous acceptez nos",
+      "privacy_policy": "politique de confidentialité",
+      "signin": "Se connecter",
+      "user_agreement": "Accord d'utilisation"
+    },
+    "validations": {
+      "confirm_pw": "Confirmez votre mot de passe.",
+      "match_pw": "Le mot de passe doit correspondre.",
+      "strong_pw": "Le mot de passe doit contenir au moins une lettre majuscule, une lettre minuscule et un chiffre."
+    }
   }
 }

@@ -13,6 +13,8 @@ import {
   findUserById,
   constructUserObject,
 } from './utils/helper/query/User';
+import { getTranslations } from 'next-intl/server';
+import { cookies } from 'next/headers';
 
 export const {
   handlers: { GET, POST },
@@ -38,7 +40,15 @@ export const {
       name: 'email',
       async authorize(credentials, req) {
         if (credentials) {
-          const user = await authSignInEmail(credentials);
+          const cookieStore = cookies();
+          const { value: locale } = cookieStore.get('NEXT_LOCALE');
+
+          const t = await getTranslations({
+            locale,
+            namespace: 'signin_page',
+          });
+
+          const user = await authSignInEmail(credentials, t);
 
           if (user) {
             return user;
@@ -64,9 +74,17 @@ export const {
   ],
   callbacks: {
     async signIn({ user, account, profile }) {
+      const cookieStore = cookies();
+      const { value: locale } = cookieStore.get('NEXT_LOCALE');
+
+      const t1 = await getTranslations({
+        locale,
+        namespace: 'common',
+      });
+
       // if signed in using OAuth
       if (user && profile) {
-        await authSignInOAuth(user, account);
+        await authSignInOAuth(user, account, t1);
 
         return true;
       } else {

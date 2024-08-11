@@ -12,27 +12,17 @@ export default function AuthRedirect({ children }) {
     const signedOut = localStorage.getItem('signed-out');
     const signedIn = localStorage.getItem('signed-in');
 
-    const unAuthenticated = status === 'unauthenticated';
-    const authenticated = status === 'authenticated';
+    const handleRefresh = (itemKey) => {
+      router.refresh();
+      localStorage.removeItem(itemKey);
+    };
 
-    if (unAuthenticated && signedOut) {
-      console.log('signed out...');
-      const timeoutId = setTimeout(() => {
-        router.refresh();
-        localStorage.removeItem('signed-out');
-      }, 1000);
-
-      return () => clearTimeout(timeoutId);
-    }
-
-    if (authenticated && signedIn) {
-      console.log('signed in...');
-      const timeoutId = setTimeout(() => {
-        router.refresh();
-        localStorage.removeItem('signed-in');
-      }, 1000);
-
-      return () => clearTimeout(timeoutId);
+    if (status === 'unauthenticated' && signedOut) {
+      handleRefresh('signed-out');
+    } else if (signedIn) {
+      handleRefresh('signed-in');
+    } else {
+      router.refresh();
     }
   }, [router, status]);
 

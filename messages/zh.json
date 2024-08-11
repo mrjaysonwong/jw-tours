@@ -1,5 +1,112 @@
 {
-  "SignInPage": {
-    "header": "登入"
+  "layout": {
+    "meta_title": {
+      "jw_tours": "JW 旅程"
+    }
+  },
+  "common": {
+    "button_labels": { "goback": "回去", "send": "发送" },
+    "errors": {
+      "email_taken": "邮箱已被占用",
+      "internal_server": "内部服务器错误",
+      "missing_or_invalid_parameters": "缺少参数或者参数无效。",
+      "rate_limit": "每分钟一个请求。请在 {timeLeft} 秒后重试。",
+      "try_again": "发生错误。请重试。",
+      "unexpected_error": "發生意外錯誤。"
+    },
+    "headers": { "auth_failed": "身份验证失败" },
+    "labels": {
+      "confirm_pw": "确认密码",
+      "email": "电子邮件",
+      "fname": "名",
+      "goback": "回去",
+      "lname": "姓",
+      "password": "密码"
+    },
+    "paragraphs": {
+      "enter_verified_email": "输入您在 JW Tours 帐户中注册的已验证电子邮件地址，我们将向您发送登录链接。",
+      "invalid_verification_link": "看起来您可能点击了无效的电子邮件验证链接。"
+    },
+    "subheaders": { "try_auth_again": "请关闭此窗口并再次尝试验证。" },
+    "validations": {
+      "email_required": "需要电子邮件。",
+      "enter_valid_name": "请输入有效的名称。",
+      "fname_required": "需要名字。",
+      "invalid_email": "电子邮件地址无效。",
+      "lname_required": "姓氏是必填项。",
+      "max_pw": "密码不得超过 40 个字符。",
+      "min_pw": "密码必须至少包含 8 个字符。",
+      "pw_required": "需要密码。"
+    }
+  },
+  "signin_page": {
+    "button_labels": { "signin": "登入" },
+    "errors": {
+      "already_verified": "帐户已经验证。",
+      "email_must_verified": "必须验证电子邮件。",
+      "invalid_credentials": "凭证无效",
+      "invalid_signin_link": "登录链接无效或已过期。",
+      "use_signin_method": "请使用{accountProvider}登录方式。"
+    },
+    "headers": {
+      "one_time_link": "使用一次性链接登录 JW Tours",
+      "signin": "登入"
+    },
+    "labels": { "or": "或者" },
+    "meta_title": { "signin": "登入" },
+    "paragraphs": {
+      "dont_have_account": "沒有帳戶？",
+      "enter_verified_email": "输入您在 JW Tours 帐户中注册的已验证电子邮件地址，我们将向您发送登录链接。",
+      "signin_with": "使用以下方式登录",
+      "signup": "报名"
+    },
+    "success_messages": {
+      "signin_link_sent": "登录链接已发送至 {email}",
+      "verification_link_sent": "验证链接已发送至 {email}"
+    }
+  },
+  "confirmation_page": {
+    "button_labels": {
+      "resend": "重新发送",
+      "resend_timeleft": "在 {timeLeft} 秒后重新发送"
+    },
+    "headers": { "check_your_email": "检查你的电子邮件" },
+    "paragraphs": { "did_not_receive_email": "没有收到电子邮件？" }
+  },
+  "notifications_page": {
+    "meta_title": {
+      "notifications": "通知"
+    }
+  },
+  "verify_page": {
+    "meta_title": {
+      "verify_request": "验证请求"
+    }
+  },
+  "signup_page": {
+    "button_labels": { "signup": "报名" },
+    "errors": {
+      "email_taken": "电子邮件已被占用",
+      "internal_server": "内部服务器错误",
+      "missing_or_invalid_parameters": "缺少参数或者参数无效。",
+      "rate_limit": "每分钟一个请求。请在 {timeLeft} 秒后重试。",
+      "try_again": "发生错误。请重试。",
+      "unexpected_error": "發生意外錯誤。"
+    },
+    "headers": { "signup": "报名" },
+    "meta_title": { "signup": "报名" },
+    "paragraphs": {
+      "already_have_account": "已有账户？",
+      "and_acknowledge": "并确认您已阅读并理解我们的",
+      "by_clicking": "点击注册，即表示您同意我们的",
+      "privacy_policy": "隐私政策",
+      "signin": "登入",
+      "user_agreement": "用户协议"
+    },
+    "validations": {
+      "confirm_pw": "确认您的密码。",
+      "match_pw": "密码必须匹配。",
+      "strong_pw": "密码必须至少包含一个大写字母、一个小写字母和一个数字。"
+    }
   }
 }

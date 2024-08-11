@@ -1,5 +1,115 @@
 {
-  "SignInPage": {
-    "header": "サインイン"
+  "layout": {
+    "meta_title": {
+      "jw_tours": "JWツアー"
+    }
+  },
+  "common": {
+    "button_labels": { "goback": "戻る", "send": "送信" },
+    "errors": {
+      "email_taken": "メールアドレスはすでに使用されています",
+      "internal_server": "内部サーバーエラー",
+      "missing_or_invalid_parameters": "パラメータが欠落しているか無効です。",
+      "rate_limit": "1 分間に 1 回のリクエスト。{timeLeft} 秒後にもう一度お試しください。",
+      "try_again": "エラーが発生しました。もう一度お試しください。",
+      "unexpected_error": "予期しないエラーが発生しました。"
+    },
+    "headers": { "auth_failed": "認証に失敗しました" },
+    "labels": {
+      "confirm_pw": "パスワードを認証する",
+      "email": "メール",
+      "fname": "ファーストネーム",
+      "goback": "戻る",
+      "lname": "苗字",
+      "password": "パスワード"
+    },
+    "paragraphs": {
+      "enter_verified_email": "JW Tours アカウントに登録されている確認済みのメール アドレスを入力すると、サインインするためのリンクが送信されます。",
+      "invalid_verification_link": "無効なメール確認リンクをクリックした可能性があります。"
+    },
+    "subheaders": {
+      "try_auth_again": "このウィンドウを閉じて、再度認証をお試しください。"
+    },
+    "validations": {
+      "email_required": "メールアドレスは必須です。",
+      "enter_valid_name": "有効な名前を入力してください。",
+      "fname_required": "名は必須です。",
+      "invalid_email": "メールアドレスが無効です。",
+      "lname_required": "姓は必須です。",
+      "max_pw": "パスワードは40文字を超えてはなりません。",
+      "min_pw": "パスワードは 8 文字以上でなければなりません。",
+      "pw_required": "パスワードが必要です。"
+    }
+  },
+  "signin_page": {
+    "button_labels": { "signin": "サインイン" },
+    "errors": {
+      "already_verified": "アカウントはすでに確認済みです。",
+      "email_must_verified": "電子メールを確認する必要があります。",
+      "invalid_credentials": "無効な資格情報",
+      "invalid_signin_link": "サインイン リンクが無効または期限切れです。",
+      "use_signin_method": "{accountProvider} サインイン方法を使用してください。"
+    },
+    "headers": {
+      "one_time_link": "ワンタイムリンクでJW Toursにサインイン",
+      "signin": "サインイン"
+    },
+    "labels": { "or": "または" },
+    "meta_title": { "signin": "サインイン" },
+    "paragraphs": {
+      "dont_have_account": "アカウントをお持ちではありませんか?",
+      "enter_verified_email": "JW Tours アカウントに登録されている確認済みのメール アドレスを入力すると、サインインするためのリンクが送信されます。",
+      "signin_with": "サインイン",
+      "signup": "サインアップ"
+    },
+    "success_messages": {
+      "signin_link_sent": "サインイン リンクが {email} に送信されました",
+      "verification_link_sent": "確認リンクが {email} に送信されました"
+    }
+  },
+  "confirmation_page": {
+    "button_labels": {
+      "resend": "再送信",
+      "resend_timeleft": "{timeLeft}秒後に再送信"
+    },
+    "headers": { "check_your_email": "メールを確認してください" },
+    "paragraphs": { "did_not_receive_email": "メールが届きませんか？" }
+  },
+  "notifications_page": {
+    "meta_title": {
+      "notifications": "通知"
+    }
+  },
+
+  "verify_page": {
+    "meta_title": {
+      "verify_request": "リクエストの確認"
+    }
+  },
+  "signup_page": {
+    "button_labels": { "signup": "サインアップ" },
+    "errors": {
+      "email_taken": "メールアドレスはすでに使用されています",
+      "internal_server": "内部サーバーエラー",
+      "missing_or_invalid_parameters": "パラメータが欠落しているか無効です。",
+      "rate_limit": "1 分間に 1 回のリクエスト。{timeLeft} 秒後にもう一度お試しください。",
+      "try_again": "エラーが発生しました。もう一度お試しください。",
+      "unexpected_error": "予期しないエラーが発生しました。"
+    },
+    "headers": { "signup": "サインアップ" },
+    "meta_title": { "signup": "サインアップ" },
+    "paragraphs": {
+      "already_have_account": "すでにアカウントをお持ちですか?",
+      "and_acknowledge": "当社の",
+      "by_clicking": "「サインアップ」をクリックすると、当社の",
+      "privacy_policy": "プライバシーポリシー",
+      "signin": "サインイン",
+      "user_agreement": "ユーザー契約"
+    },
+    "validations": {
+      "confirm_pw": "パスワードを確認してください。",
+      "match_pw": "パスワードは一致する必要があります。",
+      "strong_pw": "パスワードには、少なくとも 1 つの大文字、1 つの小文字、および 1 つの数字が含まれている必要があります。"
+    }
   }
 }

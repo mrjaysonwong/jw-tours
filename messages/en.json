@@ -1,5 +1,117 @@
 {
-  "SignInPage": {
-    "header": "Sign In"
+  "layout": {
+    "meta_title": {
+      "jw_tours": "JW Tours"
+    }
+  },
+  "common": {
+    "button_labels": { "goback": "Go Back", "send": "Send" },
+    "errors": {
+      "email_taken": "Email Already Taken",
+      "internal_server": "Internal Server Error",
+      "missing_or_invalid_parameters": "Missing or invalid parameters.",
+      "rate_limit": "One request per minute. Try again in {timeLeft} seconds.",
+      "try_again": "An error occurred. Try again.",
+      "unexpected_error": "Unexpected error occurred."
+    },
+    "headers": { "auth_failed": "Authentication Failed" },
+    "labels": {
+      "confirm_pw": "Confirm Password",
+      "email": "Email",
+      "fname": "First Name",
+      "goback": "Go Back",
+      "lname": "Last Name",
+      "password": "Password"
+    },
+    "paragraphs": {
+      "enter_verified_email": "Enter the verified email address registered with your JW Tours account, and we'll send you a link to sign in.",
+      "invalid_verification_link": "It looks like you may have clicked on an invalid email verification link."
+    },
+    "subheaders": {
+      "try_auth_again": "Please close this window and try authenticating again."
+    },
+    "validations": {
+      "email_required": "Email is required.",
+      "enter_valid_name": "Please enter valid name.",
+      "fname_required": "First name is required.",
+      "invalid_email": "Invalid email address.",
+      "lname_required": "Last name is required.",
+      "max_pw": "Password must not exceed 40 characters.",
+      "min_pw": "Password must be at least 8 characters.",
+      "pw_required": "Password is required."
+    },
+    "success_messages": {
+      "verification_link_sent": "Verification link has been sent to {email}"
+    }
+  },
+  "signin_page": {
+    "button_labels": { "signin": "Sign In" },
+    "errors": {
+      "already_verified": "Account has been already verified.",
+      "email_must_verified": "Email must be verified.",
+      "invalid_credentials": "Invalid Credentials",
+      "invalid_signin_link": "Invalid or expired sign-in link.",
+      "use_signin_method": "Please use the {accountProvider} sign-in method."
+    },
+    "headers": {
+      "one_time_link": "Sign in to JW Tours with a one-time link",
+      "signin": "Sign In"
+    },
+    "labels": { "or": "Or" },
+    "meta_title": { "signin": "Sign In" },
+    "paragraphs": {
+      "dont_have_account": "Don't have an account?",
+      "enter_verified_email": "Enter the verified email address registered with your JW Tours account, and we'll send you a link to sign in.",
+      "signin_with": "Sign in with",
+      "signup": "Sign Up"
+    },
+    "success_messages": {
+      "signin_link_sent": "A sign-in link has been sent to {email}"
+    }
+  },
+  "confirmation_page": {
+    "button_labels": {
+      "resend": "Resend",
+      "resend_timeleft": "Resend in {timeLeft}s"
+    },
+    "headers": { "check_your_email": "Check your email" },
+    "paragraphs": { "did_not_receive_email": "Did not receive the email?" }
+  },
+  "notifications_page": {
+    "meta_title": {
+      "notifications": "Notifications"
+    }
+  },
+
+  "verify_page": {
+    "meta_title": {
+      "verify_request": "Verify Request"
+    }
+  },
+  "signup_page": {
+    "button_labels": { "signup": "Sign Up" },
+    "errors": {
+      "email_taken": "Email Already Taken",
+      "internal_server": "Internal Server Error",
+      "missing_or_invalid_parameters": "Missing or invalid parameters.",
+      "rate_limit": "One request per minute. Try again in {timeLeft} seconds.",
+      "try_again": "An error occurred. Try again.",
+      "unexpected_error": "Unexpected error occurred."
+    },
+    "headers": { "signup": "Sign Up" },
+    "meta_title": { "signup": "Sign Up" },
+    "paragraphs": {
+      "already_have_account": "Already have an account?",
+      "and_acknowledge": "and acknowledge that you have read and understand our",
+      "by_clicking": "By clicking Sign Up, you agree to our",
+      "privacy_policy": "Privacy Policy",
+      "signin": "Sign In",
+      "user_agreement": "User Agreement"
+    },
+    "validations": {
+      "confirm_pw": "Confirm your password.",
+      "match_pw": "Password must match.",
+      "strong_pw": "Password must contain at least one uppercase letter, one lowercase letter, and one digit."
+    }
   }
 }

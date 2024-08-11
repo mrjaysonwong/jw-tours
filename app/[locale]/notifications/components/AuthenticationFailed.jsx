@@ -1,20 +1,15 @@
 import { Typography } from '@mui/material';
 import ErrorIcon from '@mui/icons-material/Error';
 
-export default function AuthenticationFailed() {
+export default function AuthenticationFailed({ t1 }) {
   return (
     <>
       <ErrorIcon color="error" sx={{ fontSize: '4rem' }} />
       <Typography variant="h4" sx={{ m: 2, fontWeight: 500 }}>
-        Authentication Failed
+        {t1('headers.auth_failed')}
       </Typography>
-      <Typography>
-        It looks like you may have clicked on an invalid email verification
-        link.
-      </Typography>
-      <Typography>
-        Please close this window and try authenticating again.
-      </Typography>
+      <Typography>{t1('paragraphs.invalid_verification_link')}</Typography>
+      <Typography>{t1('subheaders.try_auth_again')}</Typography>
     </>
   );
 }

@@ -2,28 +2,35 @@
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { signIn } from 'next-auth/react';
+import { useTranslations } from 'next-intl';
 import { StyledContainer as MainContainer } from '@/app/components/global-styles/globals';
 import PageSpinner from '@/app/components/custom/loaders/PageSpinner';
+import { authenticate } from '../actions';
 
 export default function Verify(props) {
   const { token, email, action, callbackUrl } = props;
+
   const router = useRouter();
 
-  const handleSignIn = async () => {
-    // pass credentials to authSignInEmail function
-    const res = await signIn('email', {
-      redirect: false,
-      token: token,
-      email: email,
-      action: action,
-    });
+  const t1 = useTranslations('common');
 
-    if (res.error) {
-      router.replace('/notifications/authentication-failed');
-    } else {
-      localStorage.setItem('signed-in', 'true');
-      router.replace(callbackUrl ?? '/');
+  const handleSignIn = async () => {
+    try {
+      const res = await authenticate(token, email, action, callbackUrl);
+
+      if (res?.error) {
+        if (res.error.message === t1('errors.internal_server')) {
+          router.replace(
+            `/error?token=${token}&email=${email}&action=${action}`
+          );
+        } else {
+          router.push('/notifications/authentication-failed');
+        }
+      } else {
+        localStorage.setItem('signed-in', 'true');
+      }
+    } catch (error) {
+      router.replace(`/error?token=${token}&email=${email}&action=${action}`);
     }
   };
 
@@ -31,7 +38,7 @@ export default function Verify(props) {
     if (email && token) {
       handleSignIn();
     }
-  }, [email, token]);
+  }, [email, token, router]);
 
   return (
     <MainContainer

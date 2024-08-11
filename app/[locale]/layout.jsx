@@ -13,13 +13,11 @@ import AuthRedirect from './(auth)/AuthRedirect';
 import SessionWrapper from './(auth)/SessionWrapper';
 import { UserSessionWrapper } from '@/context/UserSessionWrapper';
 import { locales } from '@/navigation';
+import { createMetadata } from '@/utils/helper/common';
 
-export const metadata = {
-  title: {
-    template: '%s | JW Tours',
-    default: 'JW Tours',
-  },
-};
+export async function generateMetadata({ params: { locale } }) {
+  return createMetadata(locale, 'layout',);
+}
 
 export default async function RootLayout({ children, params: { locale } }) {
   if (!locales.includes(locale)) {
@@ -43,7 +41,7 @@ export default async function RootLayout({ children, params: { locale } }) {
 
         <body>
           <AppRouterCacheProvider options={{ key: 'css' }}>
-            <NextIntlClientProvider messages={messages}>
+            <NextIntlClientProvider locale={locale} messages={messages}>
               <ToggleThemeMode storedTheme={storedTheme}>
                 <AuthRedirect>
                   <UserSessionWrapper session={session}>

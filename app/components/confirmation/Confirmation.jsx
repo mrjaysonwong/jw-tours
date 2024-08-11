@@ -4,13 +4,11 @@ import { StyledCard } from '@/app/components/global-styles/globals';
 import { Box, Button, Typography, CircularProgress } from '@mui/material';
 import ReCAPTCHA from 'react-google-recaptcha';
 import axios from 'axios';
-
 import { useMessageStore } from '@/stores/messageStore';
 import { errorHandler } from '@/utils/helper/errorHandler';
+import { useTranslations } from 'next-intl';
 
-
-export default function Confirmation({ email, action }) {
-  const isSignin = action === 'signin';
+export default function Confirmation({ message, email, action }) {
   const isSignup = action === 'signup';
 
   const router = useRouter();
@@ -23,6 +21,8 @@ export default function Confirmation({ email, action }) {
   const [isCountdown, setIsCountdown] = useState(false);
 
   const { handleAlertMessage } = useMessageStore();
+
+  const t = useTranslations('confirmation_page');
 
   const onChange = () => {
     setCaptcha(false);
@@ -90,15 +90,14 @@ export default function Confirmation({ email, action }) {
           textAlign: 'center',
         }}
       >
-        <Typography variant="h5">Check your email</Typography>
-        <Typography>
-          We have sent a {isSignin ? 'signin' : 'verification'} link to
-        </Typography>
-        <Typography color="primary.dark">{email}</Typography>
+        <Typography variant="h5">{t('headers.check_your_email')}</Typography>
+        <Typography>{message}</Typography>
 
         {isSignup && (
           <>
-            <Typography sx={{ my: 2 }}>Did not receive the email?</Typography>
+            <Typography sx={{ my: 2 }}>
+              {t('paragraphs.did_not_receive_email')}
+            </Typography>
 
             {captcha && (
               <Box sx={{ mb: 2 }}>
@@ -119,11 +118,11 @@ export default function Confirmation({ email, action }) {
               autoFocus
             >
               {isCountdown && timeLeft > 0 ? (
-                `Resend in ${timeLeft}s`
+                <span>{t('button_labels.resend_timeleft', { timeLeft })}</span>
               ) : isSubmitting ? (
                 <CircularProgress size="1.5rem" />
               ) : (
-                'Resend'
+                <span>{t('button_labels.resend')}</span>
               )}
             </Button>
           </>

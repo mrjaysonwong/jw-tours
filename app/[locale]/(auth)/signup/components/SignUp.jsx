@@ -27,13 +27,15 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { AlertMessage } from '@/app/components/custom/texts';
 import { useMessageStore } from '@/stores/messageStore';
 import Confirmation from '@/app/components/confirmation/Confirmation';
+import { signUpTranslations } from '@/lib/validation/validationTranslations';
 
 export default function SignUp() {
   const [showPassword, setShowPassword] = useState(false);
 
   let emailRef = useRef('');
 
-  const t = useTranslations('SignInPage');
+  const t = useTranslations('signup_page');
+  const t1 = useTranslations('common');
 
   const { alert, handleAlertMessage, handleClose } = useMessageStore();
 
@@ -41,12 +43,15 @@ export default function SignUp() {
     setShowPassword((show) => !show);
   };
 
+  const translations = signUpTranslations(t, t1);
+  const schema = signUpSchema(translations);
+
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting, isSubmitSuccessful },
   } = useForm({
-    resolver: yupResolver(signUpSchema),
+    resolver: yupResolver(schema),
   });
 
   const onSubmit = async (formData, event) => {
@@ -87,7 +92,7 @@ export default function SignUp() {
             }}
           >
             <Typography variant="h5" sx={{ mb: 2 }}>
-              {t('header')}
+              {t('headers.signup')}
             </Typography>
             <form>
               <Grid container spacing={2}>
@@ -96,7 +101,7 @@ export default function SignUp() {
                     {...register('firstName')}
                     fullWidth
                     size="small"
-                    label="First Name"
+                    label={t1('labels.fname')}
                     name="firstName"
                     error={!!errors.firstName}
                   />
@@ -107,7 +112,7 @@ export default function SignUp() {
                     {...register('lastName')}
                     fullWidth
                     size="small"
-                    label="Last Name"
+                    label={t1('labels.lname')}
                     name="lastName"
                     error={!!errors.lastName}
                   />
@@ -119,7 +124,7 @@ export default function SignUp() {
                     {...register('email')}
                     fullWidth
                     size="small"
-                    label="Email"
+                    label={t1('labels.email')}
                     name="email"
                     error={!!errors.email}
                     autoComplete="email"
@@ -132,7 +137,7 @@ export default function SignUp() {
                     {...register('password')}
                     fullWidth
                     size="small"
-                    label="Password"
+                    label={t1('labels.password')}
                     name="password"
                     error={!!errors.password}
                     type={showPassword ? 'text' : 'password'}
@@ -154,7 +159,7 @@ export default function SignUp() {
                     {...register('confirmPassword')}
                     fullWidth
                     size="small"
-                    label="Confirm Password"
+                    label={t1('labels.confirm_pw')}
                     name="confirmPassword"
                     error={!!errors.confirmPassword}
                     type={showPassword ? 'text' : 'password'}
@@ -173,16 +178,22 @@ export default function SignUp() {
 
                 <Grid item xs={12}>
                   <Typography variant="body2">
-                    By clicking Sign Up, you agree to our{' '}
-                    <a href="/legal/user-agreement">User Agreement</a> and
-                    acknowledge that you have read and understand our{' '}
-                    <a href="/legal/privacy-policy">Privacy Policy</a>.
+                    {t('paragraphs.by_clicking')}
+                    <br />
+                    <a href="/legal/user-agreement">
+                      {t('paragraphs.user_agreement')}
+                    </a>{' '}
+                    {t('paragraphs.and_acknowledge')}{' '}
+                    <a href="/legal/privacy-policy">
+                      {t('paragraphs.privacy_policy')}
+                    </a>
+                    .
                   </Typography>
                 </Grid>
 
                 <Grid item xs={12}>
                   <FormSubmitButton
-                    label="Sign Up"
+                    label={t('button_labels.signup')}
                     action="auth"
                     handleSubmit={handleSubmit(onSubmit)}
                     isSubmitting={isSubmitting}
@@ -203,10 +214,10 @@ export default function SignUp() {
               },
             }}
           >
-            <Typography>Already have an account?</Typography>
+            <Typography>{t('paragraphs.already_have_account')}</Typography>
             <Link href="/signin">
               <Typography sx={{ ml: 1, color: 'var(--text-link-color-blue)' }}>
-                Sign In
+                {t('paragraphs.signin')}
               </Typography>
             </Link>
           </Box>

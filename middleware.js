@@ -9,5 +9,6 @@ export default createMiddleware({
 
 // only applies this middleware to files in the app directory
 export const config = {
+  // matcher: ['/((?!api|_next|_vercel|.*\\..*).*)'],
   matcher: ['/((?!api|_next|.*\\..*).*)'],
 };

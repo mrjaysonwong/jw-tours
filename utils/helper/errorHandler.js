@@ -1,10 +1,10 @@
 /* with axios client-side */
-export const errorHandler = (error) => {
+export const errorHandler = (error, t1) => {
   if (error && error.response) {
     const { status, statusText, data } = error.response;
 
     /* Server-side api statusText  */
-    const errorMessage = data?.statusText ?? 'An error occured. Try again.';
+    const errorMessage = data?.statusText ?? t1('errors.try_again');
 
     return {
       status,
@@ -17,15 +17,15 @@ export const errorHandler = (error) => {
 
     return {
       status: 500,
-      statusText: 'Internal Server Error',
-      errorMessage: 'An unexpected error occurred.',
+      statusText: t1('errors.internal_server'),
+      errorMessage: t1('errors.try_again'),
     };
   }
 };
 
-export function getLocalMessage(errorMessage) {
+export function getLocalMessage(errorMessage, t1) {
   if (process.env.NODE_ENV === 'production') {
-    return 'An error occured. Try again.';
+    return t1('errors.try_again');
   } else {
     return errorMessage;
   }
@@ -43,13 +43,13 @@ export function getValidationError(error) {
   }
 }
 
-export function handleRateLimitError(error) {
+export function handleRateLimitError(error, t1) {
   const rateLimited = error?.remainingPoints === 0;
   const timeLeft = Math.floor(error?.msBeforeNext / 1000);
 
   if (rateLimited) {
     throw new HttpError({
-      message: `One request per minute. Try again in ${timeLeft} seconds.`,
+      message: t1('errors.rate_limit', { timeLeft }),
       status: 429,
     });
   }

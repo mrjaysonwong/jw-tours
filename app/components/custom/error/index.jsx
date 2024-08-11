@@ -1,10 +1,11 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { useSearchParams, usePathname } from 'next/navigation';
+import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import { StyledContainer as MainContainer } from '@/app/components/global-styles/globals';
 import { Box, Typography, Button, Tooltip } from '@mui/material';
 import ErrorIcon from '@mui/icons-material/Error';
 
+// Use-case for session only
 export function ErrorTooltip() {
   return (
     <Tooltip title="Error while fetching data." arrow>
@@ -16,6 +17,11 @@ export function ErrorTooltip() {
 export default function CustomError({ error, reset }) {
   const searchParams = useSearchParams();
   const isErrorPage = searchParams.get('error');
+  const token = searchParams.get('token');
+  const email = searchParams.get('email');
+  const action = searchParams.get('action');
+
+  const router = useRouter();
 
   const pathname = usePathname();
   const isMySettings = pathname.startsWith('/mysettings');
@@ -69,8 +75,12 @@ export default function CustomError({ error, reset }) {
             <Button
               variant="text"
               onClick={
-                // Attempt to recover by trying to re-render the segment
-                () => reset()
+                token
+                  ? () =>
+                      router.replace(
+                        `/verify?token=${token}&email=${email}&action=${action}`
+                      )
+                  : () => reset() // Attempt to recover by trying to re-render the segment
               }
             >
               Try again
