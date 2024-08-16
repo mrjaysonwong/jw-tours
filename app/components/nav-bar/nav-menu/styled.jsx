@@ -34,7 +34,7 @@ export const StyledNavMenuLinks = styled(Box)(({ theme }) => ({
     opacity: 0,
     visibility: 'hidden',
     position: 'absolute',
-    maxWidth: '370px',
+    maxWidth: '450px',
     transition: 'max-height 1s ease, opacity 0.1s ease, visibility 0.3s ease',
     maxHeight: 0,
     overflow: 'hidden',

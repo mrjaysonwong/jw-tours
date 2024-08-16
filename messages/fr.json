@@ -4,6 +4,53 @@
       "jw_tours": "JW Tours"
     }
   },
+  "main_nav_links": {
+    "labels": {
+      "about_us": "À propos de nous",
+      "adventure": "Aventure",
+      "beach_time": "L'heure de la plage",
+      "bicol": "Bicol",
+      "bohol": "Bohol",
+      "boracay": "Boracay",
+      "camiguin": "Camiguin",
+      "cebu": "Cébu",
+      "culture": "Culture",
+      "davao": "Davao",
+      "destinations": "Destinations",
+      "get_inspired": "Laissez-vous inspirer",
+      "hiking_tours": "Randonnées pédestres",
+      "historical_tours": "Visites historiques",
+      "home": "Accueil",
+      "ilocos_region": "Région d'Ilocos",
+      "island_cruises": "Croisières dans les îles",
+      "northern_luzon": "Nord de Luçon",
+      "our_reviews": "Nos avis",
+      "our_story": "Notre histoire",
+      "our_team": "Notre équipe",
+      "palawan": "Palawan",
+      "private_tours": "Visites privées",
+      "puerto_galera": "Port Galera",
+      "siargao": "Siargao",
+      "tours_on_sale": "Circuits en vente",
+      "trip_types": "Types de voyages",
+      "visayas": "Visayas"
+    }
+  },
+  "not_found_page": {
+    "headers": { "there_was_problem": "Il y a eu un problème." },
+    "paragraphs": {
+      "page": "page",
+      "props_type": "Nous n'avons pas pu trouver le {propsType} que vous recherchiez.",
+      "resource": "ressource"
+    }
+  },
+  "custom_error_page": {
+    "button_labels": { "try_again": "Essayer à nouveau" },
+    "paragraphs": {
+      "error_while_fetching": "Erreur lors de la récupération des données.",
+      "something_went_wrong": "Une erreur s'est produite !"
+    }
+  },
   "common": {
     "button_labels": { "goback": "Retourner", "send": "Envoyer" },
     "errors": {

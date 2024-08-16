@@ -4,8 +4,58 @@
       "jw_tours": "JW Tours"
     }
   },
+  "main_nav_links": {
+    "labels": {
+      "about_us": "About Us",
+      "adventure": "Adventure",
+      "beach_time": "Beach Time",
+      "bicol": "Bicol",
+      "bohol": "Bohol",
+      "boracay": "Boracay",
+      "camiguin": "Camiguin",
+      "cebu": "Cebu",
+      "culture": "Culture",
+      "davao": "Davao",
+      "destinations": "Destinations",
+      "get_inspired": "Get Inspired",
+      "hiking_tours": "Hiking Tours",
+      "historical_tours": "Historical Tours",
+      "home": "Home",
+      "ilocos_region": "Ilocos Region",
+      "island_cruises": "Island Cruises",
+      "northern_luzon": "Northern Luzon",
+      "our_reviews": "Our Reviews",
+      "our_story": "Our Story",
+      "our_team": "Our Team",
+      "palawan": "Palawan",
+      "private_tours": "Private Tours",
+      "puerto_galera": "Puerto Galera",
+      "siargao": "Siargao",
+      "tours_on_sale": "Tours On Sale",
+      "trip_types": "Trip Types",
+      "visayas": "Visayas"
+    }
+  },
+  "not_found_page": {
+    "headers": { "there_was_problem": "There was a problem." },
+    "paragraphs": {
+      "page": "page",
+      "props_type": "We could not find the {propsType} you were looking for.",
+      "resource": "resource"
+    }
+  },
+  "custom_error_page": {
+    "button_labels": { "try_again": "Try again" },
+    "paragraphs": {
+      "error_while_fetching": "Error while fetching data.",
+      "something_went_wrong": "Something went wrong!"
+    }
+  },
   "common": {
-    "button_labels": { "goback": "Go Back", "send": "Send" },
+    "button_labels": {
+      "goback": "Go Back",
+      "send": "Send"
+    },
     "errors": {
       "email_taken": "Email Already Taken",
       "internal_server": "Internal Server Error",

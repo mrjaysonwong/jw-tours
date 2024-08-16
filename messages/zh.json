@@ -4,6 +4,53 @@
       "jw_tours": "JW 旅程"
     }
   },
+  "main_nav_links": {
+    "labels": {
+      "about_us": "关于我们",
+      "adventure": "冒险",
+      "beach_time": "海滩时光",
+      "bicol": "比科尔",
+      "bohol": "薄荷岛",
+      "boracay": "长滩岛",
+      "camiguin": "甘米银",
+      "cebu": "宿务",
+      "culture": "文化",
+      "davao": "达沃",
+      "destinations": "目的地",
+      "get_inspired": "获得灵感",
+      "hiking_tours": "徒步旅行",
+      "historical_tours": "历史之旅",
+      "home": "家",
+      "ilocos_region": "伊罗戈斯地区",
+      "island_cruises": "岛屿巡游",
+      "northern_luzon": "吕宋岛北部",
+      "our_reviews": "我们的评论",
+      "our_story": "我们的故事",
+      "our_team": "我们的团队",
+      "palawan": "巴拉望",
+      "private_tours": "私人行程",
+      "puerto_galera": "波多格尼拉",
+      "siargao": "锡亚高岛",
+      "tours_on_sale": "特价旅游",
+      "trip_types": "行程类型",
+      "visayas": "维萨亚斯"
+    }
+  },
+  "not_found_page": {
+    "headers": { "there_was_problem": "出现了问题。" },
+    "paragraphs": {
+      "page": "页",
+      "props_type": "我们找不到您正在寻找的{propsType}。",
+      "resource": "资源"
+    }
+  },
+  "custom_error_page": {
+    "button_labels": { "try_again": "再试一次" },
+    "paragraphs": {
+      "error_while_fetching": "获取数据时出错。",
+      "something_went_wrong": "出问题了！"
+    }
+  },
   "common": {
     "button_labels": { "goback": "回去", "send": "发送" },
     "errors": {

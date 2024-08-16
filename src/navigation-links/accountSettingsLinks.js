@@ -18,7 +18,7 @@ export const accountSettingsLinks = [
     slug: 'preferences',
     tabName: 'Preferences',
     icon: <TuneOutlinedIcon />,
-    text: 'Change your language, currency, and accessibility requirements.',
+    text: 'Change your language, and accessibility requirements.',
   },
   {
     path: '/mysettings/security',

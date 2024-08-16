@@ -10,10 +10,6 @@ import { getLocalMessage } from '@/utils/helper/errorHandler';
 
 export async function GET(Request) {
   try {
-    const searchParams = Request.nextUrl.searchParams;
-    const userId = searchParams.get('userId');
-    const isMySettings = searchParams.get('settings');
-
     const session = await auth();
 
     if (!session) {
@@ -25,6 +21,10 @@ export async function GET(Request) {
         { status: 401 }
       );
     }
+
+    const searchParams = Request.nextUrl.searchParams;
+    const userId = searchParams.get('userId');
+    const isMySettings = searchParams.get('settings');
 
     if (session.user.id !== userId) {
       return Response.json(
@@ -126,7 +126,7 @@ export async function PATCH(Request) {
 
     const errorMessage = error.status
       ? error.message.split(',')
-      : 'Internal Server Error. Try again.';
+      : 'Internal Server Error';
 
     return Response.json(
       {

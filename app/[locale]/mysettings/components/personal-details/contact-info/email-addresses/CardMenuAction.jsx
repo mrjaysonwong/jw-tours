@@ -12,7 +12,7 @@ import {
   CircularProgress,
 } from '@mui/material';
 import axios from 'axios';
-import { PersonalSettingsContext } from '../../PersonalDetails';
+import { PersonalSettingsContext } from '../../../tabs/MySettingsTabs';
 import { useMessageStore } from '@/stores/messageStore';
 import { errorHandler } from '@/utils/helper/errorHandler';
 
@@ -24,7 +24,7 @@ export default function CardMenuAction(props) {
   const { open, setOpen, targetEmail, menuAction, setMenuAction } = props;
   const isActionDelete = menuAction === 'delete';
 
-  const { user, refetch } = useContext(PersonalSettingsContext);
+  const { refetch } = useContext(PersonalSettingsContext);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -67,7 +67,7 @@ export default function CardMenuAction(props) {
       <Dialog
         open={open}
         TransitionComponent={Transition}
-        keepMounted
+     
         onKeyUp={(e) => {
           const ENTER = 'Enter';
 

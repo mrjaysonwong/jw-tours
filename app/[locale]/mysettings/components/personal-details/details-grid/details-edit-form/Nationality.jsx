@@ -1,11 +1,11 @@
 import React, { useContext } from 'react';
 import { Grid, TextField, Autocomplete } from '@mui/material';
 import { Controller } from 'react-hook-form';
-import { DetailsEditFormContext } from './DetailsEditForm';
+import { EditFormDetailsContext } from './EditFormDialog';
 import { nationalities } from '@/src/countries/nationalities';
 
 export default function Nationality() {
-  const { user, control } = useContext(DetailsEditFormContext);
+  const { user, control } = useContext(EditFormDetailsContext);
 
   return (
     <>

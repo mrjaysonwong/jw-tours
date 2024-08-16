@@ -25,7 +25,6 @@ import AddToCart from './AddToCart';
 import Notifications from './Notifications';
 import { ErrorTooltip } from '../custom/error';
 
-
 export const UserDataContext = createContext(null);
 
 function HideOnScroll({ children }) {
@@ -73,7 +72,6 @@ export default function NavBar() {
             sx={{
               display: 'flex',
               alignItems: 'center',
-           
             }}
           >
             <Logo />

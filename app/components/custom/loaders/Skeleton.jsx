@@ -1,4 +1,5 @@
-import { Skeleton, Grid } from '@mui/material';
+import { Skeleton, Grid, Box } from '@mui/material';
+import { usePathname } from 'next/navigation';
 
 function SkeletonGrid() {
   return (
@@ -21,9 +22,12 @@ function SkeletonGrid() {
 }
 
 export function LoadingSkeletonGrid() {
+  const pathname = usePathname();
+  const isPersonalTab = pathname.includes('personal');
+
   return (
     <>
-      <Grid container sx={{ mt: '4.5rem' }}>
+      <Grid container sx={{ mt: isPersonalTab ? '6rem' : '4rem' }}>
         {Array.from({ length: 3 }).map((_, index) => (
           <SkeletonGrid key={index} />
         ))}

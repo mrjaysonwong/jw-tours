@@ -1,3 +1,4 @@
+import { useTranslations } from 'next-intl';
 import React, { useState } from 'react';
 import { usePathname, useParams } from 'next/navigation';
 import Link from 'next/link';
@@ -9,6 +10,9 @@ import { authPage, hideNavLinks } from '@/utils/helper/common';
 import { StyledNavMenuLinks } from './styled';
 
 export default function NavMenu() {
+  const t = useTranslations('main_nav_links');
+  const linksTransLations = menuLinks(t);
+
   const [hoveredDropdown, setHoveredDropdown] = useState(null);
   const [openDropdown, setOpenDropdown] = useState(null);
 
@@ -46,7 +50,7 @@ export default function NavMenu() {
   const renderLinks = () => {
     return (
       <StyledNavMenuLinks>
-        {menuLinks.map((item) => {
+        {linksTransLations.map((item) => {
           if (item.dropdown) {
             return (
               <Box

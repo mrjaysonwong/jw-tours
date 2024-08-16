@@ -12,7 +12,7 @@ import {
   Slide,
   CircularProgress,
 } from '@mui/material';
-import { PersonalSettingsContext } from '../../PersonalDetails';
+import { PersonalSettingsContext } from '../../../tabs/MySettingsTabs';
 import axios from 'axios';
 import { useMessageStore } from '@/stores/messageStore';
 import { errorHandler } from '@/utils/helper/errorHandler';
@@ -21,7 +21,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-export default function VerifyMobilelOTP(props) {
+export default function VerifyMobilelOTPDialog(props) {
   const { open, setOpenOTP, completePhone } = props;
 
   const { dialCode, phoneNumber } = completePhone.phone;

@@ -4,6 +4,53 @@
       "jw_tours": "JWツアー"
     }
   },
+  "main_nav_links": {
+    "labels": {
+      "about_us": "私たちについて",
+      "adventure": "アドベンチャー",
+      "beach_time": "ビーチタイム",
+      "bicol": "ビコール",
+      "bohol": "ボホール",
+      "boracay": "ボラカイ",
+      "camiguin": "カミギン",
+      "cebu": "セブ",
+      "culture": "文化",
+      "davao": "ダバオ",
+      "destinations": "目的地",
+      "get_inspired": "インスピレーションを得る",
+      "hiking_tours": "ハイキングツアー",
+      "historical_tours": "歴史ツアー",
+      "home": "家",
+      "ilocos_region": "イロコス地方",
+      "island_cruises": "アイランドクルーズ",
+      "northern_luzon": "ルソン島北部",
+      "our_reviews": "私たちのレビュー",
+      "our_story": "私たちのストーリー",
+      "our_team": "私たちのチーム",
+      "palawan": "パラワン",
+      "private_tours": "プライベートツアー",
+      "puerto_galera": "プエルトガレラ",
+      "siargao": "シアルガオ",
+      "tours_on_sale": "ツアーセール",
+      "trip_types": "旅行の種類",
+      "visayas": "ビサヤ諸島"
+    }
+  },
+  "not_found_page": {
+    "headers": { "there_was_problem": "問題がありました。" },
+    "paragraphs": {
+      "page": "ページ",
+      "props_type": "探していた {propsType} が見つかりませんでした。",
+      "resource": "リソース"
+    }
+  },
+  "custom_error_page": {
+    "button_labels": { "try_again": "もう一度やり直してください" },
+    "paragraphs": {
+      "error_while_fetching": "データの取得中にエラーが発生しました。",
+      "something_went_wrong": "問題が発生しました。"
+    }
+  },
   "common": {
     "button_labels": { "goback": "戻る", "send": "送信" },
     "errors": {

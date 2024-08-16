@@ -21,7 +21,7 @@ import { errorHandler } from '@/utils/helper/errorHandler';
 import FormSubmitButton from '@/app/components/custom/buttons/FormSubmitButton';
 import { phoneNumbers } from '@/src/countries/phoneNumbers';
 
-export default function AddMobileForm(props) {
+export default function AddMobileDialog(props) {
   const { open, setOpen, setOpenOTP, setCompletePhone } = props;
 
   const { handleAlertMessage } = useMessageStore();

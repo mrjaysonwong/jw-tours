@@ -1,10 +1,10 @@
 import React, { useContext } from 'react';
 import { Grid, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 import { Controller } from 'react-hook-form';
-import { DetailsEditFormContext } from './DetailsEditForm';
+import { EditFormDetailsContext } from './EditFormDialog';
 
 export default function Gender() {
-  const { user, control } = useContext(DetailsEditFormContext);
+  const { user, control } = useContext(EditFormDetailsContext);
 
   return (
     <>

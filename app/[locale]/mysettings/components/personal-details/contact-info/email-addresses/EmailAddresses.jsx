@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react';
 import { Typography, Box, Card, Tooltip, Button } from '@mui/material';
-import { PersonalSettingsContext } from '../../PersonalDetails';
+import { PersonalSettingsContext } from '../../../tabs/MySettingsTabs';
 import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium';
 import CardMenu from './CardMenu';
 import { LoadingSkeletonEmailCard } from '@/app/components/custom/loaders/Skeleton';

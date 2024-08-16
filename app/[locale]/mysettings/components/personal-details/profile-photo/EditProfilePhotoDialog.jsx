@@ -16,7 +16,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import { CropperContainer, SliderContainer } from './styled';
 import { getCroppedImg } from '@/app/[locale]/mysettings/components/personal-details/profile-photo/(image-handler)/getCroppedImg';
 import axios from 'axios';
-import { PersonalSettingsContext } from '../PersonalDetails';
+import { PersonalSettingsContext } from '../../tabs/MySettingsTabs';
 import { errorHandler } from '@/utils/helper/errorHandler';
 import { emptyFileInput } from '@/app/[locale]/mysettings/components/personal-details/profile-photo/(image-handler)/emptyFileInput';
 

@@ -11,7 +11,7 @@ import {
   CircularProgress,
 } from '@mui/material';
 import axios from 'axios';
-import { PersonalSettingsContext } from '../PersonalDetails';
+import { PersonalSettingsContext } from '../../tabs/MySettingsTabs';
 import { errorHandler } from '@/utils/helper/errorHandler';
 
 export default function DeleteProfilePhotoDialog({ open, setOpenDelete }) {

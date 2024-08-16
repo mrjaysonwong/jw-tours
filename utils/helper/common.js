@@ -32,7 +32,11 @@ export function authPage(pathname) {
 export function hideNavLinks(pathname, params) {
   const selectedPages = ['/mysettings', `/mysettings/${params.slug}`];
 
-  const hideOnSelectedPage = selectedPages.includes(pathname);
+  const hasLocale = locales.some((locale) =>
+    pathname.startsWith(`/${locale}/`)
+  );
+
+  const hideOnSelectedPage = hasLocale || selectedPages.includes(pathname);
 
   return hideOnSelectedPage;
 }

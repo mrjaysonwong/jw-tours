@@ -4,12 +4,12 @@ import EmailAddresses from './email-addresses/EmailAddresses';
 import MobileNumbers from './mobile-numbers/MobileNumbers';
 import { useMessageStore } from '@/stores/messageStore';
 import { AlertMessage } from '@/app/components/custom/texts';
-import AddEmailForm from './email-addresses/AddEmailForm';
-import VerifyEmailOTP from './email-addresses/VerifyEmailOTP';
+import AddEmailDialog from './email-addresses/AddEmailDialog';
+import VerifyEmailOTPDialog from './email-addresses/VerifyEmailOTPDialog';
 import EmailIcon from '@mui/icons-material/Email';
 import PhoneIcon from '@mui/icons-material/Phone';
-import AddMobileForm from './mobile-numbers/AddMobileForm';
-import VerifyMobileOTP from './mobile-numbers/VerifyMobileOTP';
+import AddMobileDialog from './mobile-numbers/AddMobileDialog';
+import VerifyMobileOTPDialog from './mobile-numbers/VerifyMobileOTPDialog';
 
 export default function ContactInfo() {
   const [openAddEmail, setOpenAddEmail] = useState(false);
@@ -58,13 +58,13 @@ export default function ContactInfo() {
           <EmailAddresses />
 
           {openEmailOTP ? (
-            <VerifyEmailOTP
+            <VerifyEmailOTPDialog
               open={openEmailOTP}
               setOpenOTP={setOpenEmailOTP}
               email={email}
             />
           ) : (
-            <AddEmailForm
+            <AddEmailDialog
               open={openAddEmail}
               setOpen={setOpenAddEmail}
               setOpenOTP={setOpenEmailOTP}
@@ -95,13 +95,13 @@ export default function ContactInfo() {
           <MobileNumbers />
 
           {openMobileOTP ? (
-            <VerifyMobileOTP
+            <VerifyMobileOTPDialog
               open={openMobileOTP}
               setOpenOTP={setOpenMobileOTP}
               completePhone={completePhone}
             />
           ) : (
-            <AddMobileForm
+            <AddMobileDialog
               open={openAddMobile}
               setOpen={setOpenAddMobile}
               setOpenOTP={setOpenMobileOTP}

@@ -75,7 +75,7 @@ const userSchema = new Schema(
     },
     languageCountry: {
       type: String,
-      default: 'English (US)',
+      default: 'en',
     },
     nationality: {
       type: String,

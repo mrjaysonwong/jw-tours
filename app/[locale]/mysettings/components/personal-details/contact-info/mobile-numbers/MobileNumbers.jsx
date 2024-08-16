@@ -6,7 +6,7 @@ import {
   Tooltip,
   Button,
 } from '@mui/material';
-import { PersonalSettingsContext } from '../../PersonalDetails';
+import { PersonalSettingsContext } from '../../../tabs/MySettingsTabs';
 import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium';
 import { LoadingSkeletonEmailCard } from '@/app/components/custom/loaders/Skeleton';
 import CustomError from '@/app/components/custom/error';

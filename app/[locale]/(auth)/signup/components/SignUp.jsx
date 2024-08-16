@@ -210,13 +210,14 @@ export default function SignUp() {
               my: 2,
               display: 'flex',
               a: {
+                ml: 1,
                 pointerEvents: isSubmitting ? 'none' : 'auto',
               },
             }}
           >
             <Typography>{t('paragraphs.already_have_account')}</Typography>
             <Link href="/signin">
-              <Typography sx={{ ml: 1, color: 'var(--text-link-color-blue)' }}>
+              <Typography sx={{ color: 'var(--text-link-color-blue)' }}>
                 {t('paragraphs.signin')}
               </Typography>
             </Link>

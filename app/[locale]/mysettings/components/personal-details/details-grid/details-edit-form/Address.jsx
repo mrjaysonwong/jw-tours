@@ -7,14 +7,14 @@ import {
   Typography,
 } from '@mui/material';
 import { Controller } from 'react-hook-form';
-import { DetailsEditFormContext } from './DetailsEditForm';
+import { EditFormDetailsContext } from './EditFormDialog';
 import { useDebounce } from 'use-debounce';
 import axios from 'axios';
 import { ErrorText } from '@/utils/helper/form-text/ErrorText';
 
 
 export default function Address() {
-  const { user, register, control } = useContext(DetailsEditFormContext);
+  const { user, register, control } = useContext(EditFormDetailsContext);
   const address = user?.address;
 
   const street = address?.street;

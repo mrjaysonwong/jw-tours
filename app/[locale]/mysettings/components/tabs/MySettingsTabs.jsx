@@ -1,14 +1,18 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, createContext, useContext } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Box, Tabs, Tab, Button } from '@mui/material';
 import { accountSettingsLinks } from '@/src/navigation-links/accountSettingsLinks';
 import PersonalDetails from '../personal-details/PersonalDetails';
+import { UserSessionContext } from '@/context/UserSessionWrapper';
+import { useUserData } from '@/utils/hooks/useUserData';
 import Preferences from '../preferences/Preferences';
 import Security from '../security/Security';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+
+export const PersonalSettingsContext = createContext(null);
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -34,6 +38,26 @@ export default function MySettingsTabs({ slug }) {
   const currentIndex = accountSettingsLinks.findIndex(
     (item) => item.slug === slug
   );
+
+  const session = useContext(UserSessionContext);
+  const userId = session?.user?.id;
+
+  const {
+    data: user,
+    isLoading,
+    refetch,
+    isError,
+    error,
+  } = useUserData(userId);
+
+  const values = {
+    user,
+    isLoading,
+    userId,
+    refetch,
+    isError,
+    error,
+  };
 
   const [value, setValue] = useState(currentIndex);
 
@@ -98,13 +122,15 @@ export default function MySettingsTabs({ slug }) {
           ))}
         </Tabs>
 
-        {accountSettingsLinks.map((item, index) => (
-          <TabPanel key={item.tabName} value={value} index={index}>
-            {index === 0 && <PersonalDetails />}
-            {index === 1 && <Preferences />}
-            {index === 2 && <Security />}
-          </TabPanel>
-        ))}
+        <PersonalSettingsContext.Provider value={values}>
+          {accountSettingsLinks.map((item, index) => (
+            <TabPanel key={item.tabName} value={value} index={index}>
+              {index === 0 && <PersonalDetails />}
+              {index === 1 && <Preferences />}
+              {index === 2 && <Security />}
+            </TabPanel>
+          ))}
+        </PersonalSettingsContext.Provider>
       </Box>
     </>
   );

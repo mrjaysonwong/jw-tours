@@ -2,7 +2,7 @@ import React, { useContext, useState } from 'react';
 import { Box, IconButton, Avatar, Tooltip } from '@mui/material';
 import CameraAltOutlinedIcon from '@mui/icons-material/CameraAltOutlined';
 import ProfilePhotoDialog from './ProfilePhotoDialog';
-import { PersonalSettingsContext } from '../PersonalDetails';
+import { PersonalSettingsContext } from '../../tabs/MySettingsTabs';
 import { LoadingSkeletonAvatar } from '@/app/components/custom/loaders/Skeleton';
 import { ErrorTooltip } from '@/app/components/custom/error';
 

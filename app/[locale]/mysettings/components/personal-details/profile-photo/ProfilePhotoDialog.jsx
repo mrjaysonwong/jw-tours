@@ -14,7 +14,7 @@ import {
 import CloseIcon from '@mui/icons-material/Close';
 import CameraEnhanceIcon from '@mui/icons-material/CameraEnhance';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { PersonalSettingsContext } from '../PersonalDetails';
+import { PersonalSettingsContext } from '../../tabs/MySettingsTabs';
 import AddPhotoDialog from './AddPhotoDialog';
 import EditProfilePhotoDialog from './EditProfilePhotoDialog';
 import { useMessageStore } from '@/stores/messageStore';

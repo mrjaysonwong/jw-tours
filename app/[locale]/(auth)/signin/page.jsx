@@ -25,43 +25,55 @@ export default async function SignInPage() {
   const t = await getTranslations('signin_page');
 
   return (
-    <>
-      <MainContainer
+    <MainContainer
+      sx={{
+        mt: { xs: 0, md: 5 },
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
+      <StyledCard sx={{ width: 'clamp(280px, 50%, 280px)' }}>
+        <Typography variant="h5" sx={{ mb: 2 }}>
+          {t('headers.signin')}
+        </Typography>
+
+        <CredentialsForm />
+
+        <Divider sx={{ my: 2 }}>
+          <Chip label={t('labels.or')} />
+        </Divider>
+
+        <Typography sx={{ mb: 2 }}>{t('paragraphs.signin_with')}</Typography>
+
+        <SignInWithContainer>
+          <OAuth />
+        </SignInWithContainer>
+      </StyledCard>
+
+      <Box
         sx={{
-          mt: { xs: 0, md: 5 },
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
+          my: 2,
+          div: {
+            display: 'flex',
+          },
+
+          a: {
+            ml: 1,
+          },
         }}
       >
-        <StyledCard sx={{ width: 'clamp(280px, 50%, 280px)' }}>
-          <Typography variant="h5" sx={{ mb: 2 }}>
-            {t('headers.signin')}
-          </Typography>
-
-          <CredentialsForm />
-
-          <Divider sx={{ my: 2 }}>
-            <Chip label={t('labels.or')} />
-          </Divider>
-
-          <Typography sx={{ mb: 2 }}>{t('paragraphs.signin_with')}</Typography>
-
-          <SignInWithContainer>
-            <OAuth />
-          </SignInWithContainer>
-        </StyledCard>
-
-        <Box sx={{ my: 2, display: 'flex' }}>
+        <div>
           <Typography>{t('paragraphs.dont_have_account')}</Typography>
+
           <Link href="/signup">
-            <Typography sx={{ ml: 1, color: 'var(--text-link-color-blue)' }}>
+            <Typography sx={{ color: 'var(--text-link-color-blue)' }}>
               {t('paragraphs.signup')}
             </Typography>
           </Link>
-        </Box>
-      </MainContainer>
-    </>
+        </div>
+      </Box>
+    </MainContainer>
   );
 }

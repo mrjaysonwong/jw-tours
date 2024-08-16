@@ -17,15 +17,15 @@ import DateOfBirth from './DateOfBirth';
 import Nationality from './Nationality';
 import Address from './Address';
 import { personalDetailsSchema } from '@/lib/validation/yup/personalDetailsSchema';
-import { PersonalSettingsContext } from '../../PersonalDetails';
+import { PersonalSettingsContext } from '../../../tabs/MySettingsTabs';
 import axios from 'axios';
 import { AlertMessage } from '@/app/components/custom/texts';
 import { useMessageStore } from '@/stores/messageStore';
 import FormSubmitButton from '@/app/components/custom/buttons/FormSubmitButton';
 
-export const DetailsEditFormContext = createContext(null);
+export const EditFormDetailsContext = createContext(null);
 
-export default function DetailsEditForm({ open, setOpen }) {
+export default function EditFormDialog({ open, setOpen }) {
   const { user, refetch } = useContext(PersonalSettingsContext);
 
   const { update } = useSession();
@@ -81,13 +81,13 @@ export default function DetailsEditForm({ open, setOpen }) {
         <form>
           <DialogContent sx={{ maxHeight: '60vh' }}>
             <Grid container spacing={3}>
-              <DetailsEditFormContext.Provider value={values}>
+              <EditFormDetailsContext.Provider value={values}>
                 <Name />
                 <Gender />
                 <DateOfBirth />
                 <Nationality />
                 <Address />
-              </DetailsEditFormContext.Provider>
+              </EditFormDetailsContext.Provider>
             </Grid>
           </DialogContent>
           <DialogActions sx={{ m: 2 }}>

@@ -14,7 +14,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { setFileToBase64 } from '@/app/[locale]/mysettings/components/personal-details/profile-photo/(image-handler)/setFileToBase64';
 import { StyledInput as UploadInput } from './styled';
-import { PersonalSettingsContext } from '../PersonalDetails';
+import { PersonalSettingsContext } from '../../tabs/MySettingsTabs';
 import { useMessageStore } from '@/stores/messageStore';
 
 export default function AddPhotoDialog(props) {

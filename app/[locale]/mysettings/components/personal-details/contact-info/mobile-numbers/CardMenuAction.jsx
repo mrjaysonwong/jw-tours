@@ -11,15 +11,13 @@ import {
   CircularProgress,
 } from '@mui/material';
 import axios from 'axios';
-import { PersonalSettingsContext } from '../../PersonalDetails';
+import { PersonalSettingsContext } from '../../../tabs/MySettingsTabs';
 import { useMessageStore } from '@/stores/messageStore';
 import { errorHandler } from '@/utils/helper/errorHandler';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
-
-
 
 export default function CardMenuAction(props) {
   const { open, setOpen, targetNumber, menuAction, setMenuAction } = props;
@@ -63,7 +61,6 @@ export default function CardMenuAction(props) {
       <Dialog
         open={open}
         TransitionComponent={Transition}
-        keepMounted
         onKeyUp={(e) => {
           const ENTER = 'Enter';
 

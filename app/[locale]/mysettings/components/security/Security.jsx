@@ -1,7 +1,11 @@
+
+// UI / UX / Api for change password
+// reset password abstractions?
+
 export default function Security() {
   return (
     <>
-      <h3>Security Page</h3>
+      <h5>Security Page</h5>
     </>
   );
 }

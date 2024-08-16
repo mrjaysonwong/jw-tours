@@ -17,7 +17,7 @@ import { useMessageStore } from '@/stores/messageStore';
 import { errorHandler } from '@/utils/helper/errorHandler';
 import FormSubmitButton from '@/app/components/custom/buttons/FormSubmitButton';
 
-export default function AddEmailForm(props) {
+export default function AddEmailDialog(props) {
   const { open, setOpen, setOpenOTP, setEmail } = props;
 
   const { handleAlertMessage } = useMessageStore();

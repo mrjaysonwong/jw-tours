@@ -1,3 +1,4 @@
+import { useTranslations } from 'next-intl';
 import React, { useState } from 'react';
 import { usePathname, useRouter, useParams } from 'next/navigation';
 import {
@@ -23,6 +24,9 @@ import Logo from '../Logo';
 const drawerWidth = '100%';
 
 export default function NavMenuMobile() {
+  const t = useTranslations('main_nav_links');
+  const linksTransLations = menuLinks(t);
+
   const router = useRouter();
 
   const { state, toggleNavDrawer } = useNavDrawerStore();
@@ -71,7 +75,7 @@ export default function NavMenuMobile() {
         </Box>
 
         <List sx={{ mt: 2 }}>
-          {menuLinks.map((item) => (
+          {linksTransLations.map((item) => (
             <StyledListItem key={item.label} disablePadding>
               <ListItemButton
                 label={item.label}

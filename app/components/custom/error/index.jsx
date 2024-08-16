@@ -4,11 +4,14 @@ import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import { StyledContainer as MainContainer } from '@/app/components/global-styles/globals';
 import { Box, Typography, Button, Tooltip } from '@mui/material';
 import ErrorIcon from '@mui/icons-material/Error';
+import { useTranslations } from 'next-intl';
 
 // Use-case for session only
 export function ErrorTooltip() {
+  const t = useTranslations('custom_error_page');
+
   return (
-    <Tooltip title="Error while fetching data." arrow>
+    <Tooltip title={t('paragraphs.error_while_fetching')} arrow>
       <ErrorIcon color="error" sx={{ fontSize: '2rem' }} />
     </Tooltip>
   );
@@ -25,6 +28,8 @@ export default function CustomError({ error, reset }) {
 
   const pathname = usePathname();
   const isMySettings = pathname.startsWith('/mysettings');
+
+  const t = useTranslations('custom_error_page');
 
   return (
     <>
@@ -65,11 +70,13 @@ export default function CustomError({ error, reset }) {
             priority
             alt="robot-error"
           />
-          <Typography sx={{ my: 1 }}>Something went wrong!</Typography>
+          <Typography sx={{ my: 1 }}>
+            {t('paragraphs.something_went_wrong')}
+          </Typography>
 
           {isErrorPage ? (
             <Link href="/signin">
-              <Button>Try again</Button>
+              <Button>{t('button_labels.try_again')}</Button>
             </Link>
           ) : (
             <Button
@@ -83,7 +90,7 @@ export default function CustomError({ error, reset }) {
                   : () => reset() // Attempt to recover by trying to re-render the segment
               }
             >
-              Try again
+              {t('button_labels.try_again')}
             </Button>
           )}
         </MainContainer>

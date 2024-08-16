@@ -1,10 +1,10 @@
 import React, { useContext } from 'react';
 import { Grid, TextField } from '@mui/material';
-import { DetailsEditFormContext } from './DetailsEditForm';
+import { EditFormDetailsContext } from './EditFormDialog';
 import { ErrorText } from '@/utils/helper/form-text/ErrorText';
 
 export default function Name() {
-  const { user, register, errors } = useContext(DetailsEditFormContext);
+  const { user, register, errors } = useContext(EditFormDetailsContext);
 
   return (
     <>
