@@ -31,6 +31,7 @@ import { signUpTranslations } from '@/lib/validation/validationTranslations';
 
 export default function SignUp() {
   const [showPassword, setShowPassword] = useState(false);
+  const [message, setMessage] = useState('');
 
   let emailRef = useRef('');
 
@@ -61,34 +62,29 @@ export default function SignUp() {
       const { data } = await axios.post(url, formData);
 
       if (data) {
+        setMessage(data.statusText);
         emailRef.current = data.email;
       }
     } catch (error) {
-      const { errorMessage } = errorHandler(error);
+      const { errorMessage } = errorHandler(error, t1);
 
       handleAlertMessage(errorMessage, 'error');
     }
   };
 
   return (
-    <MainContainer
-      sx={{
-        mt: emailRef.current ? 0 : 5,
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-      }}
-    >
+    <MainContainer sx={{ alignItems: 'center' }}>
       {emailRef.current ? (
-        <Confirmation email={emailRef.current} action={'signup'} />
+        <Confirmation
+          message={message}
+          email={emailRef.current}
+          action={'signup'}
+        />
       ) : (
         <>
           <StyledCard
             sx={{
-              width: 'clamp(300px, 90vw, 350px)',
-              height: { lg: '460px' },
-              overflowY: { lg: 'auto' },
+              width: 'clamp(300px, 50%, 300px)',
             }}
           >
             <Typography variant="h5" sx={{ mb: 2 }}>
@@ -145,7 +141,7 @@ export default function SignUp() {
                       endAdornment: (
                         <InputAdornment position="end">
                           <IconButton onClick={handleShowPassword}>
-                            {showPassword ? <VisibilityOff /> : <Visibility />}
+                            {showPassword ? <Visibility /> : <VisibilityOff />}
                           </IconButton>
                         </InputAdornment>
                       ),
@@ -167,7 +163,7 @@ export default function SignUp() {
                       endAdornment: (
                         <InputAdornment position="end">
                           <IconButton onClick={handleShowPassword}>
-                            {showPassword ? <VisibilityOff /> : <Visibility />}
+                            {showPassword ? <Visibility /> : <VisibilityOff />}
                           </IconButton>
                         </InputAdornment>
                       ),

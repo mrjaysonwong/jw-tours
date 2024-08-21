@@ -8,12 +8,16 @@ import {
 } from '@mui/material';
 import { PersonalSettingsContext } from '../../../tabs/MySettingsTabs';
 import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium';
-import { LoadingSkeletonEmailCard } from '@/app/components/custom/loaders/Skeleton';
+import {
+  LoadingSkeletonCard,
+  LoadingSkeletonButton,
+} from '@/app/components/custom/loaders/Skeleton';
 import CustomError from '@/app/components/custom/error';
 import CardMenu from './CardMenu';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import PhoneIcon from '@mui/icons-material/Phone';
 
-export default function MobileNumbers() {
+export default function MobileNumbers({ setOpen }) {
   const { user, isLoading, isError, error } = useContext(
     PersonalSettingsContext
   );
@@ -57,6 +61,10 @@ export default function MobileNumbers() {
     );
   });
 
+  const handleClickAddMobile = () => {
+    setOpen(true);
+  };
+
   const handleShowMore = () => {
     const nextDisplayCount = displayCount + 2;
 
@@ -70,11 +78,26 @@ export default function MobileNumbers() {
   return (
     <>
       {isLoading ? (
-        <LoadingSkeletonEmailCard h={56} />
+        <>
+          <LoadingSkeletonButton h={32} w={120} />
+          <LoadingSkeletonCard h={56} />
+        </>
       ) : isError ? (
         <CustomError error={error} />
       ) : (
         <>
+          <Box sx={{ textAlign: 'right' }}>
+            <Button
+              size="small"
+              variant="contained"
+              startIcon={<PhoneIcon />}
+              onClick={handleClickAddMobile}
+              sx={{ mt: 2 }}
+            >
+              Add Mobile
+            </Button>
+          </Box>
+
           {!user?.phone ? (
             <Card
               sx={{

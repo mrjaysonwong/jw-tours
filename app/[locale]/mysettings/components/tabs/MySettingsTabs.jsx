@@ -26,6 +26,7 @@ function TabPanel(props) {
       {...other}
       sx={{
         width: '100%',
+        minHeight: '75vh',
         ml: { xs: 0, lg: 3 },
       }}
     >
@@ -71,7 +72,13 @@ export default function MySettingsTabs({ slug }) {
 
   return (
     <>
-      <Link href="/mysettings" replace>
+      <Box
+        sx={{
+          a: {
+            color: 'primary.main',
+          },
+        }}
+      >
         <Button
           startIcon={<ArrowBackIcon />}
           sx={{
@@ -79,11 +86,13 @@ export default function MySettingsTabs({ slug }) {
             mb: 3,
           }}
         >
-          Go Back
+          <Link href="/mysettings" replace>
+            Go Back
+          </Link>
         </Button>
-      </Link>
+      </Box>
 
-      <Box sx={{ display: { xs: 'block', lg: 'flex' } }}>
+      <Box sx={{ width: '100%', display: { xs: 'block', lg: 'flex' } }}>
         <Tabs
           orientation="vertical"
           value={value}

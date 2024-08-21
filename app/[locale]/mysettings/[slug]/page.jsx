@@ -24,9 +24,5 @@ export default async function MySettingsSlugPage({ params }) {
     }
   };
 
-  return (
-    <>
-      <MainContainer>{renderTabsComponent(slug)}</MainContainer>
-    </>
-  );
+  return <MainContainer>{renderTabsComponent(slug)}</MainContainer>;
 }

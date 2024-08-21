@@ -1,3 +1,5 @@
+'use client';
+
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
@@ -55,12 +57,7 @@ export default function CustomError({ error, reset }) {
       ) : (
         <MainContainer
           sx={{
-            mt: 1,
-            display: 'flex',
-            flexDirection: 'column',
             alignItems: 'center',
-            justifyContent: 'center',
-            textAlign: 'center',
           }}
         >
           <Image
@@ -87,7 +84,7 @@ export default function CustomError({ error, reset }) {
                       router.replace(
                         `/verify?token=${token}&email=${email}&action=${action}`
                       )
-                  : () => reset() // Attempt to recover by trying to re-render the segment
+                  : () => location.reload() // Attempt to recover by trying to re-render the segment
               }
             >
               {t('button_labels.try_again')}

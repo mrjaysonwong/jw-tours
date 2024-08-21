@@ -4,12 +4,8 @@ import { Typography, Box, List, ListItem } from '@mui/material';
 
 export default function TermsOfUse() {
   return (
-    <Box sx={{ width: 'clamp(min(100vw, 600px), 90vw, max(50vw, 600px ))' }}>
-      <Typography
-        variant="h3"
-        textAlign="center"
-        sx={{ mt: 20, mb: 10}}
-      >
+    <>
+      <Typography variant="h3" sx={{ my: 6, textAlign: 'center' }}>
         User Agreement
       </Typography>
       <List
@@ -178,6 +174,6 @@ export default function TermsOfUse() {
           </Typography>
         </ListItem>
       </List>
-    </Box>
+    </>
   );
 }

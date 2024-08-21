@@ -1,12 +1,7 @@
 'use client';
 
 import { Link } from '@/navigation';
-import {
-  Box,
-  Typography,
-  Grid,
-  Divider,
-} from '@mui/material';
+import { Box, Typography, Grid, Divider } from '@mui/material';
 import FacebookIcon from '@mui/icons-material/Facebook';
 import XIcon from '@mui/icons-material/X';
 import YouTubeIcon from '@mui/icons-material/YouTube';
@@ -91,7 +86,7 @@ export default function Footer() {
 
       <Grid
         container
-        rowSpacing={{ xs: 2 }}
+        rowSpacing={{ xs: 3 }}
         sx={{
           maxWidth: '65vw',
           margin: 'auto',
@@ -114,9 +109,8 @@ export default function Footer() {
           </Typography>
         </Grid>
         <Grid item xs={12} lg={4}>
-          <Typography variant="body2">
-            ©2024-2025 JW Tours. All rights reserved.{' '}
-          </Typography>
+          <Typography variant="body2">©2024-2025 JW Tours</Typography>
+          <Typography variant="body2">All rights reserved</Typography>
         </Grid>
       </Grid>
     </Box>

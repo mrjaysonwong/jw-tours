@@ -25,16 +25,8 @@ export default async function SignInPage() {
   const t = await getTranslations('signin_page');
 
   return (
-    <MainContainer
-      sx={{
-        mt: { xs: 0, md: 5 },
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-      }}
-    >
-      <StyledCard sx={{ width: 'clamp(280px, 50%, 280px)' }}>
+    <MainContainer sx={{ alignItems: 'center' }}>
+      <StyledCard sx={{ width: 'clamp(300px, 50%, 300px)' }}>
         <Typography variant="h5" sx={{ mb: 2 }}>
           {t('headers.signin')}
         </Typography>

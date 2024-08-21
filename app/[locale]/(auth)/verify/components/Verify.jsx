@@ -41,15 +41,7 @@ export default function Verify(props) {
   }, [email, token, router]);
 
   return (
-    <MainContainer
-      sx={{
-        mt: 0,
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-      }}
-    >
+    <MainContainer sx={{ alignItems: 'center' }}>
       <PageSpinner />
     </MainContainer>
   );

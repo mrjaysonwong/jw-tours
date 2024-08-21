@@ -12,8 +12,8 @@ export function authPage(pathname) {
     '/signup',
     '/verify',
     '/notifications/authentication-failed',
-    '/confirmation/send-link',
     '/error',
+    '/account/reset-password'
   ];
 
   const hasLocale = locales.some((locale) =>
@@ -36,7 +36,11 @@ export function hideNavLinks(pathname, params) {
     pathname.startsWith(`/${locale}/`)
   );
 
-  const hideOnSelectedPage = hasLocale || selectedPages.includes(pathname);
+  const hideOnSelectedPage = selectedPages.some(
+    (page) =>
+      pathname === page ||
+      (hasLocale && pathname.replace(/^\/[^/]+\//, '/') === page)
+  );
 
   return hideOnSelectedPage;
 }

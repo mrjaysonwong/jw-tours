@@ -1,13 +1,11 @@
 import React, { useState } from 'react';
-import { Grid, Typography, Box, Button } from '@mui/material';
+import { Grid, Typography } from '@mui/material';
 import EmailAddresses from './email-addresses/EmailAddresses';
 import MobileNumbers from './mobile-numbers/MobileNumbers';
 import { useMessageStore } from '@/stores/messageStore';
 import { AlertMessage } from '@/app/components/custom/texts';
 import AddEmailDialog from './email-addresses/AddEmailDialog';
 import VerifyEmailOTPDialog from './email-addresses/VerifyEmailOTPDialog';
-import EmailIcon from '@mui/icons-material/Email';
-import PhoneIcon from '@mui/icons-material/Phone';
 import AddMobileDialog from './mobile-numbers/AddMobileDialog';
 import VerifyMobileOTPDialog from './mobile-numbers/VerifyMobileOTPDialog';
 
@@ -16,22 +14,17 @@ export default function ContactInfo() {
   const [openAddMobile, setOpenAddMobile] = useState(false);
   const [openEmailOTP, setOpenEmailOTP] = useState(false);
   const [openMobileOTP, setOpenMobileOTP] = useState(false);
+
   const [email, setEmail] = useState('');
+
   const [completePhone, setCompletePhone] = useState({
     phone: {
       dialCode: '',
-      phoneNumber: ''
-    }
+      phoneNumber: '',
+    },
   });
 
   const { alert, handleClose } = useMessageStore();
-
-  const handleClickAddEmail = () => {
-    setOpenAddEmail(true);
-  };
-  const handleClickAddMobile = () => {
-    setOpenAddMobile(true);
-  };
 
   return (
     <>
@@ -43,19 +36,7 @@ export default function ContactInfo() {
             account.
           </Typography>
 
-          <Box sx={{ textAlign: 'right' }}>
-            <Button
-              size="small"
-              variant="contained"
-              startIcon={<EmailIcon />}
-              onClick={handleClickAddEmail}
-              sx={{ mt: 2 }}
-            >
-              Add Email
-            </Button>
-          </Box>
-
-          <EmailAddresses />
+          <EmailAddresses setOpen={setOpenAddEmail} />
 
           {openEmailOTP ? (
             <VerifyEmailOTPDialog
@@ -80,19 +61,7 @@ export default function ContactInfo() {
             account.
           </Typography>
 
-          <Box sx={{ textAlign: 'right' }}>
-            <Button
-              size="small"
-              variant="contained"
-              startIcon={<PhoneIcon />}
-              onClick={handleClickAddMobile}
-              sx={{ mt: 2 }}
-            >
-              Add Mobile
-            </Button>
-          </Box>
-
-          <MobileNumbers />
+          <MobileNumbers setOpen={setOpenAddMobile} />
 
           {openMobileOTP ? (
             <VerifyMobileOTPDialog

@@ -1,15 +1,11 @@
 'use client';
 
-import { Typography, Box, List, ListItem } from '@mui/material';
+import { Typography, List, ListItem } from '@mui/material';
 
 export default function PrivacyPolicy() {
   return (
-    <Box sx={{ width: 'clamp(min(100vw, 600px), 90vw, max(50vw, 600px ))' }}>
-      <Typography
-        variant="h3"
-        textAlign="center"
-        sx={{ mt: 20, mb: 10, fontWeight: 600 }}
-      >
+    <>
+      <Typography variant="h3" sx={{ my: 6, textAlign: 'center' }}>
         Privacy Policy
       </Typography>
       <List
@@ -231,6 +227,6 @@ export default function PrivacyPolicy() {
           </Typography>
         </ListItem>
       </List>
-    </Box>
+    </>
   );
 }

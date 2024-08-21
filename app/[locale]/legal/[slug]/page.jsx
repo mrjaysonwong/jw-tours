@@ -1,5 +1,6 @@
+import { redirect } from '@/navigation';
+import { notFound } from 'next/navigation';
 import { StyledContainer as MainContainer } from '@/app/components/global-styles/globals';
-import { Custom404Page } from '@/app/components/custom/error/404';
 import { formatMetadata } from '@/utils/helper/formats/formatMetadata';
 import TermsOfUse from '../components/UserAgreement';
 import PrivacyPolicy from '../components/PrivacyPolicy';
@@ -20,17 +21,13 @@ export default function LegalPage({ params }) {
         return <PrivacyPolicy />;
 
       default:
-        return <Custom404Page />;
+        redirect(notFound());
     }
   };
 
   return (
     <MainContainer
-      sx={{
-        mt: 0,
-        display: 'flex',
-        justifyContent: 'center',
-      }}
+      sx={{ width: 'clamp(min(95vw, 600px), 50%, max(70vw, 600px ))' }}
     >
       {renderLegalComponent(slug)}
     </MainContainer>

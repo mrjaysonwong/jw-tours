@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { StyledContainer as MainContainer } from '@/app/components/global-styles/globals';
 import {
   Box,
   Typography,
@@ -8,23 +9,32 @@ import {
   CardContent,
   CardMedia,
   CardActionArea,
+  Container,
 } from '@mui/material';
 import { sleep } from '@/utils/helper/common';
 import PaginationControls from './PaginationControls';
 import HistoryBackButton from '@/app/components/custom/buttons/HistoryBackButton';
+import SearchBar from './SearchBar';
 import { formatTitle } from '@/utils/helper/formats/formatMetadata';
+import { Custom404Page } from '@/app/components/custom/error/404';
+import CustomError from '@/app/components/custom/error';
 
 async function fetchPosts(newOffset, pageLimit) {
-  await sleep(1000);
-  const res = await fetch(
-    `https://pokeapi.co/api/v2/pokemon?offset=${newOffset}&limit=${pageLimit}`
-  );
+  try {
+    await sleep(1000);
+    const res = await fetch(
+      `https://pokeapi.co/api/v2/pokemon?offset=${newOffset}&limit=${pageLimit}`
+    );
 
-  if (!res.ok) {
-    throw new Error('Something went wrong!');
+    if (!res.ok) {
+      return { statusText: res.statusText, status: res.status };
+    }
+
+    return await res.json();
+  } catch (error) {
+    console.error(error);
+    return { status: 500 };
   }
-
-  return await res.json();
 }
 
 function Card({ pokemon }) {
@@ -36,7 +46,7 @@ function Card({ pokemon }) {
 
   return (
     <Grid item xs={12} md={4} lg={4}>
-      <MUICard sx={{ maxWidth: '100%', a: { color: 'inherit' } }}>
+      <MUICard sx={{ a: { color: 'inherit' } }}>
         <Link href={`/blog/${pokemon.name}`}>
           <CardActionArea>
             <CardMedia
@@ -89,39 +99,64 @@ function Card({ pokemon }) {
 }
 
 export default async function Posts({ searchParams }) {
-  const pageNum = searchParams.page;
+  let pokemons;
+  let totalCount;
 
-  const pageLimit = 12;
-  const newOffset = (pageNum - 1) * pageLimit;
-  const pokemons = await fetchPosts(newOffset, pageLimit);
+  try {
+    const pageNum = searchParams.page;
 
-  const totalCount = Math.ceil(pokemons.count / pageLimit);
-  const pageNums = ['0', ''];
+    const pageLimit = 12;
+    const newOffset = (pageNum - 1) * pageLimit;
 
-  if (pageNums.includes(pageNum) || pageNum > totalCount) {
-    return (
-      <>
-        <Typography sx={{ my: 2 }}>Nothing found here.</Typography>
-        <HistoryBackButton />
-      </>
-    );
+    pokemons = await fetchPosts(newOffset, pageLimit);
+
+    if (pokemons.status === 404) {
+      return <Custom404Page resource="resource" />;
+    } else if (pokemons.status === 500) {
+      return <CustomError />;
+    }
+
+    totalCount = Math.ceil(pokemons.count / pageLimit);
+    const pageNums = ['0', ''];
+
+    if (pageNums.includes(pageNum) || pageNum > totalCount) {
+      return (
+        <Container sx={{ mt: '7rem', minHeight: '90vh' }}>
+          <HistoryBackButton />
+          <Typography sx={{ my: 2 }}>Nothing found here.</Typography>
+        </Container>
+      );
+    }
+  } catch (error) {
+    return <CustomError />;
   }
 
   return (
-    <>
+    <MainContainer>
+      <Box
+        sx={{
+          width: '100%',
+          display: 'flex',
+          alignItems: 'center',
+        }}
+      >
+        <Typography variant="h4">Blog</Typography>
+
+        <SearchBar />
+      </Box>
+
       <Box
         sx={{
           my: 5,
-          minHeight: '90vh',
         }}
       >
-        <Grid container spacing={4}>
+        <Grid container spacing={6}>
           {pokemons?.results.map((pokemon) => (
             <Card key={pokemon.name} pokemon={pokemon} />
           ))}
         </Grid>
       </Box>
       <PaginationControls totalCount={totalCount} />
-    </>
+    </MainContainer>
   );
 }

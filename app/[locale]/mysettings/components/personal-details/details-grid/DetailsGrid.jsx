@@ -1,6 +1,9 @@
 import React, { useState, useContext } from 'react';
 import { Typography, Grid, Button, Box, Divider } from '@mui/material';
-import { LoadingSkeletonGrid } from '@/app/components/custom/loaders/Skeleton';
+import {
+  LoadingSkeletonGrid,
+  LoadingSkeletonButton,
+} from '@/app/components/custom/loaders/Skeleton';
 import { PersonalSettingsContext } from '../../tabs/MySettingsTabs.jsx';
 import DetailsEditForm from './details-edit-form/EditFormDialog.jsx';
 import CustomError from '@/app/components/custom/error/index.jsx';
@@ -36,7 +39,11 @@ export default function DetailsGrid() {
   };
 
   if (isLoading) {
-    return <LoadingSkeletonGrid />;
+    return (
+      <>
+        <LoadingSkeletonButton h={32} w={120} /> <LoadingSkeletonGrid />
+      </>
+    );
   }
 
   return (

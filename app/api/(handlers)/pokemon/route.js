@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-export async function GET(Request) {
+export async function GET() {
   try {
     const { data } = await axios.get(
       'https://pokeapi.co/api/v2/pokemon?limit=100000'
@@ -10,7 +10,7 @@ export async function GET(Request) {
   } catch (error) {
     console.error(error);
     return Response.json(
-      { statusText: 'Internal Server Error. Try again.' },
+      { statusText: 'Internal Server Error' },
       { status: 500 }
     );
   }

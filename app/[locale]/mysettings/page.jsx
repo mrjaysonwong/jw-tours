@@ -19,10 +19,14 @@ export default async function MySettingsPage() {
 
   return (
     <MainContainer>
-      <Typography variant="h4" sx={{ mt: 12 }}>
-        Account settings
-      </Typography>
-      <Typography>Manage your JW Tours experience</Typography>
+      <Box
+        sx={{
+          width: '100%',
+        }}
+      >
+        <Typography variant="h4">Account settings</Typography>
+        <Typography>Manage your JW Tours experience</Typography>
+      </Box>
 
       <Grid container spacing={2} sx={{ mt: 2 }}>
         {accountSettingsLinks.map((item) => (

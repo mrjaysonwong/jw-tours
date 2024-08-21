@@ -23,6 +23,7 @@ export default function Confirmation({ message, email, action }) {
   const { handleAlertMessage } = useMessageStore();
 
   const t = useTranslations('confirmation_page');
+  const t1 = useTranslations('common');
 
   const onChange = () => {
     setCaptcha(false);
@@ -51,7 +52,7 @@ export default function Confirmation({ message, email, action }) {
         setIsCountdown(true);
       }
     } catch (error) {
-      const { errorMessage } = errorHandler(error);
+      const { errorMessage } = errorHandler(error, t1);
 
       if (submitAttemptRef.current === 5 && errorMessage) {
         setCaptcha(true);
@@ -91,7 +92,7 @@ export default function Confirmation({ message, email, action }) {
         }}
       >
         <Typography variant="h5">{t('headers.check_your_email')}</Typography>
-        <Typography>{message}</Typography>
+        <Typography sx={{ my: 2 }}>{message}</Typography>
 
         {isSignup && (
           <>

@@ -1,3 +1,4 @@
+import { StyledContainer as MainContainer } from '@/app/components/global-styles/globals';
 import { Box, Grid, Skeleton, CircularProgress } from '@mui/material';
 
 function PostListSkeleton() {
@@ -17,31 +18,20 @@ function PostListSkeleton() {
 
 export function LoadingPostList() {
   return (
-    <Box
-      sx={{
-        my: 5,
-      }}
-    >
-      <Grid container spacing={4}>
+    <MainContainer>
+      <Grid container spacing={5} sx={{ mt: 5 }}>
         {Array.from({ length: 12 }).map((_, index) => (
           <PostListSkeleton key={index} />
         ))}
       </Grid>
-    </Box>
+    </MainContainer>
   );
 }
 
 export function LoadingCircularProgress() {
   return (
-    <Box
-      sx={{
-        width: '100%',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-      }}
-    >
+    <MainContainer sx={{ alignItems: 'center' }}>
       <CircularProgress />
-    </Box>
+    </MainContainer>
   );
 }

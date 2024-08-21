@@ -5,7 +5,14 @@ import { styled } from '@mui/system';
 
 export const StyledContainer = styled(Container)({
   marginTop: '7rem',
-  minHeight: '100vh',
+  minHeight: '75vh',
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'center',
+
+  '@media (orientation: landscape)': {
+    height: { sm: '80vw', md: '80vw', lg: '80vh' },
+  },
 
   a: {
     textDecoration: 'none',

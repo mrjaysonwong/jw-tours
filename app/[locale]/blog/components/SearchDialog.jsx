@@ -34,8 +34,6 @@ export default function SearchDialog({ open, setOpen }) {
   const [suggestions, setSuggestions] = useState([]);
   const [debouncedText] = useDebounce(text, 1000);
 
-  const [hasError, setHasError] = useState(false);
-
   const [loading, setLoading] = useState({
     showMore: false,
     initialData: false,
@@ -126,7 +124,10 @@ export default function SearchDialog({ open, setOpen }) {
         setShowMore(result?.length >= 20);
         setLoading({ initialData: false });
       } catch (error) {
-        handleAlertMessage('An error occured. Try again.', 'error');
+        handleAlertMessage(
+          'An error occured. Clear search query and try again.',
+          'error'
+        );
       }
     };
 
@@ -260,7 +261,7 @@ export default function SearchDialog({ open, setOpen }) {
               }}
               slotProps={{
                 paper: {
-                  elevation: 5,
+                  elevation: 2,
                 },
               }}
             />
@@ -300,13 +301,7 @@ export default function SearchDialog({ open, setOpen }) {
         </DialogContent>
         <Divider />
         <DialogActions>
-          <Button
-            size="small"
-            variant="outlined"
-            color="inherit"
-            onClick={handleOnClose}
-            sx={{ mx: 2 }}
-          >
+          <Button size="small" onClick={handleOnClose} sx={{ mx: 2 }}>
             Close
           </Button>
         </DialogActions>

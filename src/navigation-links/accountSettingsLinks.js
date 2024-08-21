@@ -25,7 +25,7 @@ export const accountSettingsLinks = [
     slug: 'security',
     tabName: 'Security',
     icon: <SecurityOutlinedIcon />,
-    text: 'Change your security settings, set up secure authentication, or delete your account.',
+    text: 'Change your security settings, or delete your account.',
   },
   {
     path: '/mysettings/payment',

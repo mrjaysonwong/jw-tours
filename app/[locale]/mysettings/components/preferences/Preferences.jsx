@@ -2,7 +2,10 @@ import React, { useContext, useState } from 'react';
 import { Typography, Grid, Divider, Button, Box } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import { PersonalSettingsContext } from '../tabs/MySettingsTabs';
-import { LoadingSkeletonGrid } from '@/app/components/custom/loaders/Skeleton';
+import {
+  LoadingSkeletonGrid,
+  LoadingSkeletonButton,
+} from '@/app/components/custom/loaders/Skeleton';
 import EditFormDialog from './components/EditFormDialog';
 import { AlertMessage } from '@/app/components/custom/texts';
 import { useMessageStore } from '@/stores/messageStore';
@@ -24,7 +27,11 @@ export function DetailsGrid() {
   const lang = languageMap[user?.languageCountry] || 'Not Provided';
 
   if (isLoading) {
-    return <LoadingSkeletonGrid />;
+    return (
+      <>
+        <LoadingSkeletonButton h={32} w={120} /> <LoadingSkeletonGrid />
+      </>
+    );
   }
 
   const handleClickOpen = () => {
@@ -32,7 +39,7 @@ export function DetailsGrid() {
   };
 
   return (
-    <>
+    <Box>
       <Box sx={{ textAlign: 'right' }}>
         <Button
           size="small"
@@ -61,7 +68,7 @@ export function DetailsGrid() {
           refetch={refetch}
         />
       )}
-    </>
+    </Box>
   );
 }
 

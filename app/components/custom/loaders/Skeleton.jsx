@@ -1,5 +1,6 @@
-import { Skeleton, Grid, Box } from '@mui/material';
-import { usePathname } from 'next/navigation';
+import { Skeleton, Grid } from '@mui/material';
+import { usePathname } from '@/navigation';
+import { useSearchParams } from 'next/navigation';
 
 function SkeletonGrid() {
   return (
@@ -22,12 +23,9 @@ function SkeletonGrid() {
 }
 
 export function LoadingSkeletonGrid() {
-  const pathname = usePathname();
-  const isPersonalTab = pathname.includes('personal');
-
   return (
     <>
-      <Grid container sx={{ mt: isPersonalTab ? '6rem' : '4rem' }}>
+      <Grid container>
         {Array.from({ length: 3 }).map((_, index) => (
           <SkeletonGrid key={index} />
         ))}
@@ -44,11 +42,34 @@ export function LoadingSkeletonAvatar({ w, h }) {
   );
 }
 
-export function LoadingSkeletonEmailCard({ h }) {
+export function LoadingSkeletonButton({ h, w }) {
+  const pathname = usePathname();
+
+  const searchParams = useSearchParams();
+  const query = searchParams.get('q');
+
+  const isPersonal = pathname.includes('personal') && !query;
+
+
+
+  return (
+    <>
+      {Array.from({ length: 1 }).map((_, index) => (
+        <Skeleton
+          variant="rectangular"
+          key={index}
+          sx={{ height: h, width: w, ml: 'auto', mt: isPersonal ? 7 : 2 }}
+        />
+      ))}
+    </>
+  );
+}
+
+export function LoadingSkeletonCard({ h }) {
   return (
     <>
       {Array.from({ length: 4 }).map((_, index) => (
-        <Skeleton variant="rectangular" key={index} sx={{ height: h, my: 2 }} />
+        <Skeleton variant="rectangular" key={index} sx={{ height: h, mt: 2 }} />
       ))}
     </>
   );

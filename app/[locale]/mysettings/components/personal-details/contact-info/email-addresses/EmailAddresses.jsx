@@ -3,11 +3,15 @@ import { Typography, Box, Card, Tooltip, Button } from '@mui/material';
 import { PersonalSettingsContext } from '../../../tabs/MySettingsTabs';
 import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium';
 import CardMenu from './CardMenu';
-import { LoadingSkeletonEmailCard } from '@/app/components/custom/loaders/Skeleton';
+import {
+  LoadingSkeletonCard,
+  LoadingSkeletonButton,
+} from '@/app/components/custom/loaders/Skeleton';
 import CustomError from '@/app/components/custom/error';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import EmailIcon from '@mui/icons-material/Email';
 
-export default function EmailAddresses() {
+export default function EmailAddresses({ setOpen }) {
   const { user, isLoading, isError, error } = useContext(
     PersonalSettingsContext
   );
@@ -47,6 +51,10 @@ export default function EmailAddresses() {
     );
   });
 
+  const handleClickAddEmail = () => {
+    setOpen(true);
+  };
+
   const handleShowMore = () => {
     const nextDisplayCount = displayCount + 2;
 
@@ -60,11 +68,26 @@ export default function EmailAddresses() {
   return (
     <>
       {isLoading ? (
-        <LoadingSkeletonEmailCard h={56} />
+        <>
+          <LoadingSkeletonButton h={32} w={120} />
+          <LoadingSkeletonCard h={56} />
+        </>
       ) : isError ? (
         <CustomError error={error} />
       ) : (
         <>
+          <Box sx={{ textAlign: 'right' }}>
+            <Button
+              size="small"
+              variant="contained"
+              startIcon={<EmailIcon />}
+              onClick={handleClickAddEmail}
+              sx={{ mt: 2 }}
+            >
+              Add Email
+            </Button>
+          </Box>
+
           {emailListCard}
 
           {displayCount !== sortedEmailList.length &&

@@ -157,7 +157,7 @@ export async function updateOTP(userId, email, dialCode, phoneNumber) {
   }
 }
 
-export function authEmailToken(email, Request, action) {
+export function authEmailToken(email, Request, action, firstName) {
   // Generate and Authenticate Email Token
   const token = generateToken(email);
   const decoded = jwt.verify(token, process.env.JWT_SECRET);
@@ -169,16 +169,31 @@ export function authEmailToken(email, Request, action) {
   const formattedDateString = formattedDate(epochTime);
   const encodedEmail = encodeURIComponent(email);
 
-  const paramsAction = action === 'signin' ? 'signin' : 'signup';
+  let paramsAction;
+  switch (action) {
+    case 'signin':
+      paramsAction = 'signin';
+      break;
+    case 'reset-password':
+      paramsAction = 'reset-password';
+      break;
+    default:
+      paramsAction = 'signup';
+  }
 
   const baseUrl = `${process.env.NEXT_PUBLIC_BASE_URL}`;
-  const url = `${baseUrl}/verify?token=${token}&email=${encodedEmail}&action=${paramsAction}`;
+
+  const url =
+    action === 'reset-password'
+      ? `${baseUrl}/account/reset-password?token=${token}&action=${paramsAction}`
+      : `${baseUrl}/verify?token=${token}&email=${encodedEmail}&action=${paramsAction}`;
 
   const emailHtml = render(
     <EmailTemplate
       url={url}
       formattedDateString={formattedDateString}
       action={action}
+      firstName={firstName}
     />
   );
 

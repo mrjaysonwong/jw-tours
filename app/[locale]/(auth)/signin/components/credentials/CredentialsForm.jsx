@@ -104,7 +104,7 @@ export default function CredentialsForm() {
             endAdornment: (
               <InputAdornment position="end">
                 <IconButton onClick={handleShowPassword}>
-                  {showPassword ? <VisibilityOff /> : <Visibility />}
+                  {showPassword ? <Visibility /> : <VisibilityOff />}
                 </IconButton>
               </InputAdornment>
             ),

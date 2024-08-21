@@ -6,7 +6,7 @@ import { sendEmail } from '@/utils/config/sendEmail';
 import { signUpSchema } from '@/lib/validation/yup/signUpSchema';
 import { findUserByEmail } from '@/utils/helper/query/User';
 import { authEmailToken } from '@/utils/helper/token-handlers/tokenActions';
-import { getTranslations, getLocale } from 'next-intl/server';
+import { getTranslations } from 'next-intl/server';
 import { signUpTranslations } from '@/lib/validation/validationTranslations';
 import { cookies } from 'next/headers';
 
@@ -81,6 +81,7 @@ export async function POST(Request) {
     return Response.json(
       {
         statusText: t1('success_messages.verification_link_sent', { email }),
+
         email: email,
       },
       { status: 201 }

@@ -80,15 +80,7 @@ export default function EmailLink() {
 
   return (
     <>
-      <MainContainer
-        sx={{
-          mt: 0,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
-      >
+      <MainContainer sx={{ alignItems: 'center' }}>
         {emailRef.current ? (
           <Confirmation
             message={message}
@@ -97,7 +89,7 @@ export default function EmailLink() {
           />
         ) : (
           <>
-            <StyledCard sx={{ width: 'clamp(280px, 50%, 340px)' }}>
+            <StyledCard sx={{ width: 'clamp(300px, 50%, 300px)' }}>
               <Box sx={{ mb: 2 }}>
                 <Typography variant="h5">
                   {t('headers.one_time_link')}

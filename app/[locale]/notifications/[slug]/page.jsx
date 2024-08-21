@@ -5,7 +5,11 @@ import { createMetadata } from '@/utils/helper/common';
 import { useTranslations } from 'next-intl';
 
 export function generateMetadata({ params: { locale } }) {
-  return createMetadata(locale, 'notifications_page', 'meta_title.notifications');
+  return createMetadata(
+    locale,
+    'notifications_page',
+    'meta_title.notifications'
+  );
 }
 
 export default function NotificationsPage({ params }) {
@@ -25,12 +29,8 @@ export default function NotificationsPage({ params }) {
   return (
     <MainContainer
       sx={{
-        mt: 0,
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
         textAlign: 'center',
+        alignItems: 'center',
       }}
     >
       {renderNotificationComponent(slug)}

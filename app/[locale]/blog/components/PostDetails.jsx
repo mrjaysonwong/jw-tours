@@ -1,39 +1,56 @@
+import { StyledContainer as MainContainer } from '@/app/components/global-styles/globals';
 import { Box, Typography, Avatar, Button } from '@mui/material';
 import HistoryBackButton from '@/app/components/custom/buttons/HistoryBackButton';
-import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import ThumbUpOutlinedIcon from '@mui/icons-material/ThumbUpOutlined';
 import ShareIcon from '@mui/icons-material/Share';
 import { sleep } from '@/utils/helper/common';
 import { formatTitle } from '@/utils/helper/formats/formatMetadata';
-import { notFound } from 'next/navigation';
 import SearchBar from './SearchBar';
+import { Custom404Page } from '@/app/components/custom/error/404';
+import CustomError from '@/app/components/custom/error';
 
 export async function fetchPostDetails(slug) {
-  await sleep(1000);
-  const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${slug}`);
+  try {
+    await sleep(1000);
+    const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${slug}`);
 
-  if (res.status === 404) {
-    notFound();
-  } else if (!res.ok) {
-    throw new Error('Something went wrong!');
+    if (!res.ok) {
+      return { statusText: res.statusText, status: res.status };
+    }
+
+    return await res.json();
+  } catch (error) {
+    console.error(error);
+    return { status: 500 };
   }
-
-  return await res.json();
 }
 
 export default async function PostDetails({ slug }) {
-  const pokemon = await fetchPostDetails(slug);
-  const formattedTitle = formatTitle(pokemon.name);
+  let pokemon;
+  let formattedTitle;
+  let pokemonSprite;
 
-  const pokemonSprite = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemon.id}.png`;
+  try {
+    pokemon = await fetchPostDetails(slug);
+
+    if (pokemon.status === 404) {
+      return <Custom404Page resource="resource" />;
+    } else if (pokemon.status === 500) {
+      return <CustomError />;
+    }
+
+    formattedTitle = formatTitle(pokemon.name);
+    pokemonSprite = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemon.id}.png`;
+  } catch (error) {
+    console.error(error);
+    return <CustomError />;
+  }
 
   return (
-    <>
+    <MainContainer sx={{ alignItems: 'center' }}>
       <Box
         sx={{
-          mt: '7rem',
-          minHeight: '100vh',
-          width: 'clamp(min(100vw, 600px), 90vw, max(50vw, 600px ))',
+          width: 'clamp(min(95vw, 600px), 60%, max(70vw, 600px))',
         }}
       >
         <Box
@@ -181,6 +198,6 @@ export default async function PostDetails({ slug }) {
           </Button>
         </Box>
       </Box>
-    </>
+    </MainContainer>
   );
 }

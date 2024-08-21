@@ -21,6 +21,7 @@ export function EmailTemplate(props) {
   const isSignUp = action === 'signup';
   const isGenOTP = action === 'gen-otp';
   const isEmailSignIn = action === 'signin';
+  const isResetPassword = action === 'reset-password';
 
   const links = [
     { href: `${baseUrl}/blog`, label: 'Blog' },
@@ -36,6 +37,8 @@ export function EmailTemplate(props) {
           <Preview>Your verification link for JW Tours</Preview>
         ) : isGenOTP ? (
           <Preview>Your JW Tours OTP code</Preview>
+        ) : isResetPassword ? (
+          <Preview>Password reset request</Preview>
         ) : (
           <Preview>Your sign-in link for JW Tours</Preview>
         )}
@@ -84,6 +87,30 @@ export function EmailTemplate(props) {
 
                 <Text style={paragraph}>
                   This OTP code will be valid for 5 minutes till{' '}
+                  <b>{formattedDateString}</b>.
+                  <br />
+                  If you did not request this email, there is nothing to worry
+                  about - you can safely ignore it.
+                </Text>
+              </>
+            )}
+
+            {isResetPassword && (
+              <>
+                <Text style={greetings}>Hi {firstName},</Text>
+
+                <Text style={paragraph}>
+                  We received a request to reset your password. Click below to
+                  create a new password:
+                </Text>
+
+                <Section style={buttonContainer}>
+                  <Button style={button} href={url} target="_blank">
+                    Reset password
+                  </Button>
+                </Section>
+                <Text style={paragraph}>
+                  This link will be valid for 5 minutes till{' '}
                   <b>{formattedDateString}</b>.
                   <br />
                   If you did not request this email, there is nothing to worry
@@ -163,6 +190,14 @@ const paragraph = {
   fontSize: '15px',
   lineHeight: '1.4',
   color: '#3c4149',
+};
+
+const greetings = {
+  margin: '0 0 15px',
+  fontSize: '15px',
+  lineHeight: '1.4',
+  color: '#3c4149',
+  padding: '30px 0 0',
 };
 
 const codeContainer = {

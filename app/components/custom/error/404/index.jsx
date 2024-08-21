@@ -7,18 +7,16 @@ import HistoryBackButton from '../../buttons/HistoryBackButton';
 import { useTranslations } from 'next-intl';
 
 export function Custom404Page(props) {
-  const t = useTranslations('not_found_page')
+  const t = useTranslations('not_found_page');
 
-  const propsType = props.resource ? t('paragraphs.resource') : t('paragraphs.page')
+  const propsType = props.resource
+    ? t('paragraphs.resource')
+    : t('paragraphs.page');
 
   return (
     <MainContainer
       sx={{
-        mt: 0,
-        display: 'flex',
-        flexDirection: 'column',
         alignItems: 'center',
-        justifyContent: 'center',
         textAlign: 'center',
       }}
     >
@@ -30,15 +28,11 @@ export function Custom404Page(props) {
         alt="404-error"
       />
       <Typography variant="h4" sx={{ mt: 1 }}>
-       {t('headers.there_was_problem')}
+        {t('headers.there_was_problem')}
       </Typography>
-      <Typography>
-       {t('paragraphs.props_type', {propsType})}
-      </Typography>
+      <Typography>{t('paragraphs.props_type', { propsType })}</Typography>
       <br />
       <HistoryBackButton />
     </MainContainer>
   );
 }
-
-

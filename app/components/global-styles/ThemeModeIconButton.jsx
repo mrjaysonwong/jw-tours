@@ -17,7 +17,7 @@ export default function ThemeModeIconButton() {
       <Box
         sx={{
           position: 'fixed',
-          bottom: 20,
+          bottom: 100,
           right: 20,
         }}
       >

@@ -139,7 +139,7 @@ export async function createSigninLink(Request, action, t, t1) {
     const message =
       action === 'signin'
         ? t('success_messages.signin_link_sent', { email })
-        : t1('success_messages:verification_link_sent', { email });
+        : t1('success_messages.verification_link_sent', { email });
 
     const statusCode = userTokenExists ? 200 : 201;
 
