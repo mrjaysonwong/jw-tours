@@ -2,6 +2,7 @@ import { redirect } from '@/navigation';
 import { notFound } from 'next/navigation';
 import { StyledContainer as MainContainer } from '@/app/components/global-styles/globals';
 import PasswordReset from '../components/PasswordReset';
+import connectMongo from '@/lib/connection';
 import Token from '@/model/tokenModel/tokenModel';
 
 export default async function AccountPage({ params, searchParams }) {
@@ -11,6 +12,8 @@ export default async function AccountPage({ params, searchParams }) {
   if (!token) {
     redirect(notFound());
   }
+
+  await connectMongo();
 
   const tokenExists = await Token.findOne({ 'email.token': token });
 
