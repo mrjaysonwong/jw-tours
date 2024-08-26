@@ -13,7 +13,6 @@ export function authPage(pathname) {
     '/verify',
     '/notifications/authentication-failed',
     '/error',
-    '/account/reset-password'
   ];
 
   const hasLocale = locales.some((locale) =>
@@ -23,7 +22,8 @@ export function authPage(pathname) {
   const hideOnAuthPage = authPages.some(
     (page) =>
       pathname === page ||
-      (hasLocale && pathname.replace(/^\/[^/]+\//, '/') === page) // Strips out the locale prefix from the path, normalizing the URL.
+      (hasLocale && pathname.replace(/^\/[^/]+\//, '/') === page) ||
+      pathname.startsWith('/account') // Strips out the locale prefix from the path, normalizing the URL.
   );
 
   return hideOnAuthPage;

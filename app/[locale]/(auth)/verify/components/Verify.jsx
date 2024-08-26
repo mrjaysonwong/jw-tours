@@ -2,7 +2,6 @@
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useTranslations } from 'next-intl';
 import { StyledContainer as MainContainer } from '@/app/components/global-styles/globals';
 import PageSpinner from '@/app/components/custom/loaders/PageSpinner';
 import { authenticate } from '../actions';
@@ -12,14 +11,12 @@ export default function Verify(props) {
 
   const router = useRouter();
 
-  const t1 = useTranslations('common');
-
   const handleSignIn = async () => {
     try {
       const res = await authenticate(token, email, action, callbackUrl);
 
       if (res?.error) {
-        if (res.error.message === t1('errors.internal_server')) {
+        if (res.error.message === 'Internal Server Error') {
           router.replace(
             `/error?token=${token}&email=${email}&action=${action}`
           );

@@ -44,7 +44,7 @@ const userSchema = new Schema(
     },
     phone: {
       type: [phoneSchema],
-      default: undefined
+      default: undefined,
     },
     dateOfBirth: {
       type: String,
@@ -86,7 +86,6 @@ const userSchema = new Schema(
     // },
     banned: {
       type: Boolean,
-      default: false,
     },
     active: {
       type: Boolean,

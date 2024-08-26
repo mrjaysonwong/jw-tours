@@ -41,7 +41,8 @@ export default function MySettingsTabs({ slug }) {
   );
 
   const session = useContext(UserSessionContext);
-  const userId = session?.user?.id;
+  const {id: userId, email} = session?.user
+
 
   const {
     data: user,
@@ -55,6 +56,7 @@ export default function MySettingsTabs({ slug }) {
     user,
     isLoading,
     userId,
+    email,
     refetch,
     isError,
     error,

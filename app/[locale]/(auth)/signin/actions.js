@@ -2,12 +2,8 @@
 
 import { signIn } from '@/auth';
 import { redirect } from '@/navigation';
-import { getTranslations } from 'next-intl/server';
 
 export async function authenticate(formData, callbackUrl) {
-  const t = await getTranslations('signin_page');
-  const t1 = await getTranslations('common');
-
   try {
     const data = await signIn('credentials', {
       redirect: false,
@@ -23,7 +19,7 @@ export async function authenticate(formData, callbackUrl) {
     const authError = error?.cause?.err;
 
     if (authError) {
-      if (authError.message.includes('google' || 'github' || 'facebook')) {
+      if (authError.message.includes('sign-in method')) {
         return {
           error: {
             message: authError.message,
@@ -32,13 +28,13 @@ export async function authenticate(formData, callbackUrl) {
       }
 
       switch (authError.message) {
-        case t('errors.invalid_credentials'):
+        case 'Invalid Credentials':
           return {
             error: {
               message: authError.message,
             },
           };
-        case t('errors.email_must_verified'):
+        case 'Verify Email First':
           return {
             error: {
               message: authError.message,
@@ -48,7 +44,7 @@ export async function authenticate(formData, callbackUrl) {
         default:
           return {
             error: {
-              message: t1('errors.internal_server'),
+              message: 'Internal Server Error',
             },
           };
       }

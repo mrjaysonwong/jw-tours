@@ -1,5 +1,4 @@
 import { auth } from '@/auth';
-import { getTranslations } from 'next-intl/server';
 import { Link, redirect } from '@/navigation';
 import { Box, Typography, Divider, Chip } from '@mui/material';
 import {
@@ -9,11 +8,10 @@ import {
 import { SignInWithContainer } from './components/styled';
 import CredentialsForm from './components/credentials/CredentialsForm';
 import OAuth from './components/oauth/OAuth';
-import { createMetadata } from '@/utils/helper/common';
 
-export async function generateMetadata({ params: { locale } }) {
-  return createMetadata(locale, 'signin_page', 'meta_title.signin');
-}
+export const metadata = {
+  title: 'Sign In',
+};
 
 export default async function SignInPage() {
   const session = await auth();
@@ -22,22 +20,20 @@ export default async function SignInPage() {
     redirect('/');
   }
 
-  const t = await getTranslations('signin_page');
-
   return (
     <MainContainer sx={{ alignItems: 'center' }}>
       <StyledCard sx={{ width: 'clamp(300px, 50%, 300px)' }}>
         <Typography variant="h5" sx={{ mb: 2 }}>
-          {t('headers.signin')}
+          Sign in
         </Typography>
 
         <CredentialsForm />
 
         <Divider sx={{ my: 2 }}>
-          <Chip label={t('labels.or')} />
+          <Chip label="or" />
         </Divider>
 
-        <Typography sx={{ mb: 2 }}>{t('paragraphs.signin_with')}</Typography>
+        <Typography sx={{ mb: 2 }}>Sign in with</Typography>
 
         <SignInWithContainer>
           <OAuth />
@@ -57,11 +53,11 @@ export default async function SignInPage() {
         }}
       >
         <div>
-          <Typography>{t('paragraphs.dont_have_account')}</Typography>
+          <Typography>Don&apos;t have an account?</Typography>
 
           <Link href="/signup">
             <Typography sx={{ color: 'var(--text-link-color-blue)' }}>
-              {t('paragraphs.signup')}
+              Sign Up
             </Typography>
           </Link>
         </div>

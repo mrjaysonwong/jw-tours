@@ -1,135 +1,65 @@
-import { auth } from '@/auth';
 import connectMongo from '@/lib/connection';
-import User from '@/model/userModel/userModel';
-import Token from '@/model/tokenModel/tokenModel';
-import { hash, compare } from 'bcryptjs';
-import { authEmailToken } from '@/utils/helper/token-handlers/tokenActions';
-import { sendEmail } from '@/utils/config/sendEmail';
+import { getLocalMessage } from '@/utils/helper/errorHandler';
+import { sendPasswordResetLink } from './Create';
+import { updatePassword } from './Update';
+import { headers } from 'next/headers';
 
 export async function POST(Request) {
   try {
-    const session = await auth();
+    await connectMongo();
 
-    if (!session) {
-      return Response.json(
-        { statusText: 'Unauthorized! You must signin first.' },
-        { status: 401 }
-      );
-    }
-
-    const { id: userId, email, name } = session?.user;
-    const [firstName, lastName] = name.split(' ');
-
-    const searchParams = Request.nextUrl.searchParams;
-    const action = searchParams.get('action');
-
-    const { token, epochTime, emailHtml } = authEmailToken(
-      email,
-      Request,
-      action,
-      firstName
-    );
-
-    await Token.create({
-      userId: userId,
-      email: [
-        {
-          email: email,
-          token: token,
-          expireTimestamp: epochTime,
-        },
-      ],
-    });
-
-    // server-side environment
-    await sendEmail({
-      to: email,
-      subject: 'Password reset request',
-      html: emailHtml,
-    });
+    const { statusCode, email } = await sendPasswordResetLink(Request, headers);
 
     return Response.json(
       { statusText: `Password reset link has been sent to ${email}` },
-      { status: 201 }
+      { status: statusCode }
     );
   } catch (error) {
     console.error(error);
 
+    const errorMessage = error.status ? error.message : 'Internal Server Error';
+
     return Response.json(
-      { statusText: 'Internal Server Error' },
-      { status: 500 }
+      { statusText: errorMessage },
+      { status: error.status ?? 500 }
     );
   }
 }
 
 export async function PATCH(Request) {
   try {
-    const session = await auth();
+    const { searchParams } = new URL(Request.url);
+    const action = searchParams.get('action');
 
-    if (!session) {
+    const validActions = ['change-password', 'set-new-password'];
+
+    if (!validActions.includes(action)) {
       return Response.json(
-        { statusText: 'Unauthorized! You must signin first.' },
-        { status: 401 }
+        { statusText: getLocalMessage('Invalid or missing parameters.') },
+        { status: 400 }
       );
     }
-
-    const userId = session?.user?.id;
 
     await connectMongo();
 
-    const userExists = await User.findById(userId);
-
-    if (!userExists) {
-      return Response.json({ statusText: 'User not found.' }, { status: 404 });
-    }
-
-    const { currentPassword, password: newPassword } = await Request.json();
-
-    const passwordsMatch = await compare(currentPassword, userExists.password);
-
-    if (!passwordsMatch) {
-      return Response.json(
-        { statusText: 'The current password you entered is incorrect.' },
-        { status: 400 }
-      );
-    }
-
-    const isNewPasswordSameAsOld = await compare(
-      newPassword,
-      userExists.password
-    );
-
-    if (isNewPasswordSameAsOld) {
-      return Response.json(
-        {
-          statusText:
-            'The new password cannot be the same as the current password.',
-        },
-        { status: 400 }
-      );
-    }
-
-    const hashedPassword = await hash(newPassword, 12);
-
-    await User.updateOne(
-      { _id: userId },
-      {
-        $set: {
-          password: hashedPassword,
-        },
-      }
-    );
+    await updatePassword(Request, action);
 
     return Response.json(
-      { statusText: 'Successfully Updated' },
+      { statusText: 'Successfully Updated!' },
       { status: 200 }
     );
   } catch (error) {
     console.error(error);
 
+    const errorMessage = error.status
+      ? error.message.split(',')
+      : 'Internal Server Error';
+
     return Response.json(
-      { statusText: 'Internal Server Error' },
-      { status: 500 }
+      {
+        statusText: errorMessage,
+      },
+      { status: error.status ?? 500 }
     );
   }
 }

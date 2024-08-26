@@ -1,9 +1,15 @@
 'use client';
 
 import React, { useState, useRef } from 'react';
+
 import { useSearchParams } from 'next/navigation';
-import { useTranslations } from 'next-intl';
-import { TextField, InputAdornment, IconButton } from '@mui/material';
+import { Link } from '@/navigation';
+import {
+  TextField,
+  InputAdornment,
+  IconButton,
+  Typography,
+} from '@mui/material';
 import FormSubmitButton from '@/app/components/custom/buttons/FormSubmitButton';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -15,7 +21,6 @@ import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { AlertMessage } from '@/app/components/custom/texts';
 import { useMessageStore } from '@/stores/messageStore';
-import { signInCredentialsTranslations } from '@/lib/validation/validationTranslations';
 
 export default function CredentialsForm() {
   const searchParams = useSearchParams();
@@ -27,9 +32,6 @@ export default function CredentialsForm() {
 
   const [captcha, setCaptcha] = useState('' || null);
   const [showPassword, setShowPassword] = useState(false);
-
-  const t = useTranslations('signin_page');
-  const t1 = useTranslations('common');
 
   const handleShowPassword = () => {
     setShowPassword((show) => !show);
@@ -43,15 +45,12 @@ export default function CredentialsForm() {
       .forEach((a) => a.remove());
   };
 
-  const translations = signInCredentialsTranslations(t1);
-  const schema = credentialsSignInSchema(translations);
-
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting, isSubmitSuccessful },
   } = useForm({
-    resolver: yupResolver(schema),
+    resolver: yupResolver(credentialsSignInSchema),
   });
 
   const onSubmit = async (formData, event) => {
@@ -70,7 +69,7 @@ export default function CredentialsForm() {
         localStorage.setItem('signed-in', 'true');
       }
     } catch (error) {
-      handleAlertMessage(t1('errors.try_again'), 'error');
+      handleAlertMessage('An error occured. Try again.', 'error');
     }
   };
 
@@ -80,10 +79,9 @@ export default function CredentialsForm() {
         <TextField
           {...register('email')}
           fullWidth
-          size="small"
           id="email"
           name="email"
-          label={t1('labels.email')}
+          label="Email"
           type="email"
           error={!!errors.email}
           autoComplete="on"
@@ -94,10 +92,9 @@ export default function CredentialsForm() {
         <TextField
           {...register('password')}
           fullWidth
-          size="small"
           id="password"
           name="password"
-          label={t1('labels.password')}
+          label="Password"
           error={!!errors.password}
           type={showPassword ? 'text' : 'password'}
           InputProps={{
@@ -122,8 +119,12 @@ export default function CredentialsForm() {
           />
         )}
 
+        <Typography sx={{ my: 2, textAlign: 'right' }}>
+          <Link href="/account/forgot-password">Forgot Password?</Link>
+        </Typography>
+
         <FormSubmitButton
-          label={t('button_labels.signin')}
+          label="Sign In"
           action="auth"
           handleSubmit={handleSubmit(onSubmit)}
           isSubmitting={isSubmitting}

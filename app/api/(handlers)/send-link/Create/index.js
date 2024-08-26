@@ -11,7 +11,6 @@ import { HttpError } from '@/utils/helper/errorHandler';
 import { emailSignInSchema } from '@/lib/validation/yup/signInSchema';
 import { getValidationError } from '@/utils/helper/errorHandler';
 import { handleRateLimitError } from '@/utils/helper/errorHandler';
-import { signInEmailTranslations } from '@/lib/validation/validationTranslations';
 
 const opts = {
   points: 1,
@@ -20,29 +19,29 @@ const opts = {
 
 const rateLimiter = new RateLimiterMemory(opts);
 
-export async function createSigninLink(Request, action, t, t1) {
+export async function sendSignInLink(Request) {
   try {
+    const { searchParams } = new URL(Request.url);
+    const action = searchParams.get('action');
+
     const validActions = ['signin', 'signup'];
 
     if (!validActions.includes(action)) {
       throw new HttpError({
-        message: getLocalMessage(t1('errors.missing_or_invalid_parameters'), t1),
+        message: getLocalMessage('Missing or invalid parameters.'),
         status: 400,
       });
     }
 
     const { email } = await Request.json();
 
-    const translations = signInEmailTranslations(t1);
-
-    const schema = emailSignInSchema(translations);
-    await schema.validate({ email }, { abortEarly: false });
+    await emailSignInSchema.validate({ email }, { abortEarly: false });
 
     const userExists = await findUserByEmail(email);
 
     if (!userExists) {
       throw new HttpError({
-        message: t('errors.email_must_verified'),
+        message: getLocalMessage('Email must be verified.'),
         status: 403,
       });
     }
@@ -52,14 +51,14 @@ export async function createSigninLink(Request, action, t, t1) {
     if (action === 'signin') {
       if (!emailIsVerified) {
         throw new HttpError({
-          message: t('errors.email_must_verified'),
+          message: getLocalMessage('Email must be verified.'),
           status: 403,
         });
       }
     } else if (action === 'signup') {
       if (emailIsVerified) {
         throw new HttpError({
-          message: getLocalMessage(t('errors.already_verified'), t1),
+          message: getLocalMessage('Account has been already verified.'),
           status: 422,
         });
       }
@@ -138,8 +137,8 @@ export async function createSigninLink(Request, action, t, t1) {
 
     const message =
       action === 'signin'
-        ? t('success_messages.signin_link_sent', { email })
-        : t1('success_messages.verification_link_sent', { email });
+        ? `A sign-in link has been sent to ${email}`
+        : `Verification link has been sent to ${email}`;
 
     const statusCode = userTokenExists ? 200 : 201;
 
@@ -147,7 +146,7 @@ export async function createSigninLink(Request, action, t, t1) {
   } catch (error) {
     console.error(error);
     getValidationError(error);
-    handleRateLimitError(error, t1);
+    handleRateLimitError(error);
 
     throw error;
   }

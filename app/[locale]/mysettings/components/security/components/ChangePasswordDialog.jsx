@@ -17,7 +17,7 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import axios from 'axios';
-import { changePasswordSchema } from '@/lib/validation/yup/changePasswordSchema';
+import { changePasswordSchema } from '@/lib/validation/yup/passwordSchema';
 import { ErrorText } from '@/utils/helper/form-text/ErrorText';
 import { useMessageStore } from '@/stores/messageStore';
 import { errorHandler } from '@/utils/helper/errorHandler';
@@ -49,13 +49,10 @@ export default function ChangePasswordDialog({ open, setOpen }) {
 
   const onSubmit = async (values) => {
     try {
-      const password = values.newPassword;
-      const currentPassword = values.currentPassword;
-
-      const action = 'update-password';
+      const action = 'change-password';
       const url = `/api/account/security?action=${action}`;
 
-      const { data } = await axios.patch(url, { password, currentPassword });
+      const { data } = await axios.patch(url, values);
 
       setOpen(false);
       handleAlertMessage(data.statusText, 'success');

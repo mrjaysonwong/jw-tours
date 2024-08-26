@@ -1,11 +1,12 @@
 import React, { useContext } from 'react';
-import { Typography, Divider, Box } from '@mui/material';
+import { Typography, Divider } from '@mui/material';
 import Password from './components/Password';
 import DeleteAccount from './components/DeleteAccount';
 import { PersonalSettingsContext } from '../tabs/MySettingsTabs';
 import { LoadingSkeletonCard } from '@/app/components/custom/loaders/Skeleton';
 import { useMessageStore } from '@/stores/messageStore';
 import { AlertMessage } from '@/app/components/custom/texts';
+
 
 export default function Security() {
   const { isLoading } = useContext(PersonalSettingsContext);

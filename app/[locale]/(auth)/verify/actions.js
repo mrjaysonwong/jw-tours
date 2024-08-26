@@ -2,12 +2,8 @@
 
 import { signIn } from '@/auth';
 import { redirect } from 'next/navigation';
-import { getTranslations } from 'next-intl/server';
 
 export async function authenticate(token, email, action, callbackUrl) {
-  const t = await getTranslations('signin_page');
-  const t1 = await getTranslations('common');
-
   try {
     const data = await signIn('email', {
       redirect: false,
@@ -25,13 +21,13 @@ export async function authenticate(token, email, action, callbackUrl) {
 
     if (authError) {
       switch (authError.message) {
-        case t('errors.email_must_verified'):
+        case 'Email must be verified.':
           return {
             error: {
               message: authError.message,
             },
           };
-        case t('errors.invalid_signin_link'):
+        case 'Invalid or expired sign-in link.':
           return {
             error: {
               message: authError.message,
@@ -41,7 +37,7 @@ export async function authenticate(token, email, action, callbackUrl) {
         default:
           return {
             error: {
-              message: t1('errors.internal_server'),
+              message: 'Internal Server Error',
             },
           };
       }

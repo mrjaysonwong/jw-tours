@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState, useRef } from 'react';
-import { useTranslations } from 'next-intl';
 import {
   StyledContainer as MainContainer,
   StyledCard,
@@ -19,7 +18,6 @@ import ReCAPTCHA from 'react-google-recaptcha';
 import { AlertMessage } from '@/app/components/custom/texts';
 import { useMessageStore } from '@/stores/messageStore';
 import Confirmation from '@/app/components/confirmation/Confirmation';
-import { signInEmailTranslations } from '@/lib/validation/validationTranslations';
 
 export default function EmailLink() {
   const { alert, handleAlertMessage, handleClose } = useMessageStore();
@@ -31,11 +29,6 @@ export default function EmailLink() {
   const [captcha, setCaptcha] = useState('' || null);
   const [message, setMessage] = useState('');
 
-  const t = useTranslations('signin_page');
-  const t1 = useTranslations('common');
-
-  const translations = signInEmailTranslations(t1);
-
   const onChange = () => {
     setCaptcha(false);
     submitAttemptRef.current = 0;
@@ -44,14 +37,12 @@ export default function EmailLink() {
       .forEach((a) => a.remove());
   };
 
-  const schema = emailSignInSchema(translations);
-
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting, isSubmitSuccessful },
   } = useForm({
-    resolver: yupResolver(schema),
+    resolver: yupResolver(emailSignInSchema),
   });
 
   const onSubmit = async (formData, event) => {
@@ -68,7 +59,7 @@ export default function EmailLink() {
         emailRef.current = data.email;
       }
     } catch (error) {
-      const { errorMessage } = errorHandler(error, t1);
+      const { errorMessage } = errorHandler(error);
 
       if (submitAttemptRef.current === 5 && errorMessage) {
         setCaptcha(true);
@@ -92,23 +83,23 @@ export default function EmailLink() {
             <StyledCard sx={{ width: 'clamp(300px, 50%, 300px)' }}>
               <Box sx={{ mb: 2 }}>
                 <Typography variant="h5">
-                  {t('headers.one_time_link')}
+                  Sign in to JW Tours with a one-time link
                 </Typography>
 
                 <Typography color="gray">
-                  {t('paragraphs.enter_verified_email')}
+                  Enter the verified email address registered with your JW Tours
+                  account, and we&apos;ll send you a link to sign in.
                 </Typography>
               </Box>
               <form>
                 <TextField
                   {...register('email')}
                   fullWidth
-                  size="small"
                   autoFocus
                   margin="dense"
                   id="email"
                   name="email"
-                  label={t1('labels.email')}
+                  label="Email"
                   type="email"
                   autoComplete="email"
                   error={!!errors.email}
@@ -125,7 +116,7 @@ export default function EmailLink() {
                 )}
 
                 <FormSubmitButton
-                  label={t1('button_labels.send')}
+                  label="Send"
                   action="auth"
                   handleSubmit={handleSubmit(onSubmit)}
                   isSubmitting={isSubmitting}
@@ -141,7 +132,7 @@ export default function EmailLink() {
                     variant="text"
                     sx={{ mt: 2 }}
                   >
-                    {t1('button_labels.goback')}
+                    Go Back
                   </Button>
                 </Link>
               </form>

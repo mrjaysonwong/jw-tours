@@ -7,11 +7,8 @@ import {
   findUserVerifiedEmail,
   constructUserObject,
 } from './query/User';
-import { getTranslations } from 'next-intl/server';
 
 export async function authSignInCredentials(credentials, req) {
-  const t = await getTranslations('signin_page');
-
   try {
     const { email, password } = credentials;
 
@@ -20,7 +17,7 @@ export async function authSignInCredentials(credentials, req) {
     const userExists = await findUserByEmail(email);
 
     if (!userExists) {
-      throw new Error(t('errors.invalid_credentials'));
+      throw new Error('Invalid Credentials');
     }
 
     const passwordLess = userExists.password === '';
@@ -30,21 +27,19 @@ export async function authSignInCredentials(credentials, req) {
     const isVerified = await findUserVerifiedEmail(email);
 
     if (!isVerified) {
-      throw new Error(t('errors.email_must_verified'));
+      throw new Error('Verify Email First');
     } else if (passwordLess && isPrimaryEmail) {
       throw new Error(
-        t('errors.use_signin_method', {
-          accountProvider: userExists.accountProvider,
-        })
+        `Please use the ${userExists.accountProvider} sign-in method`
       );
     } else if (passwordLess && !isPrimaryEmail) {
-      throw new Error(t('errors.invalid_credentials'));
+      throw new Error('Invalid Credentials');
     }
 
     const passwordsMatch = await compare(password, userExists.password);
 
     if (!passwordsMatch) {
-      throw new Error(t('errors.invalid_credentials'));
+      throw new Error('Invalid Credentials');
     }
 
     await User.updateOne(
@@ -65,7 +60,7 @@ export async function authSignInCredentials(credentials, req) {
   }
 }
 
-export async function authSignInEmail(credentials, t) {
+export async function authSignInEmail(credentials) {
   try {
     const { token, email, action } = credentials;
 
@@ -74,7 +69,7 @@ export async function authSignInEmail(credentials, t) {
     const userExists = await findUserByEmail(email);
 
     if (!userExists) {
-      throw new Error(t('errors.email_must_verified'));
+      throw new Error('Email must be verified.');
     }
 
     const userTokenExists = await Token.aggregate([
@@ -86,7 +81,7 @@ export async function authSignInEmail(credentials, t) {
     const verifiedOnce = userTokenExists[0]?.email?.requestCount >= 2;
 
     if (userTokenExists.length === 0 || verifiedOnce) {
-      throw new Error(t('errors.invalid_signin_link'));
+      throw new Error('Invalid or expired sign-in link.');
     }
 
     if (action === 'signin') {
@@ -134,7 +129,7 @@ export async function authSignInEmail(credentials, t) {
   }
 }
 
-export async function authSignInOAuth(user, account, t1) {
+export async function authSignInOAuth(user, account) {
   try {
     const [firstName, lastName] = user?.name.split(' ');
 
@@ -177,7 +172,7 @@ export async function authSignInOAuth(user, account, t1) {
       );
     }
   } catch (error) {
-    console.error(error.message);
-    throw new Error(t1('errors.internal_server'));
+    console.error(error);
+    throw new Error('Internal Server Error');
   }
 }

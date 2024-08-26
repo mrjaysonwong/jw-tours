@@ -37,6 +37,7 @@ export default async function MySettingsPage() {
                   position: 'relative',
                   display: 'flex',
                   alignItem: 'center',
+                  height: '140px',
 
                   '&:hover': {
                     color: 'primary.dark',

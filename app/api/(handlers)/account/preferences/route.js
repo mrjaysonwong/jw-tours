@@ -1,6 +1,6 @@
 import { auth } from '@/auth';
-import User from '@/model/userModel/userModel';
 import connectMongo from '@/lib/connection';
+import User from '@/model/userModel/userModel';
 import { getLocalMessage } from '@/utils/helper/errorHandler';
 
 export async function PATCH(Request) {
@@ -17,7 +17,7 @@ export async function PATCH(Request) {
       );
     }
 
-    const userId = session.user.id;
+    const { id: userId } = session.user;
 
     const searchParams = Request.nextUrl.searchParams;
     const action = searchParams.get('action');
@@ -48,7 +48,7 @@ export async function PATCH(Request) {
     return Response.json(
       {
         statusText: 'Successfully Updated',
-        lang: updatedUser.languageCountry
+        lang: updatedUser.languageCountry,
       },
       { status: 200 }
     );

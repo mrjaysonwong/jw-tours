@@ -40,6 +40,8 @@ export const {
       name: 'email',
       async authorize(credentials, req) {
         if (credentials) {
+          // Sample demo for locales
+          /*
           const cookieStore = cookies();
           const { value: locale } = cookieStore.get('NEXT_LOCALE');
 
@@ -47,8 +49,9 @@ export const {
             locale,
             namespace: 'signin_page',
           });
+          */
 
-          const user = await authSignInEmail(credentials, t);
+          const user = await authSignInEmail(credentials);
 
           if (user) {
             return user;
@@ -74,17 +77,9 @@ export const {
   ],
   callbacks: {
     async signIn({ user, account, profile }) {
-      const cookieStore = cookies();
-      const { value: locale } = cookieStore.get('NEXT_LOCALE');
-
-      const t1 = await getTranslations({
-        locale,
-        namespace: 'common',
-      });
-
       // if signed in using OAuth
       if (user && profile) {
-        await authSignInOAuth(user, account, t1);
+        await authSignInOAuth(user, account);
 
         return true;
       } else {
