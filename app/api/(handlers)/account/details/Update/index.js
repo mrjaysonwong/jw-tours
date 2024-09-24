@@ -1,16 +1,14 @@
-import User from '@/model/userModel/userModel';
-import cloudinary from '@/utils/config/cloudinary';
-import { getValidationError } from '@/utils/helper/errorHandler';
-import { personalDetailsSchema } from '@/lib/validation/yup/personalDetailsSchema';
-import { findUserById } from '@/utils/helper/query/User';
-import { HttpError } from '@/utils/helper/errorHandler';
+import User from '@/models/userModel/userModel';
+import cloudinary from '@/services/cloudinary';
+import { getValidationError } from '@/helpers/errorHelpers';
+import { personalDetailsSchema } from '@/helpers/validation/yup/schemas/personalDetailsSchema';
+import { HttpError } from '@/helpers/errorHelpers';
 
 export async function updateProfilePhoto(Request, userId) {
   try {
-    const body = await Request.json();
-    const { croppedImage } = body;
+    const { croppedImage } = await Request.json();
 
-    const userExists = await findUserById(userId);
+    const userExists = await User.findById(userId).select('image');
 
     if (!userExists) {
       throw new HttpError({
@@ -47,14 +45,14 @@ export async function updateProfilePhoto(Request, userId) {
       });
     }
   } catch (error) {
-    console.error(error);
+    console.error('Error while updating image', error.message);
     throw error;
   }
 }
 
 export async function deleteProfilePhoto(userId) {
   try {
-    const userExists = await findUserById(userId);
+    const userExists = await User.findById(userId).select('image');
 
     if (!userExists) {
       throw new HttpError({
@@ -81,7 +79,7 @@ export async function deleteProfilePhoto(userId) {
       });
     }
   } catch (error) {
-    console.error(error);
+    console.error('Error while deleting image.', error.message);
     throw error;
   }
 }
@@ -92,7 +90,13 @@ export async function updatePersonalDetails(Request, userId) {
 
     await personalDetailsSchema.validate({ ...body }, { abortEarly: false });
 
-    const userExists = await findUserById(userId);
+    const projectedFields = {
+      default: 'firstName lastName gender dateOfBirth nationality address',
+    };
+
+    const userExists = await User.findById(userId).select(
+      projectedFields.default
+    );
 
     if (!userExists) {
       throw new HttpError({
@@ -103,7 +107,7 @@ export async function updatePersonalDetails(Request, userId) {
 
     await User.updateOne({ _id: userId }, { $set: body });
   } catch (error) {
-    console.error(error);
+    console.error('Error while updating personal details.', error.message);
     getValidationError(error);
 
     throw error;

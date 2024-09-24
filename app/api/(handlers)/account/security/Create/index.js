@@ -1,22 +1,15 @@
 import { auth } from '@/auth';
-import Token from '@/model/tokenModel/tokenModel';
-import User from '@/model/userModel/userModel';
-import { sendEmail } from '@/utils/config/sendEmail';
-import { RateLimiterMemory } from 'rate-limiter-flexible';
-import { getLocalMessage } from '@/utils/helper/errorHandler';
-import { findUserByEmail } from '@/utils/helper/query/User';
-import { authEmailToken } from '@/utils/helper/token-handlers/tokenActions';
-import { HttpError } from '@/utils/helper/errorHandler';
-import { emailSchema } from '@/lib/validation/yup/personalDetailsSchema';
-import { getValidationError } from '@/utils/helper/errorHandler';
-import { handleRateLimitError } from '@/utils/helper/errorHandler';
-
-const opts = {
-  points: 1,
-  duration: 60, // 60 secs per request
-};
-
-const rateLimiter = new RateLimiterMemory(opts);
+import User from '@/models/userModel/userModel';
+import { sendEmail } from '@/services/sendEmail';
+import { rateLimiter } from '@/services/rateLimiter';
+import { getLocalMessage } from '@/helpers/errorHelpers';
+import { findUserEmail } from '@/helpers/query/User';
+import { authEmailToken } from '@/helpers/token-handlers/tokenActions';
+import { handleUserTokenLink } from '@/helpers/token-handlers/tokenActions';
+import { HttpError } from '@/helpers/errorHelpers';
+import { emailSchema } from '@/helpers/validation/yup/schemas/personalDetailsSchema';
+import { getValidationError } from '@/helpers/errorHelpers';
+import { handleRateLimitError } from '@/helpers/errorHelpers';
 
 async function getSessionEmail(body, headers) {
   const headersList = headers();
@@ -37,11 +30,11 @@ async function getSessionEmail(body, headers) {
     const userOwnedThisEmail = await User.findOne({
       _id: userId,
       email: { $elemMatch: { email: body.email } },
-    });
+    }).select('email.$');
 
     if (!userOwnedThisEmail) {
       throw new HttpError({
-        message: 'Unauthorized! Email does not belong to the user.',
+        message: 'Forbidden! Email does not belong to the user.',
         status: 403,
       });
     }
@@ -54,47 +47,12 @@ async function getSessionEmail(body, headers) {
   return {};
 }
 
-async function handleUserToken(email, token, expireTimestamp, userId) {
-  const userTokenExists = await Token.findOne({ userId });
-
-  const targetEmail = userTokenExists?.email.find((e) => e.email === email);
-
-  if (userTokenExists) {
-    if (targetEmail) {
-      await Token.updateOne(
-        { userId, 'email.email': email },
-        {
-          $set: {
-            'email.$': { email, token, expireTimestamp },
-          },
-        }
-      );
-    } else {
-      await Token.updateOne(
-        { userId },
-        {
-          $addToSet: {
-            email: { email, token, expireTimestamp },
-          },
-        }
-      );
-    }
-  } else {
-    await Token.create({
-      userId,
-      email: [{ email, token, expireTimestamp }],
-    });
-  }
-
-  return userTokenExists;
-}
-
 export async function sendPasswordResetLink(Request, headers) {
   try {
     const searchParams = Request.nextUrl.searchParams;
     const action = searchParams.get('action');
 
-    const validActions = ['reset-password'];
+    const validActions = ['forgot-password'];
 
     if (!validActions.includes(action)) {
       throw new HttpError({
@@ -104,6 +62,7 @@ export async function sendPasswordResetLink(Request, headers) {
     }
 
     const body = await Request.json();
+
     await emailSchema.validate({ ...body }, { abortEarly: false });
 
     const { email: sessionEmail, firstName: sessionName } =
@@ -111,7 +70,7 @@ export async function sendPasswordResetLink(Request, headers) {
 
     const email = body.email || sessionEmail;
 
-    const userExists = await findUserByEmail(email);
+    const userExists = await findUserEmail({ email });
 
     if (!userExists) {
       throw new HttpError({
@@ -128,13 +87,13 @@ export async function sendPasswordResetLink(Request, headers) {
       token,
       epochTime: expireTimestamp,
       emailHtml,
-    } = authEmailToken(email, Request, action, firstName);
+    } = authEmailToken({ email, Request, action, firstName });
 
-    const userTokenExists = await handleUserToken(
+    const userTokenExists = await handleUserTokenLink(
+      userExists._id,
       email,
       token,
-      expireTimestamp,
-      userExists._id
+      expireTimestamp
     );
 
     // server-side environment

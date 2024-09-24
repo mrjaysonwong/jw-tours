@@ -1,13 +1,13 @@
-import { redirect } from '@/navigation';
 import { notFound } from 'next/navigation';
-import connectMongo from '@/lib/connection';
-import Token from '@/model/tokenModel/tokenModel';
-import { StyledContainer as MainContainer } from '@/app/components/global-styles/globals';
-import PasswordReset from '../components/PasswordReset';
-import ForgotPassword from '../components/ForgotPassword';
-import ResendVerificationLink from '../components/ResendVerificationLink';
+import { redirect } from '@/navigation';
+import connectMongo from '@/services/db/connectMongo';
+import Token from '@/models/tokenModel/tokenModel';
+import { StyledAuthContainer } from '@/components/styled/StyledContainers';
+import PasswordReset from '@/app/(features)/authentication/components/PasswordReset';
+import ForgotPassword from '@/app/(features)/authentication/components/ForgotPassword';
+import ResendVerificationLink from '@/app/(features)/authentication/components/ResendVerificationLink';
 
-export default async function AccountPage({ params, searchParams }) {
+export default async function AccountActionPage({ params, searchParams }) {
   const { slug } = params;
   const token = searchParams.token;
 
@@ -17,15 +17,11 @@ export default async function AccountPage({ params, searchParams }) {
 
   await connectMongo();
 
-  const tokenExists = await Token.findOne({ 'email.token': token });
+  const tokenExists = await Token.findOne({ 'email.token': token }).select(
+    'email.$'
+  );
 
-  const reqCount = await Token.findOne({
-    'email.token': token,
-    $or: [
-      { 'email.requestCount': { $eq: 1 } },
-      { 'email.requestCount': { $gt: 1 } },
-    ],
-  });
+  const requestDone = tokenExists?.email[0].requestCount >= 1;
 
   const renderAccountComponent = () => {
     switch (slug) {
@@ -34,7 +30,7 @@ export default async function AccountPage({ params, searchParams }) {
           <PasswordReset
             token={token}
             tokenExists={!!tokenExists}
-            requestDone={!!reqCount}
+            requestDone={requestDone}
           />
         );
 
@@ -50,8 +46,8 @@ export default async function AccountPage({ params, searchParams }) {
   };
 
   return (
-    <MainContainer sx={{ alignItems: 'center' }}>
+    <StyledAuthContainer sx={{ alignItems: 'center' }}>
       {renderAccountComponent(slug)}
-    </MainContainer>
+    </StyledAuthContainer>
   );
 }

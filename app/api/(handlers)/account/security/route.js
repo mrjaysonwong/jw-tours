@@ -1,5 +1,5 @@
-import connectMongo from '@/lib/connection';
-import { getLocalMessage } from '@/utils/helper/errorHandler';
+import connectMongo from '@/services/db/connectMongo';
+import { getLocalMessage } from '@/helpers/errorHelpers';
 import { sendPasswordResetLink } from './Create';
 import { updatePassword } from './Update';
 import { headers } from 'next/headers';
@@ -42,10 +42,10 @@ export async function PATCH(Request) {
 
     await connectMongo();
 
-    await updatePassword(Request, action);
+    const { token } = await updatePassword(Request, action);
 
     return Response.json(
-      { statusText: 'Successfully Updated!' },
+      { statusText: 'Successfully Updated!', token },
       { status: 200 }
     );
   } catch (error) {

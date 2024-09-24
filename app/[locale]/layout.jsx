@@ -1,25 +1,29 @@
-import '../[locale]/globals.css';
-import { auth } from '@/auth';
 import { cookies } from 'next/headers';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, unstable_setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v13-appRouter';
-import NavBar from '../components/nav-bar/NavBar';
-import ThemeModeIconButton from '../components/global-styles/ThemeModeIconButton';
-import Footer from '../components/custom/footer/Footer';
-import ToggleThemeMode from '../components/global-styles/ToggleThemeMode';
-import AuthRedirect from './(auth)/AuthRedirect';
-import SessionWrapper from './(auth)/SessionWrapper';
-import { UserSessionWrapper } from '@/context/UserSessionWrapper';
+
+// local imports
+import '@/app/[locale]/globals.css';
+import { auth } from '@/auth';
+import AuthSessionProvider from '@/app/(features)/authentication/contexts/AuthSessionProvider';
+import AuthRedirect from '@/app/(features)/authentication/components/AuthRedirect';
+import Header from '@/components/layout/header/Header';
+import ThemeModeIconButton from '@/components/layout/themes/ThemeModeIconButton';
+import Footer from '@/components/layout/footer/Footer';
+import ToggleThemeMode from '@/components/layout/themes/ToggleThemeMode';
+import { UserSessionProvider } from '@/contexts/UserProvider';
 import { locales } from '@/navigation';
-import { createMetadata } from '@/utils/helper/common';
+import { createMetadata } from '@/helpers/metaDataHelpers';
 
 export async function generateMetadata({ params: { locale } }) {
-  return createMetadata(locale, 'layout',);
+  return createMetadata(locale, 'layout');
 }
 
-export default async function RootLayout({ children, params: { locale } }) {
+export default async function RootLayout({ children, params }) {
+  const { locale } = params;
+
   if (!locales.includes(locale)) {
     notFound();
   }
@@ -35,27 +39,28 @@ export default async function RootLayout({ children, params: { locale } }) {
   const session = await auth();
 
   return (
-    <SessionWrapper>
-      <html lang={locale}>
-        <link rel="icon" href="/icon.svg" />
+    <html lang={locale}>
+      <link rel="icon" href="/icon.svg" />
 
-        <body>
+      <body>
+        <AuthSessionProvider>
           <AppRouterCacheProvider options={{ key: 'css' }}>
             <NextIntlClientProvider locale={locale} messages={messages}>
-              <ToggleThemeMode storedTheme={storedTheme}>
+              <UserSessionProvider session={session}>
                 <AuthRedirect>
-                  <UserSessionWrapper session={session}>
-                    <NavBar />
+                  <ToggleThemeMode storedTheme={storedTheme}>
+                    {/* <NavBar /> */}
+                    <Header />
                     {children}
                     <ThemeModeIconButton />
                     <Footer />
-                  </UserSessionWrapper>
+                  </ToggleThemeMode>
                 </AuthRedirect>
-              </ToggleThemeMode>
+              </UserSessionProvider>
             </NextIntlClientProvider>
           </AppRouterCacheProvider>
-        </body>
-      </html>
-    </SessionWrapper>
+        </AuthSessionProvider>
+      </body>
+    </html>
   );
 }

@@ -1,23 +1,16 @@
-import Token from '@/model/tokenModel/tokenModel';
-import { sendEmail } from '@/utils/config/sendEmail';
-import { RateLimiterMemory } from 'rate-limiter-flexible';
-import { getLocalMessage } from '@/utils/helper/errorHandler';
+import { sendEmail } from '@/services/sendEmail';
+import { rateLimiter } from '@/services/rateLimiter';
+import { getLocalMessage } from '@/helpers/errorHelpers';
 import {
-  findUserByEmail,
+  findUserEmail,
   findUserVerifiedEmail,
-} from '@/utils/helper/query/User';
-import { authEmailToken } from '@/utils/helper/token-handlers/tokenActions';
-import { HttpError } from '@/utils/helper/errorHandler';
-import { emailSignInSchema } from '@/lib/validation/yup/signInSchema';
-import { getValidationError } from '@/utils/helper/errorHandler';
-import { handleRateLimitError } from '@/utils/helper/errorHandler';
-
-const opts = {
-  points: 1,
-  duration: 60, // 60 secs per request
-};
-
-const rateLimiter = new RateLimiterMemory(opts);
+} from '@/helpers/query/User';
+import { authEmailToken } from '@/helpers/token-handlers/tokenActions';
+import { handleUserTokenLink } from '@/helpers/token-handlers/tokenActions';
+import { HttpError } from '@/helpers/errorHelpers';
+import { emailSignInSchema } from '@/helpers/validation/yup/schemas/signInSchema';
+import { getValidationError } from '@/helpers/errorHelpers';
+import { handleRateLimitError } from '@/helpers/errorHelpers';
 
 export async function sendSignInLink(Request) {
   try {
@@ -37,7 +30,7 @@ export async function sendSignInLink(Request) {
 
     await emailSignInSchema.validate({ email }, { abortEarly: false });
 
-    const userExists = await findUserByEmail(email);
+    const userExists = await findUserEmail({ email });
 
     if (!userExists) {
       throw new HttpError({
@@ -46,7 +39,7 @@ export async function sendSignInLink(Request) {
       });
     }
 
-    const emailIsVerified = await findUserVerifiedEmail(email);
+    const emailIsVerified = await findUserVerifiedEmail({ email });
 
     if (action === 'signin') {
       if (!emailIsVerified) {
@@ -70,58 +63,14 @@ export async function sendSignInLink(Request) {
       token,
       epochTime: expireTimestamp,
       emailHtml,
-    } = authEmailToken(email, Request, action);
+    } = authEmailToken({ email, Request, action });
 
-    const userId = userExists._id;
-
-    const userTokenExists = await Token.findOne({ userId });
-
-    const targetEmail = userTokenExists?.email.find((e) => e.email === email);
-
-    if (userTokenExists) {
-      if (targetEmail) {
-        // Update the existing email object
-        // Use field.$ positional operator
-        await Token.updateOne(
-          { userId, 'email.email': email },
-          {
-            $set: {
-              'email.$': {
-                email,
-                token,
-                expireTimestamp,
-              },
-            },
-          }
-        );
-      } else {
-        // Add a new email object
-        await Token.updateOne(
-          { userId },
-          {
-            $addToSet: {
-              email: {
-                email,
-                token,
-                expireTimestamp,
-              },
-            },
-          }
-        );
-      }
-    } else {
-      // Create a new document
-      await Token.create({
-        userId,
-        email: [
-          {
-            email: email,
-            token: token,
-            expireTimestamp: expireTimestamp,
-          },
-        ],
-      });
-    }
+    const userTokenExists = await handleUserTokenLink(
+      userExists._id,
+      email,
+      token,
+      expireTimestamp
+    );
 
     const subjectText =
       action === 'signin'
@@ -144,7 +93,7 @@ export async function sendSignInLink(Request) {
 
     return { message, statusCode, email };
   } catch (error) {
-    console.error(error);
+    console.error('Failed to send signin link:', error.message);
     getValidationError(error);
     handleRateLimitError(error);
 

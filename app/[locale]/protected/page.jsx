@@ -1,12 +1,13 @@
 import { Typography } from '@mui/material';
-import { StyledContainer as MainContainer } from '@/app/components/global-styles/globals';
+import { StyledContainer } from '@/components/styled/StyledContainers';
+
 
 export default function ProtectedPage() {
   return (
-    <MainContainer>
+    <StyledContainer>
       <Typography variant="h4" sx={{ mt: 12 }}>
         Protected Page
       </Typography>
-    </MainContainer>
+    </StyledContainer>
   );
 }

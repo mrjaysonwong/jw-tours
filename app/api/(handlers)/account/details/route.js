@@ -1,12 +1,12 @@
 import { auth } from '@/auth';
-import User from '@/model/userModel/userModel';
-import connectMongo from '@/lib/connection';
+import User from '@/models/userModel/userModel';
+import connectMongo from '@/services/db/connectMongo';
 import {
   updatePersonalDetails,
   updateProfilePhoto,
   deleteProfilePhoto,
 } from './Update';
-import { getLocalMessage } from '@/utils/helper/errorHandler';
+import { getLocalMessage } from '@/helpers/errorHelpers';
 
 export async function GET(Request) {
   try {
@@ -43,7 +43,7 @@ export async function GET(Request) {
       userExists = await User.findById(userId);
     } else {
       userExists = await User.findById(userId).select(
-        'firstName lastName email image'
+        'firstName lastName email image role'
       );
 
       if (userExists.email && Array.isArray(userExists.email)) {
@@ -62,10 +62,10 @@ export async function GET(Request) {
 
     return Response.json({ data: userExists }, { status: 200 });
   } catch (error) {
-    console.error(error);
+    console.error('Error while fetching the data.', error);
     return Response.json(
       {
-        statusText: 'An error occurred while fetching data.',
+        statusText: 'Internal Server Error',
       },
       { status: 500 }
     );

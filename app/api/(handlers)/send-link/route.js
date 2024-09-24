@@ -1,4 +1,4 @@
-import connectMongo from '@/lib/connection';
+import connectMongo from '@/services/db/connectMongo';
 import { sendSignInLink } from './Create';
 
 /* baseUrl/api/send-link */

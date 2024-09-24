@@ -1,7 +1,7 @@
 import { auth } from '@/auth';
-import connectMongo from '@/lib/connection';
-import User from '@/model/userModel/userModel';
-import { getLocalMessage } from '@/utils/helper/errorHandler';
+import connectMongo from '@/services/db/connectMongo';
+import User from '@/models/userModel/userModel';
+import { getLocalMessage } from '@/helpers/errorHelpers';
 
 export async function PATCH(Request) {
   try {

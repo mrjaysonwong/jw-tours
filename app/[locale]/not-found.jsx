@@ -1,4 +1,4 @@
-import { Custom404Page } from "../components/custom/error/404";
+import { Custom404Page } from "../../components/errors/404";
 
 
 export default function NotFound() {

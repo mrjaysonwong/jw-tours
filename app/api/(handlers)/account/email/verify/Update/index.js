@@ -1,9 +1,9 @@
-import User from '@/model/userModel/userModel';
-import Token from '@/model/tokenModel/tokenModel';
-import { HttpError } from '@/utils/helper/errorHandler';
-import { getLocalMessage } from '@/utils/helper/errorHandler';
+import User from '@/models/userModel/userModel';
+import Token from '@/models/tokenModel/tokenModel';
+import { HttpError } from '@/helpers/errorHelpers';
+import { getLocalMessage } from '@/helpers/errorHelpers';
 
-export async function verifyEmailOTP(Request, userId) {
+export async function verifyAndAddEmail(Request, userId) {
   try {
     const searchParams = Request.nextUrl.searchParams;
     const email = searchParams.get('email');
@@ -18,7 +18,7 @@ export async function verifyEmailOTP(Request, userId) {
     const emailExists = await User.findOne({
       _id: userId,
       'email.email': email,
-    });
+    }).select('email.$');
 
     if (emailExists) {
       throw new HttpError({
@@ -29,15 +29,23 @@ export async function verifyEmailOTP(Request, userId) {
 
     const { otp } = await Request.json();
 
+    if (!otp) {
+      throw new HttpError({
+        message: 'Input the OTP.',
+        status: 400,
+      });
+    }
+
     const foundToken = await Token.findOne({
       userId,
       email: {
         $elemMatch: {
-          email: email,
+          email,
           token: otp,
         },
       },
-    });
+    }).select('userId email.$');
+
 
     const currentTimestamp = Date.now(); // epochTime
     const expireTimestamp = foundToken?.email[0].expireTimestamp;
@@ -49,21 +57,20 @@ export async function verifyEmailOTP(Request, userId) {
       });
     }
 
-    await User.findByIdAndUpdate(
-      userId,
+    await User.updateOne(
+      { _id: userId },
       {
         $addToSet: {
           email: {
-            email: email,
+            email,
             isPrimary: false,
             isVerified: true,
           },
         },
-      },
-      { new: true }
+      }
     );
   } catch (error) {
-    console.error(error);
+    console.error('Error while verifying email OTP.', error.message);
     throw error;
   }
 }

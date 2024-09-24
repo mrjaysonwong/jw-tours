@@ -1,28 +1,19 @@
 import { auth } from '@/auth';
 import { redirect } from 'next/navigation';
-import { StyledContainer as MainContainer } from '@/app/components/global-styles/globals';
-import MySettingsTabs from '../components/tabs/MySettingsTabs';
+import MySettingsTabs from '@/app/(features)/account/components/MySettingsTabs';
 
-export default async function MySettingsSlugPage({ params }) {
+export default async function MySettingsPage({ params }) {
   const session = await auth();
 
-  if (!session) redirect('/signin');
+  if (!session) redirect('/');
 
   const { slug } = params;
 
-  const renderTabsComponent = () => {
-    switch (slug) {
-      case 'personal':
-        return <MySettingsTabs slug={slug} />;
-      case 'preferences':
-        return <MySettingsTabs slug={slug} />;
-      case 'security':
-        return <MySettingsTabs slug={slug} />;
+  const validSlugs = ['personal', 'preferences', 'security', 'payment'];
 
-      default:
-        redirect('/mysettings');
-    }
-  };
+  if (!validSlugs.includes(slug)) {
+    redirect('/mysettings');
+  }
 
-  return <MainContainer>{renderTabsComponent(slug)}</MainContainer>;
+  return <MySettingsTabs slug={slug} />;
 }

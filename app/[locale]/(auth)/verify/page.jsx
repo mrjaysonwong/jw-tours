@@ -1,13 +1,12 @@
-import Verify from '@/app/[locale]/(auth)/verify/components/Verify';
-import connectMongo from '@/lib/connection';
-import CustomError from '@/app/components/custom/error';
+import VerifyToken from '@/app/(features)/authentication/components/VerifyToken';
+import connectMongo from '@/services/db/connectMongo';
+import CustomError from '@/components/errors/500';
 
 export const metadata = {
   title: 'Verify Request',
 };
 
-
-export default async function VerifyPage({ searchParams }) {
+export default async function VerifyAuthTokenPage({ searchParams }) {
   const { token, email, action, callbackUrl } = searchParams;
 
   try {
@@ -17,13 +16,11 @@ export default async function VerifyPage({ searchParams }) {
   }
 
   return (
-    <>
-      <Verify
-        token={token}
-        email={email}
-        action={action}
-        callbackUrl={callbackUrl}
-      />
-    </>
+    <VerifyToken
+      token={token}
+      email={email}
+      action={action}
+      callbackUrl={callbackUrl}
+    />
   );
 }

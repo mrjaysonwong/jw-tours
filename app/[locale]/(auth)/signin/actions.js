@@ -3,7 +3,7 @@
 import { signIn } from '@/auth';
 import { redirect } from '@/navigation';
 
-export async function authenticate(formData, callbackUrl) {
+export async function authenticate(formData, pathname) {
   try {
     const data = await signIn('credentials', {
       redirect: false,
@@ -12,7 +12,7 @@ export async function authenticate(formData, callbackUrl) {
     });
 
     if (data) {
-      redirect(callbackUrl ?? '/');
+      redirect(`${process.env.NEXT_PUBLIC_BASE_URL}${pathname}` ?? '/');
     }
   } catch (error) {
     // can access error.cause when importing from '@/auth';
@@ -34,7 +34,7 @@ export async function authenticate(formData, callbackUrl) {
               message: authError.message,
             },
           };
-        case 'Verify Email First':
+        case 'Email must be verified.':
           return {
             error: {
               message: authError.message,

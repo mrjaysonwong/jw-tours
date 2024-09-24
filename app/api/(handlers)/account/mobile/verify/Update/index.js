@@ -1,10 +1,9 @@
-import User from '@/model/userModel/userModel';
-import Token from '@/model/tokenModel/tokenModel';
-import { findUserById } from '@/utils/helper/query/User';
-import { HttpError } from '@/utils/helper/errorHandler';
-import { getLocalMessage } from '@/utils/helper/errorHandler';
+import User from '@/models/userModel/userModel';
+import Token from '@/models/tokenModel/tokenModel';
+import { HttpError } from '@/helpers/errorHelpers';
+import { getLocalMessage } from '@/helpers/errorHelpers';
 
-export async function verifyMobileOTP(Request, userId) {
+export async function verifyAndAddMobile(Request, userId) {
   try {
     const searchParams = Request.nextUrl.searchParams;
     const dialCode = searchParams.get('dialcode');
@@ -17,7 +16,7 @@ export async function verifyMobileOTP(Request, userId) {
       });
     }
 
-    const userExists = await findUserById(userId);
+    const userExists = await User.findById(userId).select('phone');
 
     if (!userExists) {
       throw new HttpError({
@@ -28,16 +27,23 @@ export async function verifyMobileOTP(Request, userId) {
 
     const { otp } = await Request.json();
 
+    if (!otp) {
+      throw new HttpError({
+        message: 'Input the OTP.',
+        status: 400,
+      });
+    }
+
     const phoneNumberExists = await User.findOne({
       _id: userId,
       phone: {
         $elemMatch: {
           dialCode: `+${dialCode}`,
-          phoneNumber: phoneNumber,
+          phoneNumber,
           isVerified: true,
         },
       },
-    });
+    }).select('phone.$');
 
     if (phoneNumberExists) {
       throw new HttpError({
@@ -51,11 +57,11 @@ export async function verifyMobileOTP(Request, userId) {
       phone: {
         $elemMatch: {
           dialCode: `+${dialCode}`,
-          phoneNumber: phoneNumber,
+          phoneNumber,
           token: otp,
         },
       },
-    });
+    }).select('userId phone.$');
 
     const currentTimestamp = Date.now(); // epochTime
     const expireTimestamp = foundToken?.phone[0].expireTimestamp;
@@ -69,22 +75,21 @@ export async function verifyMobileOTP(Request, userId) {
 
     const initialPhone = !userExists.phone;
 
-    await User.findByIdAndUpdate(
-      userId,
+    await User.updateOne(
+      { _id: userId },
       {
         $addToSet: {
           phone: {
             dialCode: `+${dialCode}`,
-            phoneNumber: phoneNumber,
+            phoneNumber,
             isPrimary: initialPhone ? true : false,
             isVerified: true,
           },
         },
-      },
-      { new: true }
+      }
     );
   } catch (error) {
-    console.error(error);
+    console.error('Error while verifying mobile OTP.', error.message);
     throw error;
   }
 }

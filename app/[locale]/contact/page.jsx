@@ -1,9 +1,9 @@
-import { StyledContainer as MainContainer } from '@/app/components/global-styles/globals';
+import { StyledContainer } from "@/components/styled/StyledContainers";
 
 export default function ContactPage() {
   return (
-    <MainContainer sx={{ minHeight: '100vh' }}>
+    <StyledContainer>
       <h5>Contact Page</h5>
-    </MainContainer>
+    </StyledContainer>
   );
 }

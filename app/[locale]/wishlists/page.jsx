@@ -1,9 +1,10 @@
-import { StyledContainer as MainContainer } from '@/app/components/global-styles/globals';
+import { StyledContainer } from '@/components/styled/StyledContainers';
+
 
 export default function WishListsPage() {
   return (
-    <MainContainer sx={{ minHeight: '100vh' }}>
+    <StyledContainer>
       <h3>Wishlists Page</h3>
-    </MainContainer>
+    </StyledContainer>
   );
 }

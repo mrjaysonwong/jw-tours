@@ -1,13 +1,14 @@
 import { auth } from '@/auth';
-import User from '@/model/userModel/userModel';
-import Token from '@/model/tokenModel/tokenModel';
+import { headers } from 'next/headers';
+import User from '@/models/userModel/userModel';
+import Token from '@/models/tokenModel/tokenModel';
 import { hash, compare } from 'bcryptjs';
-import { HttpError } from '@/utils/helper/errorHandler';
+import { HttpError } from '@/helpers/errorHelpers';
 import {
   changePasswordSchema,
   newPasswordSchema,
-} from '@/lib/validation/yup/passwordSchema';
-import { getValidationError } from '@/utils/helper/errorHandler';
+} from '@/helpers/validation/yup/schemas/passwordSchema';
+import { getValidationError } from '@/helpers/errorHelpers';
 
 async function validateChangePassword(body, userPassword) {
   await changePasswordSchema.validate({ ...body }, { abortEarly: false });
@@ -31,21 +32,30 @@ async function validateChangePassword(body, userPassword) {
   }
 }
 
-async function validateSetNewPassword(body) {
+async function validateSetNewPassword(body, token) {
   await newPasswordSchema.validate({ ...body }, { abortEarly: false });
 
-  if (!body.token) {
+  if (!token) {
     throw new HttpError({
-      message: 'Input token',
+      message: 'Missing token.',
       status: 400,
     });
   }
 
-  const tokenExists = await Token.findOne({ 'email.token': body.token });
+  const tokenExists = await Token.findOne({ 'email.token': token }).select(
+    'userId email.$'
+  );
 
   if (!tokenExists) {
     throw new HttpError({
-      message: 'Invalid or token has expired. Please request a new link.',
+      message: 'Invalid token or has expired. Please request a new link.',
+      status: 400,
+    });
+  }
+
+  if (tokenExists?.email[0].requestCount >= 1) {
+    throw new HttpError({
+      message: 'This token link has been already used.',
       status: 400,
     });
   }
@@ -62,9 +72,9 @@ async function updateUserPassword(userId, hashedPassword) {
   );
 }
 
-async function updateTokenRequestCount(email) {
+async function updateTokenRequestCount(token) {
   await Token.updateOne(
-    { 'email.email': email },
+    { 'email.token': token },
     {
       $inc: { 'email.$.requestCount': 1 },
     }
@@ -74,8 +84,8 @@ async function updateTokenRequestCount(email) {
 export async function updatePassword(Request, action) {
   try {
     let userId;
-    let email;
     let hashedPassword;
+    let token;
 
     if (action === 'change-password') {
       const session = await auth();
@@ -88,9 +98,8 @@ export async function updatePassword(Request, action) {
       }
 
       userId = session.user.id;
-      email = session.user.email;
 
-      const userExists = await User.findById(userId);
+      const userExists = await User.findById(userId).select('password');
 
       if (!userExists) {
         throw new HttpError({
@@ -106,12 +115,14 @@ export async function updatePassword(Request, action) {
       hashedPassword = await hash(body.newPassword, 12);
     } else if (action === 'set-new-password') {
       const body = await Request.json();
-      const tokenExists = await validateSetNewPassword(body);
+
+      token = headers().get('authorization').replace('Bearer ', '');
+
+      const tokenExists = await validateSetNewPassword(body, token);
 
       userId = tokenExists.userId;
-      email = tokenExists.email[0].email;
 
-      const userExists = await User.findById(userId);
+      const userExists = await User.findById(userId).select('password');
 
       if (!userExists) {
         throw new HttpError({
@@ -121,12 +132,15 @@ export async function updatePassword(Request, action) {
       }
 
       hashedPassword = await hash(body.password, 12);
+
+      await updateTokenRequestCount(token);
     }
 
     await updateUserPassword(userId, hashedPassword);
-    await updateTokenRequestCount(email);
+
+    return { token };
   } catch (error) {
-    console.error(error);
+    console.error('Error while updating password.', error.message);
     getValidationError(error);
     throw error;
   }

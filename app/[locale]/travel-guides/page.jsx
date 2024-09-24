@@ -1,9 +1,9 @@
-import { StyledContainer as MainContainer } from '@/app/components/global-styles/globals';
+import { StyledContainer } from '@/components/styled/StyledContainers';
 
 export default function TravelGuidesPage() {
   return (
-    <MainContainer>
+    <StyledContainer>
       <h5>Travel Guides Page</h5>
-    </MainContainer>
+    </StyledContainer>
   );
 }

@@ -1,7 +1,7 @@
-import SignUp from '@/app/[locale]/(auth)/signup/components/SignUp';
 import { auth } from '@/auth';
 import { redirect } from '@/navigation';
-import { createMetadata } from '@/utils/helper/common';
+import { createMetadata } from '@/helpers/metaDataHelpers';
+import SignUpForm from '@/app/(features)/authentication/components/SignUpForm';
 
 export async function generateMetadata({ params: { locale } }) {
   return createMetadata(locale, 'signup_page', 'meta_title.signup');
@@ -13,9 +13,5 @@ export default async function SignUpPage() {
   if (session) {
     redirect('/');
   }
-  return (
-    <>
-      <SignUp />
-    </>
-  );
+  return <SignUpForm />;
 }

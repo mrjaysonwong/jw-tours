@@ -1,8 +1,8 @@
 import { auth } from '@/auth';
-import connectMongo from '@/lib/connection';
-import { addMobileNumber } from './Create';
+import connectMongo from '@/services/db/connectMongo';
+import { sendMobileOTP } from './Create';
 import { deleteMobileNumber, updatePrimaryMobileNumber } from './Update';
-import { getLocalMessage } from '@/utils/helper/errorHandler';
+import { getLocalMessage } from '@/helpers/errorHelpers';
 
 export async function POST(Request) {
   try {
@@ -19,7 +19,7 @@ export async function POST(Request) {
 
     await connectMongo();
 
-    const { statusCode } = await addMobileNumber(Request, userId);
+    const { statusCode } = await sendMobileOTP(Request, userId);
 
     return Response.json({ statusText: 'OTP sent!' }, { status: statusCode });
   } catch (error) {
@@ -61,14 +61,23 @@ export async function PATCH(Request) {
       );
     }
 
+    const { phone } = await Request.json();
+
+    if (!phone) {
+      return Response.json(
+        { statusText: 'Input phone number.' },
+        { status: 400 }
+      );
+    }
+
     await connectMongo();
 
     let newPrimaryNumber;
 
     if (action === 'delete') {
-      await deleteMobileNumber(Request, userId);
+      await deleteMobileNumber(phone, userId);
     } else if (action === 'set-primary') {
-      newPrimaryNumber = await updatePrimaryMobileNumber(Request, userId);
+      newPrimaryNumber = await updatePrimaryMobileNumber(phone, userId);
     }
 
     const responseMessage = action.includes('delete')
@@ -84,9 +93,7 @@ export async function PATCH(Request) {
   } catch (error) {
     console.error(error);
 
-    const errorMessage = error.status
-      ? error.message
-      : 'Internal Server Error. Try again.';
+    const errorMessage = error.status ? error.message : 'Internal Server Error';
 
     return Response.json(
       { statusText: errorMessage },

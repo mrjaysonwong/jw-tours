@@ -1,6 +1,6 @@
 import React, { Suspense } from 'react';
-import Posts from './components/Posts';
-import { LoadingPostList } from './components/Loading';
+import Posts from '@/app/(features)/blog/components/Posts';
+import { SkeletonPostList } from '@/components/loaders/Skeletons';
 
 export const metadata = {
   title: 'Blog',
@@ -9,7 +9,7 @@ export const metadata = {
 export default function BlogPage({ searchParams }) {
   return (
     <>
-      <Suspense fallback={<LoadingPostList />}>
+      <Suspense fallback={<SkeletonPostList />}>
         <Posts searchParams={searchParams} />
       </Suspense>
     </>

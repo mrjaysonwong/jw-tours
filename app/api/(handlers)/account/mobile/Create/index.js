@@ -1,28 +1,17 @@
-import User from '@/model/userModel/userModel';
-import Token from '@/model/tokenModel/tokenModel';
-import { getValidationError, HttpError } from '@/utils/helper/errorHandler';
-import { phoneNumberSchema } from '@/lib/validation/yup/personalDetailsSchema';
-import {
-  createOTP,
-  updateOTP,
-} from '@/utils/helper/token-handlers/tokenActions';
-import { RateLimiterMemory } from 'rate-limiter-flexible';
-import { sendSMS } from '@/utils/config/sendSMS';
-import { findUserById } from '@/utils/helper/query/User';
-import { handleRateLimitError } from '@/utils/helper/errorHandler';
+import User from '@/models/userModel/userModel';
+import { getValidationError, HttpError } from '@/helpers/errorHelpers';
+import { phoneNumberSchema } from '@/helpers/validation/yup/schemas/personalDetailsSchema';
+import { rateLimiter } from '@/services/rateLimiter';
+import { sendSMS } from '@/services/sendSMS';
+import { handleRateLimitError } from '@/helpers/errorHelpers';
+import { findUserPhoneNumber } from '@/helpers/query/User';
+import { handleUserTokenOTP } from '@/helpers/token-handlers/tokenActions';
 
-const opts = {
-  points: 1,
-  duration: 60, // 60 secs per request
-};
-
-const rateLimiter = new RateLimiterMemory(opts);
-
-export async function addMobileNumber(Request, userId) {
+export async function sendMobileOTP(Request, userId) {
   try {
-    const user = await findUserById(userId);
+    const { phone } = await User.findById(userId).select('phone');
 
-    if (user?.phone?.length >= 5) {
+    if (phone?.length >= 5) {
       throw new HttpError({
         message:
           'Cannot add more numbers; the maximum limit of mobile numbers has been reached.',
@@ -37,14 +26,10 @@ export async function addMobileNumber(Request, userId) {
 
     await phoneNumberSchema.validate({ ...body }, { abortEarly: false });
 
-    const phoneNumberTaken = await User.findOne({
-      _id: userId,
-      phone: {
-        $elemMatch: {
-          dialCode: dialCode,
-          phoneNumber: phoneNumber,
-        },
-      },
+    const phoneNumberTaken = await findUserPhoneNumber({
+      userId,
+      dialCode,
+      phoneNumber,
     });
 
     if (phoneNumberTaken) {
@@ -56,41 +41,16 @@ export async function addMobileNumber(Request, userId) {
 
     await rateLimiter.consume(outbound, 1);
 
-    let otp;
-    let epochTimeExpires;
-    let statusCode;
+    const { otp, statusCode } = await handleUserTokenOTP({
+      userId,
+      dialCode,
+      phoneNumber,
+    });
 
-    const foundUserToken = await Token.findOne({ userId });
-
-    if (!foundUserToken) {
-      const { otp: genOTP, expires: genExpires } = await createOTP(
-        userId,
-        undefined,
-        dialCode,
-        phoneNumber
-      );
-
-      otp = genOTP;
-      epochTimeExpires = genExpires;
-      statusCode = 201;
-    } else {
-      const { otp: genOTP, expires: genExpires } = await updateOTP(
-        userId,
-        undefined,
-        dialCode,
-        phoneNumber
-      );
-
-      otp = genOTP;
-      epochTimeExpires = genExpires;
-      statusCode = 200;
-    }
-
-    await sendSMS(outbound, otp);
+    await sendSMS({ outbound, otp });
 
     return { statusCode };
   } catch (error) {
-    console.error(error);
     getValidationError(error);
     handleRateLimitError(error);
 

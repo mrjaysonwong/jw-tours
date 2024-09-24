@@ -7,12 +7,9 @@ import {
   authSignInCredentials,
   authSignInEmail,
   authSignInOAuth,
-} from './utils/helper/authSignIn';
-import {
-  findUserByEmail,
-  findUserById,
   constructUserObject,
-} from './utils/helper/query/User';
+} from './helpers/authSignIn';
+import { fetchUser } from './helpers/query/User';
 import { getTranslations } from 'next-intl/server';
 import { cookies } from 'next/headers';
 
@@ -77,7 +74,7 @@ export const {
   ],
   callbacks: {
     async signIn({ user, account, profile }) {
-      // if signed in using OAuth
+      // if signed-in with OAuth
       if (user && profile) {
         await authSignInOAuth(user, account);
 
@@ -87,19 +84,20 @@ export const {
       }
     },
 
-    async jwt({ token, user, trigger, account, profile, session }) {
-      // authenticated
+    async jwt({ token, user, trigger, account, profile }) {
       if (trigger === 'update' && token.user) {
-        const userExists = await findUserById(token.user.id);
-        token.user = constructUserObject(userExists);
+        // Use case updating fields
+        // re-update token
+        const userId = token.user.id;
+        const data = await fetchUser({ userId });
+
+        token.user = constructUserObject(data);
       } else if (user) {
-        // isAuthenticating
-        const userExists = await findUserByEmail(user.email);
+        const email = user.email;
+        const data = await fetchUser({ email });
 
-        const userObj = await findUserById(userExists._id);
-        token.user = constructUserObject(userObj);
+        token.user = constructUserObject(data);
       }
-
       return token;
     },
 

@@ -1,6 +1,6 @@
 import { auth } from '@/auth';
-import connectMongo from '@/lib/connection';
-import { verifyMobileOTP } from './Update';
+import connectMongo from '@/services/db/connectMongo';
+import { verifyAndAddMobile } from './Update';
 
 export async function PATCH(Request) {
   try {
@@ -17,7 +17,7 @@ export async function PATCH(Request) {
 
     await connectMongo();
 
-    await verifyMobileOTP(Request, userId);
+    await verifyAndAddMobile(Request, userId);
 
     return Response.json(
       { statusText: 'Successfully Updated!' },
@@ -28,7 +28,7 @@ export async function PATCH(Request) {
 
     const errorMessage = error.status
       ? error.message
-      : 'Internal Server Error. Try again.';
+      : 'Internal Server Error';
 
     return Response.json(
       { statusText: errorMessage },

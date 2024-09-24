@@ -1,9 +1,10 @@
-import { StyledContainer as MainContainer } from '@/app/components/global-styles/globals';
+import { StyledContainer } from '@/components/styled/StyledContainers';
+
 
 export default function PalawanPage() {
   return (
-    <MainContainer>
+    <StyledContainer>
       <h5>Palawan Page</h5>
-    </MainContainer>
+    </StyledContainer>
   );
 }

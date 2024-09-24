@@ -1,8 +1,8 @@
 import { auth } from '@/auth';
-import connectMongo from '@/lib/connection';
-import { addEmailAddress } from './Create';
+import connectMongo from '@/services/db/connectMongo';
+import { sendEmailOTP } from './Create';
 import { deleteEmailAddress, updatePrimaryEmail } from './Update';
-import { getLocalMessage } from '@/utils/helper/errorHandler';
+import { getLocalMessage } from '@/helpers/errorHelpers';
 
 export async function POST(Request) {
   try {
@@ -15,11 +15,11 @@ export async function POST(Request) {
       );
     }
 
-    const userId = session.user.id;
+    const { id: userId, name } = session?.user;
 
     await connectMongo();
 
-    const { statusCode } = await addEmailAddress(Request, userId);
+    const { statusCode } = await sendEmailOTP(Request, userId, name);
 
     return Response.json({ statusText: 'OTP sent!' }, { status: statusCode });
   } catch (error) {
@@ -61,14 +61,23 @@ export async function PATCH(Request) {
       );
     }
 
+    const { email } = await Request.json();
+
+    if (!email) {
+      return Response.json(
+        { statusText: 'Input email address.' },
+        { status: 400 }
+      );
+    }
+
     await connectMongo();
 
     let updatedEmail;
 
     if (action === 'delete') {
-      await deleteEmailAddress(Request, userId);
+      await deleteEmailAddress(email, userId);
     } else if (action === 'set-primary') {
-      updatedEmail = await updatePrimaryEmail(Request, userId);
+      updatedEmail = await updatePrimaryEmail(email, userId);
     }
 
     const responseMessage = action.includes('delete')
