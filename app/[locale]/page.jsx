@@ -16,9 +16,9 @@ export default function HomePage({ searchParams }) {
 
   return (
     <>
-      <section>
+      {/* <section>
         <HeroTabsLanding data={slides} />
-      </section>
+      </section> */}
 
       <section>
         <Container sx={{ my: 3 }}>
@@ -34,11 +34,11 @@ export default function HomePage({ searchParams }) {
         </Container>
       </section>
 
-      <Suspense fallback={<div>Loading...</div>}>
+      {/* <Suspense fallback={<div>Loading...</div>}>
         <section>
           <SuspenseExample />
         </section>
-      </Suspense>
+      </Suspense> */}
     </>
   );
 }
