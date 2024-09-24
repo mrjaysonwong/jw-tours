@@ -83,7 +83,7 @@ export default function EditFormDialog({ open, setOpen }) {
                 <Gender />
                 <DateOfBirth />
                 <Nationality />
-                {/* <Address /> */}
+                <Address />
               </EditDetailsProvider>
             </Grid>
           </DialogContent>

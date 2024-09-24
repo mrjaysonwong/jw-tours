@@ -105,7 +105,7 @@ export default function UserDetailsGrid() {
           </Grid>
         </StyledItemContainer>
 
-        {/* <StyledItemContainer>
+        <StyledItemContainer>
           <Grid item xs={12} md={6}>
             <Typography>Address</Typography>
           </Grid>
@@ -117,7 +117,7 @@ export default function UserDetailsGrid() {
                 : 'Not Provided'}
             </Typography>
           </Grid>
-        </StyledItemContainer> */}
+        </StyledItemContainer>
       </Grid>
 
       <EditFormDialog open={open} setOpen={setOpen} />
