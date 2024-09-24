@@ -3,7 +3,6 @@ import { redirect } from 'next/navigation';
 import { Typography, Container } from '@mui/material';
 
 // local imports
-import CarouselLanding from '@/components/carousels/CarouselLanding';
 import HeroTabsLanding from '@/components/heros/HeroTabsLanding';
 import { slides } from '@/data/heroData.js';
 import SuspenseExample from '@/components/posts/SuspenseExample';
@@ -17,8 +16,6 @@ export default function HomePage({ searchParams }) {
 
   return (
     <>
-      {/* <CarouselLanding data={slides} /> */}
-
       <section>
         <HeroTabsLanding data={slides} />
       </section>
