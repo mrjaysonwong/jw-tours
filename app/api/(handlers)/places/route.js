@@ -1,3 +1,9 @@
+export async function GET(Request) {
+  return Response.json({ message: 'foo' }, { status: 200 });
+}
+
+
+
 // import axios from 'axios';
 
 
