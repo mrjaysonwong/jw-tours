@@ -16,9 +16,9 @@ export default function HomePage({ searchParams }) {
 
   return (
     <>
-      {/* <section>
+      <section>
         <HeroTabsLanding data={slides} />
-      </section> */}
+      </section>
 
       <section>
         <Container sx={{ my: 3 }}>
