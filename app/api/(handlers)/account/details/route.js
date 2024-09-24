@@ -73,6 +73,9 @@ export async function GET(Request) {
 }
 
 export async function PATCH(Request) {
+  const searchParams = Request.nextUrl.searchParams;
+  const action = searchParams.get('action');
+
   try {
     const session = await auth();
 
@@ -84,9 +87,6 @@ export async function PATCH(Request) {
     }
 
     const userId = session.user.id;
-
-    const searchParams = Request.nextUrl.searchParams;
-    const action = searchParams.get('action');
 
     const validActions = [
       'update-profilephoto',
