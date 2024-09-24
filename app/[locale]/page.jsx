@@ -1,11 +1,9 @@
-import React, { Suspense } from 'react';
 import { redirect } from 'next/navigation';
 import { Typography, Container } from '@mui/material';
 
 // local imports
 import HeroTabsLanding from '@/components/heros/HeroTabsLanding';
 import { slides } from '@/data/heroData.js';
-import SuspenseExample from '@/components/posts/SuspenseExample';
 
 export default function HomePage({ searchParams }) {
   const { selectedTab, aid } = searchParams;
@@ -33,12 +31,6 @@ export default function HomePage({ searchParams }) {
           </Typography>
         </Container>
       </section>
-
-      {/* <Suspense fallback={<div>Loading...</div>}>
-        <section>
-          <SuspenseExample />
-        </section>
-      </Suspense> */}
     </>
   );
 }

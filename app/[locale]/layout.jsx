@@ -40,7 +40,7 @@ export default async function RootLayout({ children, params }) {
 
   return (
     <html lang={locale}>
-      <link rel="icon" href="/icon.svg" />
+      <link rel="icon" href="/app-icon.svg" />
 
       <body>
         <AuthSessionProvider>
