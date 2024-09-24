@@ -1,11 +1,9 @@
 import axios from 'axios';
 
-export const dynamic = 'force-dynamic'
-
 export async function GET(Request) {
-  const searchParams = Request.nextUrl.searchParams;
+  const { searchParams } = new URL(Request.url);
   const namePrefix = searchParams.get('namePrefix');
-  
+
   try {
     if (!namePrefix) {
       return Response.json(
