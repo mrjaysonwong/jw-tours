@@ -1,9 +1,10 @@
 import axios from 'axios';
 
-export async function GET(Request) {
-  const { searchParams } = new URL(Request.url);
-  const namePrefix = searchParams.get('namePrefix');
 
+export async function GET(Request) {
+  const searchParams = Request.nextUrl.searchParams;
+  const namePrefix = searchParams.get('namePrefix');
+  
   try {
     if (!namePrefix) {
       return Response.json(
