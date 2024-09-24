@@ -2,7 +2,7 @@ import { Typography } from '@mui/material';
 import ErrorIcon from '@mui/icons-material/Error';
 import { useTranslations } from 'next-intl';
 import { StyledAuthContainer } from '@/components/styled/StyledContainers';
-import { createMetadata } from '@/helpers/metaDataHelpers';
+import { createMetadata } from '@/helpers/metaHelpers';
 
 export function generateMetadata({ params: { locale } }) {
   return createMetadata(

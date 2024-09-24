@@ -1,6 +1,6 @@
 import { auth } from '@/auth';
 import { redirect } from '@/navigation';
-import { createMetadata } from '@/helpers/metaDataHelpers';
+import { createMetadata } from '@/helpers/metaHelpers';
 import SignUpForm from '@/app/(features)/authentication/components/SignUpForm';
 
 export async function generateMetadata({ params: { locale } }) {

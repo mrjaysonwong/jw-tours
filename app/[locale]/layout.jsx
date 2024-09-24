@@ -15,7 +15,7 @@ import Footer from '@/components/layout/footer/Footer';
 import ToggleThemeMode from '@/components/layout/themes/ToggleThemeMode';
 import { UserSessionProvider } from '@/contexts/UserProvider';
 import { locales } from '@/navigation';
-import { createMetadata } from '@/helpers/metaDataHelpers';
+import { createMetadata } from '@/helpers/metaHelpers';
 
 export async function generateMetadata({ params: { locale } }) {
   return createMetadata(locale, 'layout');
