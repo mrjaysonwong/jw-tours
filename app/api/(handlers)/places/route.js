@@ -1,10 +1,10 @@
 import axios from 'axios';
 
 export async function GET(Request) {
+  const searchParams = Request.nextUrl.searchParams;
+  const namePrefix = searchParams.get('namePrefix');
+  
   try {
-    const searchParams = Request.nextUrl.searchParams;
-    const namePrefix = searchParams.get('namePrefix');
-
     if (!namePrefix) {
       return Response.json(
         { statusText: 'An error occurred. Try again.' },

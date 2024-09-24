@@ -4,10 +4,10 @@ import { HttpError } from '@/helpers/errorHelpers';
 import { getLocalMessage } from '@/helpers/errorHelpers';
 
 export async function verifyAndAddEmail(Request, userId) {
-  try {
-    const searchParams = Request.nextUrl.searchParams;
-    const email = searchParams.get('email');
+  const searchParams = Request.nextUrl.searchParams;
+  const email = searchParams.get('email');
 
+  try {
     if (!email) {
       throw new HttpError({
         message: getLocalMessage('Invalid or missing email parameter'),
@@ -45,7 +45,6 @@ export async function verifyAndAddEmail(Request, userId) {
         },
       },
     }).select('userId email.$');
-
 
     const currentTimestamp = Date.now(); // epochTime
     const expireTimestamp = foundToken?.email[0].expireTimestamp;

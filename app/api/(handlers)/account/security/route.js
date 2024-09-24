@@ -27,10 +27,10 @@ export async function POST(Request) {
 }
 
 export async function PATCH(Request) {
-  try {
-    const { searchParams } = new URL(Request.url);
-    const action = searchParams.get('action');
+  const searchParams = Request.nextUrl.searchParams;
+  const action = searchParams.get('action');
 
+  try {
     const validActions = ['change-password', 'set-new-password'];
 
     if (!validActions.includes(action)) {

@@ -11,10 +11,7 @@ import { emailSchema } from '@/helpers/validation/yup/schemas/personalDetailsSch
 import { getValidationError } from '@/helpers/errorHelpers';
 import { handleRateLimitError } from '@/helpers/errorHelpers';
 
-async function getSessionEmail(body, headers) {
-  const headersList = headers();
-  const referer = headersList.get('referer');
-
+async function getSessionEmail(body, referer) {
   if (referer.includes('security')) {
     const session = await auth();
 
@@ -48,10 +45,12 @@ async function getSessionEmail(body, headers) {
 }
 
 export async function sendPasswordResetLink(Request, headers) {
-  try {
-    const searchParams = Request.nextUrl.searchParams;
-    const action = searchParams.get('action');
+  const searchParams = Request.nextUrl.searchParams;
+  const action = searchParams.get('action');
+  const headersList = headers();
+  const referer = headersList.get('referer');
 
+  try {
     const validActions = ['forgot-password'];
 
     if (!validActions.includes(action)) {
@@ -66,7 +65,7 @@ export async function sendPasswordResetLink(Request, headers) {
     await emailSchema.validate({ ...body }, { abortEarly: false });
 
     const { email: sessionEmail, firstName: sessionName } =
-      await getSessionEmail(body, headers);
+      await getSessionEmail(body, referer);
 
     const email = body.email || sessionEmail;
 

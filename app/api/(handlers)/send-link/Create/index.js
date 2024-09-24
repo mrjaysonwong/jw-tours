@@ -1,10 +1,7 @@
 import { sendEmail } from '@/services/sendEmail';
 import { rateLimiter } from '@/services/rateLimiter';
 import { getLocalMessage } from '@/helpers/errorHelpers';
-import {
-  findUserEmail,
-  findUserVerifiedEmail,
-} from '@/helpers/query/User';
+import { findUserEmail, findUserVerifiedEmail } from '@/helpers/query/User';
 import { authEmailToken } from '@/helpers/token-handlers/tokenActions';
 import { handleUserTokenLink } from '@/helpers/token-handlers/tokenActions';
 import { HttpError } from '@/helpers/errorHelpers';
@@ -13,10 +10,10 @@ import { getValidationError } from '@/helpers/errorHelpers';
 import { handleRateLimitError } from '@/helpers/errorHelpers';
 
 export async function sendSignInLink(Request) {
-  try {
-    const { searchParams } = new URL(Request.url);
-    const action = searchParams.get('action');
+  const searchParams = Request.nextUrl.searchParams;
+  const action = searchParams.get('action');
 
+  try {
     const validActions = ['signin', 'signup'];
 
     if (!validActions.includes(action)) {

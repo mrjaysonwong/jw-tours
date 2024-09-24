@@ -4,6 +4,9 @@ import User from '@/models/userModel/userModel';
 import { getLocalMessage } from '@/helpers/errorHelpers';
 
 export async function PATCH(Request) {
+  const searchParams = Request.nextUrl.searchParams;
+  const action = searchParams.get('action');
+
   try {
     const session = await auth();
 
@@ -18,9 +21,6 @@ export async function PATCH(Request) {
     }
 
     const { id: userId } = session.user;
-
-    const searchParams = Request.nextUrl.searchParams;
-    const action = searchParams.get('action');
 
     const body = await Request.json();
 

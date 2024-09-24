@@ -4,11 +4,11 @@ import { HttpError } from '@/helpers/errorHelpers';
 import { getLocalMessage } from '@/helpers/errorHelpers';
 
 export async function verifyAndAddMobile(Request, userId) {
-  try {
-    const searchParams = Request.nextUrl.searchParams;
-    const dialCode = searchParams.get('dialcode');
-    const phoneNumber = searchParams.get('number');
+  const searchParams = Request.nextUrl.searchParams;
+  const dialCode = searchParams.get('dialcode');
+  const phoneNumber = searchParams.get('number');
 
+  try {
     if (!dialCode || !phoneNumber) {
       throw new HttpError({
         message: getLocalMessage('Invalid or missing parameters'),

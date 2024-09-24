@@ -9,6 +9,10 @@ import {
 import { getLocalMessage } from '@/helpers/errorHelpers';
 
 export async function GET(Request) {
+  const searchParams = Request.nextUrl.searchParams;
+  const userId = searchParams.get('userId');
+  const isMySettings = searchParams.get('settings');
+
   try {
     const session = await auth();
 
@@ -21,10 +25,6 @@ export async function GET(Request) {
         { status: 401 }
       );
     }
-
-    const searchParams = Request.nextUrl.searchParams;
-    const userId = searchParams.get('userId');
-    const isMySettings = searchParams.get('settings');
 
     if (session.user.id !== userId) {
       return Response.json(
