@@ -70,6 +70,7 @@ const SignInFormFields = () => {
       }
     } catch (error) {
       const { errorMessage } = errorHandler(error);
+
       handleAlertMessage(errorMessage, 'error');
     }
   };

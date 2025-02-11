@@ -16,6 +16,8 @@ const VerifyToken = ({ token, email, action, callbackUrl }) => {
   const router = useRouter();
   const decodedCallbackUrl = decodeURIComponent(callbackUrl);
 
+  console.log({ decodedCallbackUrl });
+
   useEffect(() => {
     const handleSignIn = async () => {
       try {
@@ -32,7 +34,9 @@ const VerifyToken = ({ token, email, action, callbackUrl }) => {
 
         setHasError(false);
         setCookie('signed-in', 'true', { path: '/' });
-        router.replace(decodedCallbackUrl ?? '/');
+        router.replace(
+          decodedCallbackUrl === 'undefined' ? '/' : decodedCallbackUrl
+        );
       } catch (error) {
         setHasError(true);
 

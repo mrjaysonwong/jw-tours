@@ -147,9 +147,9 @@ userSchema.index({
   lastName: 1,
   role: 1,
   status: 1,
-  'phone.dialCode': 1,
-  'phone.phoneNumber': 1,
 });
+
+userSchema.index({ 'phone.dialCode': 1, 'phone.phoneNumber': 1 });
 
 const User = models?.user || model('user', userSchema);
 

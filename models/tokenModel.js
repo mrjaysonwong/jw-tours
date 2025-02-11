@@ -81,8 +81,10 @@ tokenSchema.index({
   'email.email': 1,
   'email.token': 1,
   'email.expireTimestamp': 1,
-  'phone.dialCode': 1,
-  'phone.phoneNumber': 1,
+});
+
+tokenSchema.index({
+  'phone.email': 1,
   'phone.token': 1,
   'phone.expireTimestamp': 1,
 });

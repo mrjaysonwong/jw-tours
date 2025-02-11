@@ -36,6 +36,10 @@ async function handleSignInCredentials(email, password, pathname) {
   await connectMongo();
   const userExists = await findUser({ email, password });
 
+  if (!userExists) {
+    throw new Error('Invalid Credentials');
+  }
+
   const isAdmin = userExists.role === ROLES.ADMIN;
   const passwordLess = userExists.password === '';
 
@@ -95,9 +99,10 @@ async function handleSignInEmail(email, token, action) {
     throw new Error('Invalid or expired sign-in link.');
   }
 
-  const getEmail = userTokenExists.email.find((e) => e.email === email);
+ 
 
-  const verifiedOnce = getEmail.requestCount > 1;
+  const getEmail = userTokenExists.email.find((e) => e.email === email);
+  const verifiedOnce = getEmail.requestCount >= 1;
 
   if (verifiedOnce) {
     throw new Error('Invalid or expired sign-in link.');

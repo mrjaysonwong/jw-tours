@@ -5,7 +5,6 @@ import { redirect } from '@/navigation';
 import { AuthError } from 'next-auth';
 import connectMongo from '@/services/db/connectMongo';
 import { findUser } from '@/services/user/userQueries';
-import { ERROR_MESSAGES } from '@/constants/api';
 
 const errorKeyWords = [
   'sign-in method',

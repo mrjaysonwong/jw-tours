@@ -36,7 +36,7 @@ export async function sendEmailOTP({ email: userEmail, userId, userExists }) {
 
     if (emailExists) {
       throw new HttpError({
-        message: 'Email already exists.',
+        message: 'This email is already in use. Please choose another.',
         status: STATUS_CODES.CONFLICT,
       });
     }
