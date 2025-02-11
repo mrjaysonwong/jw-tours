@@ -20,12 +20,6 @@ import ProfileAvatar from '@/components/images/ProfileAvatar';
 import { ProfilePhotoDialog } from '@/app/(features)/account/photo-settings';
 import { statusLabelColorMap } from '@/utils/colorMap';
 
-const STATUS = {
-  active: { label: 'Active', color: '#3ab67a' },
-  pending: { label: 'Pending', color: '#ea8643' },
-  suspended: { label: 'Suspended', color: '#F46060' },
-  inactive: { label: 'Inactive', color: '#808080' },
-};
 
 const StatusBadge = ({ userStatus, color, alphaColor }) => (
   <Box sx={{ textAlign: 'right' }}>
@@ -106,7 +100,7 @@ const AccountManagementCard = () => {
     setOpen,
   };
 
-  const statusColor = statusLabelColorMap[user?.status];
+  const statusColor = statusLabelColorMap[user?.status] || '';
 
   const handleProfilePhotoClick = () => {
     setOpen(true);
