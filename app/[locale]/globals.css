@@ -4,19 +4,23 @@
 @import url('https://fonts.googleapis.com/css2?family=Bodoni+Moda+SC:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&family=Ga+Maamli&display=swap');
 
 :root {
-  --color-light-main: #f5f5f5;
+  --color-light-main: #fffafa;
   --color-light-secondary: #fff;
   --color-dark-main: #121212;
-  --color-dark: #191919;
+  --color-dark-secondary: #1f201f;
+  --color-dark: #1c1c1c;
   --color-blue-dark: #0a66c2;
   --color-blue-darker: #2f579c;
-  --color-blue-light: #42a5f5;
+  --color-blue-light: #2487d8;
   --color-text-main: #2d9562;
   --color-green-light: #2d9562;
-  --color-green-light-alpha: rgba(0, 159, 82, 0.1);
   --color-green-dark: #28563f;
-  --icon-bgcolor: rgba(162, 162, 162, 0.2);
+  --color-green-alpha: rgba(45, 149, 98, 0.24);
+  --color-positive: #4caf50;
+  --color-negative: #f04438;
   --border-color: rgba(113, 113, 113, 0.3);
+
+  --test: #4a719bb3;
 }
 
 * {
@@ -31,33 +35,22 @@ body {
 }
 
 a {
-  color: var(--color-blue-dark);
+  color: var(--color-blue-light);
   text-decoration: none;
 }
 
 * {
-  scrollbar-width: thin;
-  scrollbar-color: gray;
+  /* scrollbar-width: thin;
+  scrollbar-color: gray; */
   scroll-behavior: smooth;
 }
 
-/* Works on Chrome, Edge, and Safari */
-*::-webkit-scrollbar {
+/* *::-webkit-scrollbar {
   width: 8px;
   height: 4px;
-}
+} */
 
-*::-webkit-scrollbar-track {
+/* *::-webkit-scrollbar-track {
   box-shadow: inset 0 0 2px rgb(118, 118, 118);
   border-radius: 20px;
-}
-
-*::-webkit-scrollbar-thumb:vertical {
-  background-color: var(--scrollbar-color);
-  border-radius: 20px;
-}
-
-*::-webkit-scrollbar-thumb:horizontal {
-  background-color: var(--scrollbar-color);
-  border-radius: 10px;
-}
+} */

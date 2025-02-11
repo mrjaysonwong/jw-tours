@@ -1,15 +1,27 @@
 'use client';
 
 import { useContext } from 'react';
+import { usePathname } from 'next/navigation';
 import { Box, Tooltip } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import IconButton from '@mui/material/IconButton';
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
-import { ColorModeContext } from './ToggleThemeMode';
 
-export default function ThemeModeIconButton() {
+// internal imports
+import { ColorModeContext } from './ToggleThemeMode';
+import { stripLocale } from '@/helpers/pageHelpers';
+
+const ThemeModeIconButton = () => {
+  const pathname = usePathname();
+  const strippedPathname = stripLocale(pathname);
+
+  const shouldHide =
+    strippedPathname.includes('/dashboard') ||
+    strippedPathname.includes('/mysettings');
+
   const theme = useTheme();
+  const isLightMode = theme.palette.mode === 'light';
   const colorMode = useContext(ColorModeContext);
 
   return (
@@ -20,23 +32,20 @@ export default function ThemeModeIconButton() {
           bottom: 100,
           right: 20,
           zIndex: 2,
+          display: shouldHide && 'none',
         }}
       >
         <Tooltip
           arrow
           placement="left"
-          title={
-            theme.palette.mode === 'light'
-              ? 'Toggle dark mode'
-              : 'Toggle light mode'
-          }
+          title={isLightMode ? 'Toggle dark mode' : 'Toggle light mode'}
         >
           <IconButton
             onClick={colorMode.toggleColorMode}
             color="inherit"
             sx={{ bgcolor: 'grey', '&:hover': { bgcolor: 'grey' } }}
           >
-            {theme.palette.mode === 'light' ? (
+            {isLightMode ? (
               <>
                 <Brightness4Icon />
               </>
@@ -50,4 +59,6 @@ export default function ThemeModeIconButton() {
       </Box>
     </>
   );
-}
+};
+
+export default ThemeModeIconButton;

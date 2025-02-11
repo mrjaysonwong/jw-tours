@@ -3,16 +3,15 @@
 import { Box, Container } from '@mui/material';
 import { styled } from '@mui/system';
 
-export const StyledAuthContainer = styled(Box)({
-  minHeight: '100vh',
+export const StyledMainContainer = styled(Container)({
+  minHeight: '100dvh',
   display: 'flex',
   alignItems: 'center',
   flexDirection: 'column',
   justifyContent: 'center',
-  margin: '0 1rem',
 
   a: {
-    color: 'var(--color-blue-dark)',
+    color: 'var(--color-blue-light)',
   },
 
   'h6, h5, h4, h3': {
@@ -21,18 +20,19 @@ export const StyledAuthContainer = styled(Box)({
 });
 
 export const StyledContainer = styled(Container)({
-  marginTop: '7rem',
+  marginTop: '4.2rem',
   minHeight: '80vh',
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'center',
+  padding: '2rem 1rem 2rem 1rem',
 
   a: {
     textDecoration: 'none',
-    color: 'var(--color-blue-dark)',
+    color: 'var(--color-blue-light)',
   },
 
-  'h6, h5, h4, h3': {
+  'h5, h4, h3': {
     fontWeight: 550,
   },
 });
@@ -93,11 +93,9 @@ export const StyledNavLinksContainer = styled(Box)(({ theme }) => {
       minWidth: '130px',
       textTransform: 'uppercase',
       color: isDarkMode ? 'white' : 'black',
-      borderRadius: '6px 6px 0px 0px',
 
       '&:hover': {
-        color: 'white',
-        backgroundColor: 'var(--color-green-light)',
+        color: 'var(--color-green-light)',
       },
     },
 
@@ -115,7 +113,7 @@ export const StyledNavLinksContainer = styled(Box)(({ theme }) => {
       visibility: 'hidden',
       position: 'absolute',
       maxWidth: '450px',
-      transition: 'max-height 1s ease, opacity 0.1s ease, visibility 0.3s ease',
+      // transition: 'max-height 1s ease, opacity 0.1s ease, visibility 0.3s ease',
       maxHeight: 0,
       overflow: 'hidden',
       zIndex: 1, // Ensure dropdown is above other content
@@ -170,12 +168,14 @@ export const StyledItemContainer = styled(Box)(({ theme }) => {
 
   return {
     width: '100%',
-    borderBottom: `1px solid ${
-      isDarkMode ? 'rgba(255, 255, 255, 0.12)' : 'rgba(4, 4, 4, 0.12)'
-    } `,
-
     padding: '16px 0',
     display: 'flex',
+
+    '&:not(:last-child)': {
+      borderBottom: `1px solid ${
+        isDarkMode ? 'rgba(255, 255, 255, 0.12)' : 'rgba(4, 4, 4, 0.12)'
+      } `,
+    },
 
     [xtraSmallScreen]: {
       flexDirection: 'column',

@@ -1,10 +1,13 @@
-/* with axios client-side */
+import { STATUS_CODES, ERROR_MESSAGES } from '@/constants/api.js';
+
+/* handle client-side error */
 export const errorHandler = (error) => {
   if (error && error.response) {
+    // api response
     const { status, statusText, data } = error.response;
 
-    /* Server-side api statusText  */
-    const errorMessage = data?.statusText ?? 'An error occurred. Try again.';
+    const errorMessage =
+      status === 500 ? ERROR_MESSAGES.SERVER_ERROR_LOCAL : data.statusText;
 
     return {
       status,
@@ -16,9 +19,7 @@ export const errorHandler = (error) => {
     console.error('Unexpected error:', error);
 
     return {
-      status: 500,
-      statusText: 'Internal Server Error',
-      errorMessage: 'Unexpected error occured.',
+      errorMessage: ERROR_MESSAGES.UNEXPECTED_ERROR,
     };
   }
 };
@@ -36,11 +37,12 @@ export function getValidationError(error) {
   if (error.name === 'ValidationError') {
     throw new HttpError({
       message: error.errors,
-      status: 400,
+      status: STATUS_CODES.BAD_REQUEST,
     });
   }
 }
 
+/* api errors */
 export function handleRateLimitError(error, t1) {
   const rateLimited = error?.remainingPoints === 0;
   const timeLeft = Math.floor(error?.msBeforeNext / 1000);
@@ -48,7 +50,7 @@ export function handleRateLimitError(error, t1) {
   if (rateLimited) {
     throw new HttpError({
       message: `One request per minute. Try again in ${timeLeft} seconds.`,
-      status: 429,
+      status: STATUS_CODES.TOO_MANY_REQUESTS,
     });
   }
 }
@@ -58,4 +60,27 @@ export class HttpError extends Error {
     super(message);
     this.status = status;
   }
+}
+
+export function handleApiError(error) {
+  console.error(error.name === 'ValidationError' ? error.inner : error);
+
+  if (error instanceof HttpError) {
+    return {
+      statusText: error.message.split(','),
+      status: error.status,
+    };
+  }
+
+  if (error.name === 'ValidationError') {
+    return {
+      statusText: error.errors,
+      status: STATUS_CODES.BAD_REQUEST,
+    };
+  }
+
+  return {
+    statusText: ERROR_MESSAGES.SERVER_ERROR,
+    status: STATUS_CODES.SERVER_ERROR,
+  };
 }

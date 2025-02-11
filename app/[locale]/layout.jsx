@@ -4,18 +4,18 @@ import { getMessages, unstable_setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v13-appRouter';
 
-// local imports
+// internal imports
 import '@/app/[locale]/globals.css';
 import { auth } from '@/auth';
 import AuthSessionProvider from '@/app/(features)/authentication/contexts/AuthSessionProvider';
-import AuthRedirect from '@/app/(features)/authentication/components/AuthRedirect';
-import Header from '@/components/layout/header/Header';
+import AuthRedirect from '@/app/(features)/authentication/AuthRedirect';
+import Navbar from '@/components/layout/header/Navbar';
 import ThemeModeIconButton from '@/components/layout/themes/ThemeModeIconButton';
 import Footer from '@/components/layout/footer/Footer';
 import ToggleThemeMode from '@/components/layout/themes/ToggleThemeMode';
-import { UserSessionProvider } from '@/contexts/UserProvider';
+import { UserSessionProvider, UserDataProvider } from '@/contexts/UserProvider';
 import { locales } from '@/navigation';
-import { createMetadata } from '@/helpers/metaHelpers';
+import { createMetadata } from '@/helpers/metadataHelpers';
 
 export async function generateMetadata({ params: { locale } }) {
   return createMetadata(locale, 'layout');
@@ -40,7 +40,7 @@ export default async function RootLayout({ children, params }) {
 
   return (
     <html lang={locale}>
-      <link rel="icon" href="/app-icon.svg" />
+      <link rel="icon" href="/icon.svg" />
 
       <body>
         <AuthSessionProvider>
@@ -49,8 +49,9 @@ export default async function RootLayout({ children, params }) {
               <UserSessionProvider session={session}>
                 <AuthRedirect>
                   <ToggleThemeMode storedTheme={storedTheme}>
-                    {/* <NavBar /> */}
-                    <Header />
+                    <UserDataProvider>
+                      <Navbar />
+                    </UserDataProvider>
                     {children}
                     <ThemeModeIconButton />
                     <Footer />

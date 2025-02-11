@@ -1,4 +1,4 @@
-import { Typography, List, ListItem } from '@mui/material';
+import { Box, Typography, List, ListItem } from '@mui/material';
 import { StyledContainer } from '@/components/styled/StyledContainers';
 
 export const metadata = {
@@ -9,12 +9,23 @@ export default function PrivacyPolicyPage() {
   return (
     <StyledContainer
       sx={{
-        width: 'clamp(min(95vw, 600px), 50%, max(70vw, 600px ))',
+        width: { xs: 'auto', md: '700px' },
       }}
     >
-      <Typography variant="h3" sx={{ my: 6, textAlign: 'center' }}>
+      <Typography variant="h3" sx={{ textAlign: 'center' }}>
         Privacy Policy
       </Typography>
+
+      <Box sx={{ my: 2 }}>
+        <Typography>
+          This Privacy Policy (&apos;Policy&apos;) describes how JW Tours
+          (&apos;Company,&apos; &apos;we,&apos; &apos;us,&apos; or
+          &apos;our&apos;) collects, uses, shares, and protects the personal
+          information of users (&apos;User&apos; or &apos;you&apos;) of the JW
+          Tours website (the &apos;Site&apos;) and any services offered therein.
+        </Typography>
+      </Box>
+
       <List
         sx={{
           '.item': {
@@ -24,17 +35,6 @@ export default function PrivacyPolicyPage() {
           },
         }}
       >
-        <ListItem>
-          <Typography>
-            This Privacy Policy (&apos;Policy&apos;) describes how JW Tours
-            (&apos;Company,&apos; &apos;we,&apos; &apos;us,&apos; or
-            &apos;our&apos;) collects, uses, shares, and protects the personal
-            information of users (&apos;User&apos; or &apos;you&apos;) of the JW
-            Tours website (the &apos;Site&apos;) and any services offered
-            therein.
-          </Typography>
-        </ListItem>
-
         <ListItem>
           <Typography variant="h6">1. Information We Collect</Typography>
         </ListItem>

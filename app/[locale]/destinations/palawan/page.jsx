@@ -1,6 +1,5 @@
 import { StyledContainer } from '@/components/styled/StyledContainers';
 
-
 export default function PalawanPage() {
   return (
     <StyledContainer>

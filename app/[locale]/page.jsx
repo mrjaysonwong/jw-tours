@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation';
 import { Typography, Container } from '@mui/material';
 
-// local imports
+// internal imports
 import HeroTabsLanding from '@/components/heros/HeroTabsLanding';
 import { slides } from '@/data/heroData.js';
 

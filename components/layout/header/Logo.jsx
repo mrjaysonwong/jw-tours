@@ -1,10 +1,12 @@
+'use client';
+
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Box } from '@mui/material';
 import { useNavDrawerStore } from '@/stores/drawerStore';
 
-export default function Logo() {
+const Logo = () => {
   const pathname = usePathname();
   const { toggleNavDrawer } = useNavDrawerStore();
 
@@ -15,13 +17,13 @@ export default function Logo() {
       className="logo-container"
       onClick={() => toggleNavDrawer('right', false)}
       sx={{
-        my: 1.5,
-        mr: 3,
+        // my: 1.5,
+        // mr: 3,
         pointerEvents: isVerifyPage ? 'none' : 'auto',
       }}
     >
       <Link href="/">
-        <Box sx={{ position: 'relative', width: '64px', height: '64px' }}>
+        <Box sx={{ position: 'relative', width: '48px', height: '48px' }}>
           <Image
             src={'/assets/brand_logo.svg'}
             alt="logo"
@@ -35,4 +37,6 @@ export default function Logo() {
       </Link>
     </Box>
   );
-}
+};
+
+export default Logo;

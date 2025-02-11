@@ -7,10 +7,12 @@ import FacebookIcon from '@mui/icons-material/Facebook';
 import XIcon from '@mui/icons-material/X';
 import YouTubeIcon from '@mui/icons-material/YouTube';
 import InstagramIcon from '@mui/icons-material/Instagram';
-import Localization from './Localization';
-import { hideDefaultNavBar, shouldHideOnAuthPage } from '@/helpers/pageHelpers';
 
-export default function Footer() {
+// internal imports
+import LocaleSwitcher from './LocaleSwitcher';
+import { shouldHideOnAuthPage } from '@/helpers/pageHelpers';
+
+const Footer = () => {
   const pathname = usePathname();
 
   const isAuthPage = shouldHideOnAuthPage(pathname);
@@ -109,18 +111,19 @@ export default function Footer() {
         }}
       >
         <Grid item xs={12} lg={2}>
-          <Localization />
+          <LocaleSwitcher />
+        </Grid>
+        <Grid item xs={6} lg={3}>
+          <Typography variant="body2">
+            <Link href="/legal/terms-of-service">Terms of Service</Link>
+          </Typography>
         </Grid>
         <Grid item xs={6} lg={3}>
           <Typography variant="body2">
             <Link href="/legal/privacy-policy">Privacy Policy</Link>
           </Typography>
         </Grid>
-        <Grid item xs={6} lg={3}>
-          <Typography variant="body2">
-            <Link href="/legal/user-agreement">User Agreement</Link>
-          </Typography>
-        </Grid>
+
         <Grid item xs={12} lg={4}>
           <Typography variant="body2">©2024-2025 JW Tours</Typography>
           <Typography variant="body2">All rights reserved</Typography>
@@ -128,4 +131,6 @@ export default function Footer() {
       </Grid>
     </Box>
   );
-}
+};
+
+export default Footer;

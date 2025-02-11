@@ -1,17 +1,20 @@
+// third-party imports
+import { cookies } from 'next/headers';
 import NextAuth from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
 import GitHubProvider from 'next-auth/providers/github';
 import FacebookProvider from 'next-auth/providers/facebook';
 import CredentialsProvider from 'next-auth/providers/credentials';
+import { getTranslations } from 'next-intl/server';
+
+// internal imports
 import {
   authSignInCredentials,
   authSignInEmail,
   authSignInOAuth,
   constructUserObject,
-} from './helpers/authSignIn';
-import { fetchUser } from './helpers/query/User';
-import { getTranslations } from 'next-intl/server';
-import { cookies } from 'next/headers';
+} from './services/auth/authSignIn';
+import { findUser } from './services/user/userQueries';
 
 export const {
   handlers: { GET, POST },
@@ -59,9 +62,9 @@ export const {
     }),
     CredentialsProvider({
       name: 'credentials',
-      async authorize(credentials, req) {
+      async authorize(credentials) {
         if (credentials) {
-          const user = await authSignInCredentials(credentials, req);
+          const user = await authSignInCredentials(credentials);
 
           if (user) {
             return user;
@@ -80,7 +83,7 @@ export const {
 
         return true;
       } else {
-        return true;
+        return true; // Fallback return for non-OAuth sign-in
       }
     },
 
@@ -89,14 +92,14 @@ export const {
         // Use case updating fields
         // re-update token
         const userId = token.user.id;
-        const data = await fetchUser({ userId });
+        const userExists = await findUser({ userId });
 
-        token.user = constructUserObject(data);
+        token.user = constructUserObject(userExists);
       } else if (user) {
         const email = user.email;
-        const data = await fetchUser({ email });
+        const userExists = await findUser({ email });
 
-        token.user = constructUserObject(data);
+        token.user = constructUserObject(userExists);
       }
       return token;
     },

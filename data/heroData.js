@@ -6,7 +6,7 @@ import RestaurantOutlinedIcon from '@mui/icons-material/RestaurantOutlined';
 
 export const slides = [
   {
-    id: 'aaaa',
+    id: '0',
     src: 'https://res.cloudinary.com/dpyxciwcu/image/upload/v1726223625/jwtours/background/hero-image/pexels-pinkmean-9871205_ysut2e.jpg',
     alt: 'Vigan Houses Image',
     label: 'Landmarks',
@@ -15,7 +15,7 @@ export const slides = [
     icon: <MosqueOutlinedIcon />,
   },
   {
-    id: 'bbbb',
+    id: '1',
     src: 'https://res.cloudinary.com/dpyxciwcu/image/upload/v1726223651/jwtours/background/hero-image/brett-andrei-martin-dJbsSPudWos-unsplash_ysfgv4.jpg',
     alt: 'Chocolate Hills Image',
     label: 'Nature',
@@ -24,7 +24,7 @@ export const slides = [
     icon: <LandscapeOutlinedIcon />,
   },
   {
-    id: 'cccc',
+    id: '2',
     src: 'https://res.cloudinary.com/dpyxciwcu/image/upload/v1726223694/jwtours/background/hero-image/wilfriend-royce-quiras-PERYbGvSWio-unsplash_fogpwy.jpg',
     alt: 'Coron Palawan Island Image',
     label: 'Island Hopping',
@@ -33,7 +33,7 @@ export const slides = [
     icon: <SailingOutlinedIcon />,
   },
   {
-    id: 'dddd',
+    id: '3',
     src: 'https://res.cloudinary.com/dpyxciwcu/image/upload/v1726488419/jwtours/background/hero-image/avel-chuklanov-sedJnjrUMM8-unsplash_j0uhxj.jpg',
     alt: 'Kamayan Image',
     label: 'Food',
@@ -42,7 +42,7 @@ export const slides = [
     icon: <RestaurantOutlinedIcon />,
   },
   {
-    id: 'eeee',
+    id: '4',
     src: 'https://res.cloudinary.com/dpyxciwcu/image/upload/v1726231664/jwtours/background/hero-image/pexels-kim-villanueva-1028870460-20410469_zoihl3.jpg',
     alt: 'Benguet Festival Image',
     label: 'Culture',

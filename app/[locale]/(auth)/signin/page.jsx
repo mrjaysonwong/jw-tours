@@ -1,6 +1,12 @@
+// third-party imports
+import { Card, CardContent } from '@mui/material';
+
+// internal imports
 import { auth } from '@/auth';
 import { redirect } from '@/navigation';
-import SignInForm from '@/app/(features)/authentication/components/SignInForm';
+import PageLayout from '@/components/layout/PageLayout';
+import { SignInForm } from '@/app/(features)/authentication/SignInForm';
+import AnimateGradient from '@/components/bg-gradients/AnimatedGradient';
 
 export const metadata = {
   title: 'Sign In',
@@ -13,5 +19,17 @@ export default async function SignInPage() {
     redirect('/');
   }
 
-  return <SignInForm />;
+  return (
+    <>
+      <AnimateGradient />
+
+      <PageLayout marginY={5}>
+        <Card>
+          <CardContent>
+            <SignInForm header="Sign In" showOAuth={true} showCancel={true} />
+          </CardContent>
+        </Card>
+      </PageLayout>
+    </>
+  );
 }

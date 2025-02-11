@@ -1,47 +1,41 @@
 'use server';
 
 import { signIn } from '@/auth';
-import { redirect } from 'next/navigation';
+import { AuthError } from 'next-auth';
+import { STATUS_CODES, ERROR_MESSAGES } from '@/constants/api';
 
-export async function authenticate(token, email, action, callbackUrl) {
+export async function authenticate(token, email, action) {
   try {
-    const data = await signIn('email', {
+    await signIn('email', {
       redirect: false,
       token: token,
       email: email,
       action: action,
     });
-
-    if (data) {
-      redirect(callbackUrl ?? '/');
-    }
   } catch (error) {
-    // can access error.cause when importing from '@/auth';
-    const authError = error?.cause?.err;
+    if (error instanceof AuthError) {
+      // can access error.cause if instanceof AuthError
+      const err = error.cause.err;
 
-    if (authError) {
-      switch (authError.message) {
-        case 'Email must be verified.':
-          return {
-            error: {
-              message: authError.message,
-            },
-          };
+      switch (err.message) {
         case 'Invalid or expired sign-in link.':
           return {
             error: {
-              message: authError.message,
+              message: err.message,
+              status: STATUS_CODES.UNAUTHORIZED,
             },
           };
 
         default:
           return {
             error: {
-              message: 'Internal Server Error',
+              message: ERROR_MESSAGES.SERVER_ERROR,
+              status: STATUS_CODES.SERVER_ERROR,
             },
           };
       }
     }
+
     throw error;
   }
 }

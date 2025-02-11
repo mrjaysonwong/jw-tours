@@ -1,6 +1,6 @@
 'use client';
 
-import { Inter, Bebas_Neue, Poppins } from 'next/font/google';
+import { Inter, Bebas_Neue, Poppins, Montserrat } from 'next/font/google';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { CssBaseline } from '@mui/material';
 import { useState, useMemo, createContext, useEffect } from 'react';
@@ -26,17 +26,21 @@ const poppins = Poppins({
   display: 'swap',
 });
 
-export default function ToggleThemeMode(props) {
-  const { storedTheme } = props;
+const montserrat = Poppins({
+  weight: ['300', '400', '500', '700'],
+  subsets: ['latin'],
+  display: 'swap',
+});
 
-  const [mode, setMode] = useState(storedTheme?.value || 'light');
+const ToggleThemeMode = ({ storedTheme, children }) => {
+  const [mode, setMode] = useState(storedTheme?.value || 'dark');
 
   const [cookies, setCookie] = useCookies(['themeMode']);
 
   const colorMode = useMemo(
     () => ({
       toggleColorMode: () => {
-        setMode((prevMode) => (prevMode === 'light' ? 'dark' : 'light'));
+        setMode((prevMode) => (prevMode === 'dark' ? 'light' : 'dark'));
       },
     }),
     []
@@ -46,13 +50,16 @@ export default function ToggleThemeMode(props) {
     () =>
       createTheme({
         typography: {
-          fontFamily: poppins.style.fontFamily,
+          fontFamily: montserrat.style.fontFamily,
         },
 
         palette: {
           mode,
           background: {
-            default: mode === 'light' ? '#f5f5f5' : '#121212',
+            default:
+              mode === 'light'
+                ? 'var(--color-light-main)'
+                : 'var(--color-dark-main)',
             paper: mode === 'light' ? '#ffffff' : '#181818',
           },
           primary: {
@@ -73,8 +80,10 @@ export default function ToggleThemeMode(props) {
     <ColorModeContext.Provider value={colorMode}>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        {props.children}
+        {children}
       </ThemeProvider>
     </ColorModeContext.Provider>
   );
-}
+};
+
+export default ToggleThemeMode;

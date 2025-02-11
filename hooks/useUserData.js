@@ -1,38 +1,34 @@
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { usePathname } from 'next/navigation';
-
-// local imports
-import { locales } from '@/navigation';
+import { stripLocale } from '@/helpers/pageHelpers';
 
 export const useUserData = (userId) => {
   const pathname = usePathname();
-
-  const isMySettings =
-    locales.some((locale) => pathname.startsWith(`/${locale}/`)) ||
-    pathname.startsWith('/mysettings');
-
-  const isSettings = isMySettings && pathname.split('/').length > 2;
+  const strippedPathname = stripLocale(pathname);
+  const isNestedRoute = strippedPathname.split('/').length > 2;
+  const isAccountSettings = pathname.includes('mysettings') && isNestedRoute;
 
   const fetchUser = async () => {
-    const url = `/api/account/details?userId=${userId}${
-      isSettings ? `&settings=${isSettings}` : ''
-    }`;
+    try {
+      const url = `/api/v1/users/self${
+        isAccountSettings ? '' : `?projection=basic`
+      }`;
 
-    const { data } = await axios.get(url);
+      const { data } = await axios.get(url);
 
-    return data;
+      return data;
+    } catch (error) {
+      console.error(error);
+      throw new Error('Failed to fetch data.');
+    }
   };
 
   const { isLoading, data, isError, error, refetch, status } = useQuery({
-    queryKey: ['user', userId],
+    queryKey: ['users', userId],
     queryFn: fetchUser,
     enabled: !!userId, // set True only if userId present
   });
-
-  if (isError) {
-    console.error('useUserData error:', error.message);
-  }
 
   return {
     isLoading,
@@ -40,6 +36,47 @@ export const useUserData = (userId) => {
     isError,
     error,
     refetch,
+    status,
+  };
+};
+
+export const useAdminUserData = (userId) => {
+  const fetchUser = async () => {
+    try {
+      const url = `/api/v1/users/${userId}`;
+
+      const { data } = await axios.get(url);
+
+      return data;
+    } catch (error) {
+      console.error(error);
+      throw new Error('Failed to fetch data.');
+    }
+  };
+
+  const {
+    isLoading,
+    data,
+    isError,
+    error,
+    refetch: adminRefetch,
+    status,
+  } = useQuery({
+    queryKey: ['edit', userId],
+    queryFn: fetchUser,
+    enabled: !!userId, // set True only if userId present
+  });
+
+  if (isError) {
+    console.error('useAdminUserData error:', error.message);
+  }
+
+  return {
+    isLoading,
+    ...data,
+    isError,
+    error,
+    adminRefetch,
     status,
   };
 };

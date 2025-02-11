@@ -1,7 +1,9 @@
 'use client';
 
-import CustomError from '@/components/errors/500';
+import Error from '../error';
 
-export default function Error() {
-  return <CustomError />;
+export default function ErrorPage({ searchParams }) {
+  const hasQueryError = !!searchParams.error;
+
+  return <Error hasQueryError={hasQueryError} />;
 }

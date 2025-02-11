@@ -1,19 +1,19 @@
 import { auth } from '@/auth';
 import { redirect } from 'next/navigation';
-import MySettingsTabs from '@/app/(features)/account/components/MySettingsTabs';
+import MySettingsTabs from '@/app/(features)/mysettings/MySettingsTabs';
 
-export default async function MySettingsPage({ params }) {
+export default async function MySettingsSlugPage({ params }) {
   const session = await auth();
 
   if (!session) redirect('/');
 
   const { slug } = params;
 
-  const validSlugs = ['personal', 'preferences', 'security', 'payment'];
+  const validSlugs = ['profile', 'preferences', 'payment', 'security'];
 
   if (!validSlugs.includes(slug)) {
     redirect('/mysettings');
   }
 
-  return <MySettingsTabs slug={slug} />;
+  return <MySettingsTabs />;
 }

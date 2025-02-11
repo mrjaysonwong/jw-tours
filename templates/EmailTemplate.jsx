@@ -12,11 +12,16 @@ import {
   Section,
   Text,
 } from '@react-email/components';
-import React from 'react';
+import * as React from 'react';
 
-export function EmailTemplate(props) {
-  const { url, email, otp, firstName, formattedDateString, action } = props;
-
+export function EmailTemplate({
+  url,
+  email,
+  otp,
+  firstName,
+  formattedDateString,
+  action,
+}) {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
   const isSignUp = action === 'signup';
   const isGenOTP = action === 'gen-otp';
@@ -47,7 +52,7 @@ export function EmailTemplate(props) {
         <Body style={main}>
           <Container style={container}>
             <Img
-              src="https://res.cloudinary.com/dpyxciwcu/image/upload/v1726122842/jwtours/logo/Email_Logo_f9tpww.svg"
+              src="https://res.cloudinary.com/dpyxciwcu/image/upload/v1727771494/jwtours/logo/Email_Logo_ygmnb1.svg"
               width="42"
               height="42"
               alt="JW Tours"
@@ -102,7 +107,7 @@ export function EmailTemplate(props) {
 
                 <Text style={paragraph}>
                   We received a request to reset your password. Click below to
-                  create a new password:
+                  set a new password:
                 </Text>
 
                 <Section style={buttonContainer}>
@@ -161,8 +166,8 @@ export function EmailTemplate(props) {
 }
 
 const logo = {
-  width: 'auto',
-  height: 'auto',
+  width: '140px',
+  height: '64px',
 };
 
 const main = {
@@ -228,7 +233,7 @@ const buttonContainer = {
 };
 
 const button = {
-  backgroundColor: '#2d9562',
+  backgroundColor: '#235835',
   borderRadius: '3px',
   fontWeight: '600',
   color: '#fff',

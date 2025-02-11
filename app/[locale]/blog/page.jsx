@@ -1,5 +1,5 @@
 import React, { Suspense } from 'react';
-import Posts from '@/app/(features)/blog/components/Posts';
+import Posts from '@/app/(features)/blog/Posts';
 import { SkeletonPostList } from '@/components/loaders/Skeletons';
 
 export const metadata = {

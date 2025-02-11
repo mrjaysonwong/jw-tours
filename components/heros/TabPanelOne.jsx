@@ -1,10 +1,10 @@
 import Image from 'next/image';
 
-// local imports
-import { StyledHeroHeader } from '../styled/StyledHeros';
+// internal imports
+import { StyledHeroHeader } from '../styled/StyledContentHeaders';
 import Headline from './Headline';
 
-export default function TabPanelOne({ item }) {
+const TabPanelOne = ({ item }) => {
   const { src, alt, subHeader } = item;
 
   return (
@@ -24,4 +24,6 @@ export default function TabPanelOne({ item }) {
       <Headline subHeader={subHeader} />
     </StyledHeroHeader>
   );
-}
+};
+
+export default TabPanelOne;

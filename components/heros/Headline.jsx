@@ -1,10 +1,10 @@
 import { Typography, Button } from '@mui/material';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 
-// local imports
+// internal imports
 import { StyledHeadlineContainer } from '../styled/StyledContainers';
 
-export default function Headline({ subHeader }) {
+const Headline = ({ subHeader }) => {
   return (
     <StyledHeadlineContainer>
       <Typography variant="h2">Memories Crafted Just for You</Typography>
@@ -20,4 +20,6 @@ export default function Headline({ subHeader }) {
       </Button>
     </StyledHeadlineContainer>
   );
-}
+};
+
+export default Headline;

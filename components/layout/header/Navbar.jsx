@@ -1,184 +1,141 @@
-import React, { useState, useContext, createContext, useEffect } from 'react';
-import Link from 'next/link';
-import { usePathname, useParams } from 'next/navigation';
-import { useTranslations } from 'next-intl';
+// 'use client';
+
+// import { UserDataProvider } from '@/contexts/UserProvider';
+// import Navbar from './Navbar';
+
+// export default function Header() {
+//   return (
+//     <header>
+//       <UserDataProvider>
+//         <Navbar />
+//       </UserDataProvider>
+//     </header>
+//   );
+// }
+
+'use client';
+
+// third-party imports
+import React, { useState, useContext, createContext } from 'react';
+import { usePathname } from 'next/navigation';
 import {
   AppBar,
+  Toolbar,
   Box,
-  IconButton,
   Container,
-  Button,
   Slide,
   useScrollTrigger,
-  Paper,
-  Grid,
-  useTheme,
+  IconButton,
 } from '@mui/material';
+import { useTranslations } from 'next-intl';
 import MenuIcon from '@mui/icons-material/Menu';
 import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';
 import NotificationsNoneOutlinedIcon from '@mui/icons-material/NotificationsNoneOutlined';
 import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
-import ExpandLess from '@mui/icons-material/ExpandLess';
-import ExpandMore from '@mui/icons-material/ExpandMore';
 
-// local imports
-import { UserSessionContext, UserDataContext } from '@/contexts/UserProvider';
-import { SkeletonCircular } from '@/components/loaders/Skeletons';
+// internal imports
 import {
-  StyledNavIconsContainer,
-  StyledNavLinksContainer,
-} from '@/components/styled/StyledContainers';
+  UserSessionContext,
+  UserDataContext,
+  UserDataProvider,
+} from '@/contexts/UserProvider';
+import Logo from './Logo';
+import TopNavLinks from './TopNavLinks';
 import { navLinks } from '@/data/links/navLinks';
+import AuthFormDialog from '@/app/(features)/authentication/AuthFormDialog';
+import { StyledNavIconsContainer } from '@/components/styled/StyledContainers';
+import NavDrawer from './NavDrawer';
 import { useNavDrawerStore } from '@/stores/drawerStore';
+import { SkeletonCircular } from '@/components/loaders/Skeletons';
+import ProfileMenu from '@/components/menus/ProfileMenu';
 import {
   shouldHideOnAuthPage,
   shouldHideNavLinks,
 } from '@/helpers/pageHelpers';
-import Logo from './Logo';
-import NavDrawer from './NavDrawer';
-import ProfileMenu from '@/app/(features)/user-profile/components/ProfileMenu';
-import AuthFormDialog from '@/app/(features)/authentication/components/AuthFormDialog';
 
-export const DialogContext = createContext(null);
+export const DialogContext = createContext({});
 
-function HideOnScroll({ children }) {
+const HideOnScroll = ({ children }) => {
+  const trigger = useScrollTrigger({ threshold: 200 });
+
   return (
-    <Slide appear={false} direction="down" in={!useScrollTrigger()}>
+    <Slide appear={false} direction="down" in={!trigger}>
       {children}
     </Slide>
   );
-}
+};
 
-export default function Navbar() {
+export const NavLogo = () => {
+  return (
+    <Box sx={{ mr: 3, my: 1 }}>
+      <Logo />
+    </Box>
+  );
+};
+
+const SessionIconButtons = ({ open }) => (
+  <>
+    <IconButton>
+      <FavoriteBorderOutlinedIcon />
+    </IconButton>
+
+    <IconButton
+      aria-controls={open ? 'cart-drawer' : undefined}
+      aria-haspopup="true"
+      aria-expanded={open ? 'true' : undefined}
+    >
+      <ShoppingCartOutlinedIcon />
+    </IconButton>
+
+    <IconButton
+      aria-controls={open ? 'notifications-drawer' : undefined}
+      aria-haspopup="true"
+      aria-expanded={open ? 'true' : undefined}
+    >
+      <NotificationsNoneOutlinedIcon />
+    </IconButton>
+
+    <ProfileMenu />
+  </>
+);
+
+const IconButtons = ({ handleIconAuthClick }) => (
+  <>
+    <IconButton>
+      <FavoriteBorderOutlinedIcon />
+    </IconButton>
+
+    <IconButton>
+      <ShoppingCartOutlinedIcon />
+    </IconButton>
+
+    <IconButton
+      onClick={handleIconAuthClick}
+      aria-label="open auth dialog tabs, Sign In and Sign Up"
+    >
+      <AccountCircleOutlinedIcon />
+    </IconButton>
+  </>
+);
+
+const Navbar = () => {
+  const [open, setOpen] = useState(false);
+
   const session = useContext(UserSessionContext);
   const { isLoading } = useContext(UserDataContext);
 
-  const [open, setOpen] = useState(false);
-
-  const [selectedLabel, setSelectedLabel] = useState(null);
-  const [dropDownOpen, setDropdownOpen] = useState(null);
-
   const pathname = usePathname();
-  const isHomePage = pathname === '/';
-  const params = useParams();
-
   const isAuthPage = shouldHideOnAuthPage(pathname);
-  const isMySettingsPage = shouldHideNavLinks(pathname, params);
-
-  const [hasReachedPosition, setHasReachedPosition] = useState(false);
-
-  const targetScrollY = 10;
+  const isMySettingsPage = shouldHideNavLinks(pathname);
 
   const t = useTranslations('main_nav_links');
   const linksTransLations = navLinks(t);
 
-  const { toggleNavDrawer, handleClose } = useNavDrawerStore();
+  const { toggleNavDrawer } = useNavDrawerStore();
 
-  const theme = useTheme();
-  const isDarkMode = theme.palette.mode === 'dark';
-
-  const handleMouseEnter = (label) => {
-    setSelectedLabel(label);
-    setDropdownOpen(true);
-  };
-
-  const handleMouseLeave = () => {
-    setSelectedLabel(null);
-    setDropdownOpen(null);
-  };
-
-  const handleClick = () => {
-    setDropdownOpen(null);
-    setSelectedLabel(null);
-  };
-
-  const handleAuthClick = () => {
+  const handleIconAuthClick = () => {
     setOpen(true);
-    handleClose;
-  };
-
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY >= targetScrollY) {
-        setHasReachedPosition(true);
-      } else {
-        setHasReachedPosition(false);
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll);
-
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, [targetScrollY]);
-
-  const links = () => {
-    const renderEndIcon = (label) =>
-      dropDownOpen && selectedLabel === label ? <ExpandLess /> : <ExpandMore />;
-
-    return (
-      <StyledNavLinksContainer>
-        {linksTransLations.map((item) => {
-          const { label, href, dropDownMenu } = item;
-
-          if (dropDownMenu) {
-            return (
-              <Box
-                key={label}
-                className="dropdown"
-                onMouseEnter={() => handleMouseEnter(label)}
-                onMouseLeave={handleMouseLeave}
-              >
-                <Button
-                  className="dropbtn"
-                  disableRipple
-                  endIcon={renderEndIcon(label)}
-                  sx={{
-                    color:
-                      dropDownOpen && selectedLabel === label
-                        ? 'white !important'
-                        : 'inherit',
-                    bgcolor:
-                      dropDownOpen && selectedLabel === label
-                        ? 'var(--color-green-light)'
-                        : 'inherit',
-                  }}
-                >
-                  {label}
-                </Button>
-
-                {dropDownOpen && (
-                  <Paper
-                    className={'dropdown-content'}
-                    sx={{ borderRadius: '0px 0px 6px 6px' }}
-                  >
-                    <Grid container>
-                      {item.dropDownMenu
-                        .sort((a, b) => a.label.localeCompare(b.label))
-                        .map(({ label, href }) => (
-                          <Grid key={label} item md={6}>
-                            <Link href={href} onClick={handleClick}>
-                              {label}
-                            </Link>
-                          </Grid>
-                        ))}
-                    </Grid>
-                  </Paper>
-                )}
-              </Box>
-            );
-          } else {
-            return (
-              <Link key={label} href={href}>
-                <Button disableRipple>{label}</Button>
-              </Link>
-            );
-          }
-        })}
-      </StyledNavLinksContainer>
-    );
   };
 
   if (isAuthPage) {
@@ -187,120 +144,82 @@ export default function Navbar() {
 
   return (
     <>
-      <HideOnScroll>
-        <AppBar
-          component="nav"
-          color="inherit"
-          elevation={pathname === '/' && !hasReachedPosition ? 0 : 1}
-          sx={{
-            background: hasReachedPosition
-              ? undefined
-              : isHomePage
-              ? 'inherit'
-              : undefined,
-            // background: {
-            //   xs: hasReachedPosition ? undefined : 'inherit',
-            //   md: isDarkMode
-            //     ? 'var(--color-dark-main)'
-            //     : 'var(--color-light-main)',
-            // },
-
-            '&:hover': {
-              bgcolor:
-                isHomePage && !hasReachedPosition
-                  ? isDarkMode
-                    ? 'rgba(0,0,0,0.2)'
-                    : 'rgba(255,255,255, 0.1)'
-                  : undefined,
-
-              backdropFilter: 'blur(4px)',
-            },
-          }}
-        >
-          <Container sx={{ display: 'flex', alignItems: 'center' }}>
-            <Logo />
-
-            <Box
-              sx={{
-                display: {
-                  xs: 'none',
-                  lg: isMySettingsPage ? 'none' : 'flex',
-                },
-              }}
+      <UserDataProvider>
+        <header>
+          <HideOnScroll>
+            <AppBar
+              component="nav"
+              position="fixed"
+              elevation={1}
+              color="inherit"
             >
-              {links()}
-            </Box>
-
-            <StyledNavIconsContainer>
-              {session ? (
-                isLoading ? (
-                  <SkeletonCircular w={32} h={32} l={4} />
-                ) : (
-                  <>
-                    <IconButton>
-                      <FavoriteBorderOutlinedIcon />
-                    </IconButton>
-
-                    <IconButton
-                      aria-controls={open ? 'cart-drawer' : undefined}
-                      aria-haspopup="true"
-                      aria-expanded={open ? 'true' : undefined}
-                    >
-                      <ShoppingCartOutlinedIcon />
-                    </IconButton>
-
-                    <IconButton
-                      aria-controls={open ? 'notifications-drawer' : undefined}
-                      aria-haspopup="true"
-                      aria-expanded={open ? 'true' : undefined}
-                    >
-                      <NotificationsNoneOutlinedIcon />
-                    </IconButton>
-
-                    <ProfileMenu />
-                  </>
-                )
-              ) : (
-                <>
-                  <IconButton>
-                    <FavoriteBorderOutlinedIcon />
-                  </IconButton>
-
-                  <IconButton>
-                    <ShoppingCartOutlinedIcon />
-                  </IconButton>
-
-                  <IconButton onClick={handleAuthClick}>
-                    <AccountCircleOutlinedIcon />
-                  </IconButton>
-                </>
-              )}
-
-              <IconButton
-                aria-label="open nav drawer"
-                edge="start"
-                onClick={() => toggleNavDrawer('bottom', true)}
+              <Container
                 sx={{
-                  display: isMySettingsPage
-                    ? 'none'
-                    : { sm: 'flex', lg: 'none' },
-                  ml: 1,
+                  position: 'relative',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
                 }}
               >
-                <MenuIcon />
-              </IconButton>
-            </StyledNavIconsContainer>
-          </Container>
-        </AppBar>
-      </HideOnScroll>
+                <Toolbar
+                  sx={{
+                    width: '100vw',
+                    px: { xs: 0, md: 'auto' },
+                  }}
+                >
+                  <NavLogo />
 
-      <NavDrawer linksTransLations={linksTransLations} />
+                  <Box
+                    sx={{
+                      overflowX: 'auto',
+                      display: {
+                        xs: 'none',
+                        md: isMySettingsPage ? 'none' : 'flex',
+                      },
+                    }}
+                  >
+                    <TopNavLinks linksTransLations={linksTransLations} />
+                  </Box>
 
-      {open && !session && (
-        <DialogContext.Provider value={{ open, setOpen }}>
-          <AuthFormDialog />
-        </DialogContext.Provider>
-      )}
+                  <StyledNavIconsContainer>
+                    {session ? (
+                      isLoading ? (
+                        <SkeletonCircular w={32} h={32} l={4} />
+                      ) : (
+                        <SessionIconButtons open={open} />
+                      )
+                    ) : (
+                      <IconButtons handleIconAuthClick={handleIconAuthClick} />
+                    )}
+
+                    <IconButton
+                      aria-label="open nav drawer"
+                      onClick={() => toggleNavDrawer('right', true)}
+                      sx={{
+                        display: isMySettingsPage
+                          ? 'none'
+                          : { sm: 'flex', md: 'none' },
+                      }}
+                    >
+                      <MenuIcon />
+                    </IconButton>
+                  </StyledNavIconsContainer>
+                </Toolbar>
+              </Container>
+            </AppBar>
+          </HideOnScroll>
+        </header>
+
+        <NavDrawer linksTransLations={linksTransLations} />
+
+        {open && !session && (
+          <DialogContext.Provider value={{ open, setOpen }}>
+            <AuthFormDialog />
+          </DialogContext.Provider>
+        )}
+      </UserDataProvider>
     </>
   );
-}
+};
+
+export default Navbar;

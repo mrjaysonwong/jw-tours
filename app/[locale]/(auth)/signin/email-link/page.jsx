@@ -1,6 +1,10 @@
+import { redirect } from 'next/navigation';
+
+// internal imports
 import { auth } from '@/auth';
-import { redirect } from '@/navigation';
-import EmailLink from '@/app/(features)/authentication/components/EmailLink';
+import PageLayout from '@/components/layout/PageLayout';
+import EmailAuthForm from '@/app/(features)/authentication/EmailAuthForm';
+import { ACTION_TYPES } from '@/constants/api';
 
 export const metadata = {
   title: 'Sign In',
@@ -13,5 +17,9 @@ export default async function SignInEmailLinkPage() {
     redirect('/');
   }
 
-  return <EmailLink />;
+  return (
+    <PageLayout marginY={10}>
+      <EmailAuthForm actionType={ACTION_TYPES.SIGNIN} />
+    </PageLayout>
+  );
 }

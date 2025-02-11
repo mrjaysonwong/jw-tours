@@ -1,5 +1,6 @@
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
 import { useSession } from 'next-auth/react';
+import { useParams } from 'next/navigation';
 import {
   Button,
   Dialog,
@@ -12,34 +13,46 @@ import {
 } from '@mui/material';
 import axios from 'axios';
 
-// local imports
-import { UserDataContext } from '@/contexts/UserProvider';
+// internal imports
+import { useUserDetailsContext } from '@/contexts/UserProvider';
 import { useMessageStore } from '@/stores/messageStore';
 import { errorHandler } from '@/helpers/errorHelpers';
+import { API_URLS } from '@/constants/api';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-export default function MenuActionDialog(props) {
-  const {
-    open,
-    setOpen,
-    targetEmail,
-    targetNumber,
-    menuAction,
-    setMenuAction,
-  } = props;
+const MenuActionDialog = ({
+  isDialogOpen,
+  setDialogOpen,
+  menuType,
+  targetEmail,
+  targetNumber,
+  menuAction,
+  setMenuAction,
+}) => {
+  const params = useParams();
+  const [dialCode, phoneNumber] = targetNumber.split(' ');
+  const isAction = (action) => menuAction === action;
 
-  const isActionDelete = menuAction === 'delete';
+  const { userId, refetch, adminRefetch } = useUserDetailsContext();
 
-  const { refetch } = useContext(UserDataContext);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { update } = useSession();
   const { handleAlertMessage } = useMessageStore();
 
+  const getAction = () => (isAction('set-primary') ? 'update' : 'delete');
+
+  const getMobileNumberAction = () => getAction();
+  const getEmailAction = () => getAction();
+
+  const actionType = targetEmail
+    ? `${getEmailAction()}-email`
+    : `${getMobileNumberAction()}-mobile`;
+
   const handleClose = () => {
-    setOpen(false);
+    setDialogOpen(false);
     setMenuAction('');
   };
 
@@ -47,22 +60,26 @@ export default function MenuActionDialog(props) {
     setIsSubmitting(true);
 
     try {
-      const action = isActionDelete ? 'delete' : 'set-primary';
-
       const url = targetEmail
-        ? `/api/account/email?action=${action}`
-        : `/api/account/mobile?action=${action}`;
+        ? `${API_URLS.USERS}/${userId}/email`
+        : `${API_URLS.USERS}/${userId}/mobile-number`;
 
-      const body = targetEmail
-        ? { email: targetEmail }
-        : { phone: targetNumber };
+      const requestData = targetEmail
+        ? { actionType, email: targetEmail }
+        : { actionType, phone: { dialCode, phoneNumber } };
 
-      const { data } = await axios.patch(url, body);
-      refetch();
-      setOpen(false);
+      const { data } = await axios.patch(url, requestData);
+
+      if (params.id) {
+        adminRefetch();
+      } else {
+        refetch();
+      }
+
+      setDialogOpen(false);
       setIsSubmitting(false);
 
-      if (targetEmail) {
+      if (targetEmail && isAction('set-primary') && !params.id) {
         // Trigger update session
         update({});
       }
@@ -77,16 +94,16 @@ export default function MenuActionDialog(props) {
 
   const getDialogTitle = () => {
     if (targetEmail) {
-      return isActionDelete ? 'Delete Email Address' : 'Set Primary';
+      return isAction('delete') ? 'Delete Email Address' : 'Set Primary';
     }
     if (targetNumber) {
-      return isActionDelete ? 'Delete Mobile Number' : 'Set Primary';
+      return isAction('delete') ? 'Delete Mobile Number' : 'Set Primary';
     }
   };
 
   const getDialogContent = () => {
     if (targetEmail) {
-      return isActionDelete ? (
+      return isAction('delete') ? (
         <>
           This will delete <span>{targetEmail}</span> permanently. You cannot
           undo this action.
@@ -98,15 +115,16 @@ export default function MenuActionDialog(props) {
         </>
       );
     }
+
     if (targetNumber) {
-      return isActionDelete ? (
+      return isAction('delete') ? (
         <>
-          This will delete <span>{targetNumber}</span> permanently. You cannot
+          This will delete <span>+{targetNumber}</span> permanently. You cannot
           undo this action.
         </>
       ) : (
         <>
-          This will set <span>{targetNumber}</span> as your primary mobile
+          This will set <span>+{targetNumber}</span> as your primary mobile
           number.
         </>
       );
@@ -115,7 +133,7 @@ export default function MenuActionDialog(props) {
 
   return (
     <Dialog
-      open={open}
+      open={isDialogOpen}
       TransitionComponent={Transition}
       onKeyUp={(e) => {
         if (e.key === 'Enter') {
@@ -125,8 +143,12 @@ export default function MenuActionDialog(props) {
     >
       <DialogTitle>{getDialogTitle()}</DialogTitle>
 
-      <DialogContent dividers sx={{ borderBottom: 'none' }}>
-        <DialogContentText sx={{ span: { color: 'var(--color-blue-light)' } }}>
+      <DialogContent dividers sx={{ borderBottom: 'none', maxWidth: '410px' }}>
+        <DialogContentText
+          sx={{
+            span: { color: 'var(--color-blue-light)' },
+          }}
+        >
           {getDialogContent()}
         </DialogContentText>
       </DialogContent>
@@ -135,6 +157,7 @@ export default function MenuActionDialog(props) {
         <Button onClick={handleClose} disabled={isSubmitting}>
           Cancel
         </Button>
+
         <Button
           variant="contained"
           disabled={isSubmitting}
@@ -146,7 +169,7 @@ export default function MenuActionDialog(props) {
               aria-busy={true}
               size="1.5rem"
             />
-          ) : isActionDelete ? (
+          ) : isAction('delete') ? (
             'Delete'
           ) : (
             'Set as Primary'
@@ -155,4 +178,6 @@ export default function MenuActionDialog(props) {
       </DialogActions>
     </Dialog>
   );
-}
+};
+
+export default MenuActionDialog;

@@ -1,58 +1,51 @@
 import { locales } from '@/navigation';
 
-const stripLocale = (pathname) => pathname.replace(/^\/[^/]+\//, '/');
+const isLocalePath = (pathname) =>
+  locales.some((locale) => pathname.startsWith(`/${locale}/`));
 
-export function shouldHideOnAuthPage(pathname) {
+export const stripLocale = (pathname) => {
+  const hasLocale = isLocalePath(pathname);
+
+  return hasLocale ? pathname.replace(/^\/[^/]+\//, '/') : pathname;
+};
+
+const isAuthPage = (pathname) => {
   const authPages = [
     '/signin',
-    '/signin/email-link',
     '/signup',
+    '/forgot-password',
+    '/resend-verification',
+    '/reset-password',
     '/verify',
-    '/notifications/authentication-failed',
+    '/notifications',
     '/error',
+    '/admin',
+    '/partners',
   ];
+  const isBasePath = authPages.some((page) => pathname.startsWith(page));
 
-  const hasLocale = locales.some((locale) =>
-    pathname.startsWith(`/${locale}/`)
-  );
+  return isBasePath;
+};
 
-  const hideOnAuthPage = authPages.some(
-    (page) =>
-      pathname === page ||
-      (hasLocale && stripLocale(pathname) === page) ||
-      pathname.startsWith('/account') // Strips out the locale prefix from the path, normalizing the URL.
-  );
+export function shouldHideOnAuthPage(pathname) {
+  const hasLocale = isLocalePath(pathname);
+  const strippedPathname = stripLocale(pathname);
 
-  return hideOnAuthPage;
+  return isAuthPage(pathname) || (hasLocale && isAuthPage(strippedPathname));
 }
 
-export function hideDefaultNavBar(pathname) {
-  const selectedPages = ['/admin', '/partners', '/signin', '/signup'];
+export function shouldHideNavLinks(pathname) {
+  const hasLocale = isLocalePath(pathname);
+  const strippedPathname = stripLocale(pathname);
 
-  const hasLocale = locales.some((locale) =>
-    pathname.startsWith(`/${locale}/`)
+  return (
+    pathname.startsWith('/mysettings') ||
+    (hasLocale && strippedPathname.startsWith('/mysettings'))
   );
-
-  const hideOnSelectedPage = selectedPages.some(
-    (page) =>
-      pathname === page ||
-      (hasLocale && pathname.replace(/^\/[^/]+\//, '/') === page) ||
-      pathname.startsWith(page)
-  );
-
-  return hideOnSelectedPage;
 }
 
-export function shouldHideNavLinks(pathname, params) {
-  const selectedPages = ['/mysettings', `/mysettings/${params.slug}`];
+export function getLastSegment(pathname) {
+  const lastSegment = pathname.split('/').pop();
 
-  const hasLocale = locales.some((locale) =>
-    pathname.startsWith(`/${locale}/`)
-  );
-
-  const hideOnSelectedPage = selectedPages.some(
-    (page) => pathname === page || (hasLocale && stripLocale(pathname) === page)
-  );
-
-  return hideOnSelectedPage;
+  return lastSegment;
 }

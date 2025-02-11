@@ -1,27 +1,22 @@
 import { Button, CircularProgress } from '@mui/material';
 
-export default function FormSubmitButton(props) {
-  const {
-    label,
-    action,
-    handleSubmit,
-    isSubmitting,
-    fullWidth,
-    captcha,
-  } = props;
-
+const FormSubmitButton = ({
+  label,
+  action,
+  isSubmitting,
+  fullWidth,
+  captcha,
+  isSubmitSuccessful,
+  notSixDigits,
+}) => {
   return (
     <>
       {action === 'auth' ? (
         <Button
-          fullWidth={fullWidth}
-          type="submit"
-          disabled={isSubmitting || captcha}
           variant="contained"
-          onClick={handleSubmit}
-          sx={{
-            mt: 2,
-          }}
+          type="submit"
+          fullWidth={fullWidth}
+          disabled={isSubmitting || captcha || isSubmitSuccessful}
         >
           {isSubmitting ? (
             <CircularProgress
@@ -36,10 +31,9 @@ export default function FormSubmitButton(props) {
       ) : (
         <>
           <Button
-            type="submit"
-            disabled={isSubmitting || captcha}
             variant="contained"
-            onClick={handleSubmit}
+            type="submit"
+            disabled={isSubmitting || captcha || notSixDigits}
           >
             {isSubmitting ? <CircularProgress size="1.5rem" /> : label}
           </Button>
@@ -47,4 +41,6 @@ export default function FormSubmitButton(props) {
       )}
     </>
   );
-}
+};
+
+export default FormSubmitButton;

@@ -112,6 +112,48 @@ export function navLinks(t) {
         },
       ],
     },
+    // {
+    //   label: 'Contact Us',
+    //   dropDownMenu: [
+    //     {
+    //       label: t('labels.our_story'),
+    //       href: '/',
+    //     },
+    //     {
+    //       label: t('labels.our_team'),
+    //       href: '/',
+    //     },
+    //     {
+    //       label: t('labels.our_reviews'),
+    //       href: '/',
+    //     },
+    //     {
+    //       label: t('labels.get_inspired'),
+    //       href: '/',
+    //     },
+    //   ],
+    // },
+    // {
+    //   label: 'Blog',
+    //   dropDownMenu: [
+    //     {
+    //       label: t('labels.our_story'),
+    //       href: '/',
+    //     },
+    //     {
+    //       label: t('labels.our_team'),
+    //       href: '/',
+    //     },
+    //     {
+    //       label: t('labels.our_reviews'),
+    //       href: '/',
+    //     },
+    //     {
+    //       label: t('labels.get_inspired'),
+    //       href: '/',
+    //     },
+    //   ],
+    // },
   ];
 
   return linksTranslations;

@@ -1,27 +1,19 @@
 'use client';
 
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import {
-  Typography,
-  Box,
-  Grid,
-  Container,
-  TextField,
-  Paper,
-  Tabs,
-  Tab,
-  useTheme,
-} from '@mui/material';
+import { Box, Tab, useTheme } from '@mui/material';
 
-// local imports
+// internal imports
 import { StyledHeroTabs } from '../styled/StyledTabs';
 import { StyledHeroOverlay } from '../styled/StyledOverlays';
-import TabPanelOne from './TabPanelOne';
-import TabPanelTwo from './TabPanelTwo';
-import TabPanelThree from './TabPanelThree';
-import TabPanelFour from './TabPanelFour';
-import TabPanelFive from './TabPanelFive';
+import {
+  TabPanelOne,
+  TabPanelTwo,
+  TabPanelThree,
+  TabPanelFour,
+  TabPanelFive,
+} from './index';
 
 const tabComponents = [
   TabPanelOne,
@@ -47,7 +39,7 @@ const TabPanel = (props) => {
   );
 };
 
-export default function HeroTabsLanding({ data }) {
+const HeroTabsLanding = ({ data }) => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const selectedTab = searchParams.get('selectedTab');
@@ -69,22 +61,25 @@ export default function HeroTabsLanding({ data }) {
     }
   };
 
-  useEffect(() => {
-    const { label } = data[+aid || 0];
-    const tabLabel = label.toLowerCase();
+  const tabLabel = useMemo(() => {
+    const { label } = data[0 || +aid];
+    return label.toLowerCase();
+  }, [data, aid]);
 
+  useEffect(() => {
     if (selectedTab !== tabLabel) {
       router.replace('/');
     }
 
     setValue(+aid);
-  }, [searchParams]);
+  }, [tabLabel, selectedTab, aid, router]);
 
   return (
     <Box
       sx={{
         width: '100%',
         position: 'relative',
+        mt: '4rem',
       }}
     >
       {data.map((item, index) => {
@@ -126,10 +121,13 @@ export default function HeroTabsLanding({ data }) {
                 bgcolor:
                   value === index
                     ? isDarkMode
-                      ? '#141414'
-                      : '#f5f5f5'
+                      ? 'var(--color-dark-main)'
+                      : 'var(--color-light-main)'
                     : 'inherit',
-                color: value === index && !isDarkMode && '#141414 !important',
+                color:
+                  value === index &&
+                  !isDarkMode &&
+                  'var(--color-dark-main) !important',
               }}
             />
           ))}
@@ -139,4 +137,6 @@ export default function HeroTabsLanding({ data }) {
       <StyledHeroOverlay />
     </Box>
   );
-}
+};
+
+export default HeroTabsLanding;

@@ -2,6 +2,17 @@
 
 import { signIn } from '@/auth';
 import { redirect } from '@/navigation';
+import { AuthError } from 'next-auth';
+import connectMongo from '@/services/db/connectMongo';
+import { findUser } from '@/services/user/userQueries';
+import { ERROR_MESSAGES } from '@/constants/api';
+
+const errorKeyWords = [
+  'sign-in method',
+  'not allowed to sign in',
+  'Email must be verified',
+  'Invalid Credentials',
+];
 
 export async function authenticate(formData, pathname) {
   try {
@@ -9,46 +20,37 @@ export async function authenticate(formData, pathname) {
       redirect: false,
       email: formData.email,
       password: formData.password,
+      pathname,
     });
 
-    if (data) {
-      redirect(`${process.env.NEXT_PUBLIC_BASE_URL}${pathname}` ?? '/');
+    await connectMongo();
+    const userExists = await findUser({ email: formData.email });
+
+    const isAdmin = userExists.role === 'admin';
+    const isAdminPath = pathname.startsWith('/admin');
+
+    const adminDashboard = `${process.env.NEXT_PUBLIC_BASE_URL}/admin/dashboard`;
+    const callbackUrl = `${process.env.NEXT_PUBLIC_BASE_URL}${pathname}` ?? '/';
+
+    if (data && isAdmin && isAdminPath) {
+      redirect(adminDashboard);
+    } else if (data) {
+      redirect(callbackUrl);
     }
   } catch (error) {
-    // can access error.cause when importing from '@/auth';
-    const authError = error?.cause?.err;
+    if (error instanceof AuthError) {
+      // can access error.cause if instanceof AuthError
+      const err = error.cause.err;
 
-    if (authError) {
-      if (authError.message.includes('sign-in method')) {
+      if (errorKeyWords.some((message) => err.message.includes(message))) {
         return {
           error: {
-            message: authError.message,
+            message: err.message,
           },
         };
       }
-
-      switch (authError.message) {
-        case 'Invalid Credentials':
-          return {
-            error: {
-              message: authError.message,
-            },
-          };
-        case 'Email must be verified.':
-          return {
-            error: {
-              message: authError.message,
-            },
-          };
-
-        default:
-          return {
-            error: {
-              message: 'Internal Server Error',
-            },
-          };
-      }
     }
+
     throw error;
   }
 }

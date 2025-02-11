@@ -5,6 +5,8 @@ import {
   IconButton,
   Collapse,
   Container,
+  Toolbar,
+  Drawer,
   List,
   ListItemText,
   ListItemButton,
@@ -13,18 +15,126 @@ import CloseIcon from '@mui/icons-material/Close';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 
-// local imports
-import { StyledNavDrawer } from '@/components/styled/StyledDrawers';
+// internal imports
 import { StyledNavListItem } from '@/components/styled/StyledListItems';
+import { StyledNavIconsContainer } from '@/components/styled/StyledContainers';
 import { useNavDrawerStore } from '@/stores/drawerStore';
-import Logo from './Logo';
+import { NavLogo } from './Navbar';
+
+const drawerWidth = '100%';
+
+const DropdownList = ({
+  dropDownMenu,
+  handleClick,
+  label,
+  selectedLabel,
+  dropDownMenuOpen,
+}) => {
+  return (
+    <>
+      {selectedLabel === label && (
+        <Collapse in={dropDownMenuOpen} timeout="auto" unmountOnExit>
+          {dropDownMenu
+            .sort((a, b) => a.label.localeCompare(b.label))
+            .map(({ label, href }) => (
+              <List key={label} component="div" disablePadding>
+                <ListItemButton onClick={() => handleClick({ href })}>
+                  <ListItemText primary={label} sx={{ ml: 1 }} />
+                </ListItemButton>
+              </List>
+            ))}
+        </Collapse>
+      )}
+    </>
+  );
+};
+
+const NavListItem = ({
+  item,
+  handleClick,
+  selectedLabel,
+  dropDownMenuOpen,
+}) => {
+  const { label, href, dropDownMenu } = item;
+
+  return (
+    <StyledNavListItem key={label} disablePadding>
+      <ListItemButton
+        onClick={() => handleClick({ href, dropDownMenu, label })}
+      >
+        <ListItemText
+          primary={label}
+          sx={{
+            color:
+              dropDownMenuOpen &&
+              selectedLabel === label &&
+              'var(--color-text-main)',
+          }}
+        />
+        {dropDownMenu &&
+          (dropDownMenuOpen && selectedLabel === label ? (
+            <ExpandLess sx={{ color: '#2d9562' }} />
+          ) : (
+            <ExpandMore />
+          ))}
+      </ListItemButton>
+
+      <DropdownList
+        dropDownMenu={dropDownMenu}
+        handleClick={handleClick}
+        label={label}
+        selectedLabel={selectedLabel}
+        dropDownMenuOpen={dropDownMenuOpen}
+      />
+    </StyledNavListItem>
+  );
+};
+
+const DrawerList = ({
+  toggleNavDrawer,
+  linksTransLations,
+  handleClick,
+  selectedLabel,
+  dropDownMenuOpen,
+}) => {
+  return (
+    <Container component="nav" role="presentation">
+      <Toolbar
+        sx={{
+          px: { xs: 0, md: 'auto' },
+        }}
+      >
+        <NavLogo />
+
+        <StyledNavIconsContainer>
+          <IconButton
+            aria-label="close nav drawer"
+            onClick={() => toggleNavDrawer('bottom', false)}
+          >
+            <CloseIcon />
+          </IconButton>
+        </StyledNavIconsContainer>
+      </Toolbar>
+
+      <List sx={{ mt: 2 }}>
+        {linksTransLations.map((item) => (
+          <NavListItem
+            key={item.label}
+            item={item}
+            handleClick={handleClick}
+            selectedLabel={selectedLabel}
+            dropDownMenuOpen={dropDownMenuOpen}
+          />
+        ))}
+      </List>
+    </Container>
+  );
+};
 
 export default function NavDrawer({ linksTransLations }) {
+  const [selectedLabel, setSelectedLabel] = useState(null);
   const [dropDownMenuOpen, setDropdownMenuOpen] = useState(false);
-  const [selectedLabel, setSelectedLabel] = useState('');
-
   const router = useRouter();
-
   const { state, toggleNavDrawer } = useNavDrawerStore();
 
   const handleClick = ({ href, dropDownMenu, label }) => {
@@ -34,88 +144,37 @@ export default function NavDrawer({ linksTransLations }) {
     } else {
       router.push(href);
       setDropdownMenuOpen(false);
-      toggleNavDrawer('bottom', false);
+      toggleNavDrawer('right', false);
     }
   };
 
-  const drawer = () => {
-    const dropDown = (item) =>
-      item.dropDownMenu
-        .sort((a, b) => a.label.localeCompare(b.label))
-        .map(({ label, href }) => (
-          <List key={label} component="div" disablePadding>
-            <ListItemButton onClick={() => handleClick({ href })}>
-              <ListItemText primary={label} sx={{ ml: 1 }} />
-            </ListItemButton>
-          </List>
-        ));
-
-    const links = linksTransLations.map((item) => {
-      const { label, href, dropDownMenu } = item;
-
-      return (
-        <StyledNavListItem key={label} disablePadding>
-          <ListItemButton
-            onClick={() => handleClick({ href, dropDownMenu, label })}
-          >
-            <ListItemText
-              primary={label}
-              sx={{
-                color:
-                  dropDownMenuOpen &&
-                  selectedLabel === label &&
-                  'var(--color-text-main)',
-              }}
-            />
-
-            {dropDownMenuOpen && selectedLabel === label
-              ? dropDownMenu && <ExpandLess sx={{ color: '#2d9562' }} />
-              : dropDownMenu && <ExpandMore />}
-          </ListItemButton>
-
-          {dropDownMenu && selectedLabel === label && (
-            <Collapse in={dropDownMenuOpen} timeout="auto" unmountOnExit>
-              {dropDown(item)}
-            </Collapse>
-          )}
-        </StyledNavListItem>
-      );
-    });
-
-    return (
-      <Container component="nav" role="presentation">
-        <Box
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-          }}
-        >
-          <Logo />
-
-          <IconButton
-            aria-label="close nav drawer"
-            edge="start"
-            onClick={() => toggleNavDrawer('bottom', false)}
-          >
-            <CloseIcon sx={{ fontSize: '2rem' }} />
-          </IconButton>
-        </Box>
-
-        <List sx={{ mt: 2 }}>{links}</List>
-      </Container>
-    );
-  };
-
   return (
-    <StyledNavDrawer
+    <Drawer
+      // closeAfterTransition={true}
       hideBackdrop={true}
       variant="temporary"
-      transitionDuration={0}
-      anchor="bottom"
-      open={state['bottom']}
+      transitionDuration={400}
+      anchor="right"
+      open={state['right']}
+      ModalProps={{
+        keepMounted: true, // Better open performance on mobile.
+      }}
+      sx={{
+        '& .MuiDrawer-paper': {
+          boxSizing: 'border-box',
+          width: drawerWidth,
+          backgroundImage: 'none',
+          height: '100vh',
+        },
+      }}
     >
-      {drawer()}
-    </StyledNavDrawer>
+      <DrawerList
+        toggleNavDrawer={toggleNavDrawer}
+        linksTransLations={linksTransLations}
+        handleClick={handleClick}
+        selectedLabel={selectedLabel}
+        dropDownMenuOpen={dropDownMenuOpen}
+      />
+    </Drawer>
   );
 }

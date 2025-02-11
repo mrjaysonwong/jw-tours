@@ -3,11 +3,12 @@
 import { Tab, Tabs } from '@mui/material';
 import { styled } from '@mui/system';
 
-export const StyledMySettingsTab = styled(Tab)(({ theme }) => {
+export const StyledSettingsTab = styled(Tab)(({ theme }) => {
   const { palette } = theme;
   const isDarkMode = palette.mode === 'dark';
 
   return {
+    color: 'inherit',
     textTransform: 'none',
     display: 'flex',
     justifyContent: 'flex-start',
