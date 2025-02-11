@@ -1,5 +1,6 @@
 import { auth } from '@/auth';
 import { redirect } from 'next/navigation';
+
 import MySettingsTabs from '@/app/(features)/mysettings/MySettingsTabs';
 
 export default async function MySettingsSlugPage({ params }) {

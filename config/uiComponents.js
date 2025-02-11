@@ -1,5 +1,5 @@
 // dashboard components
-import Overview from '@/app/(features)/dashboard/admin/Overview/Overview';
+import Overview from '@/app/(features)/dashboard/admin/overview/Overview';
 import Analytics from '@/app/(features)/dashboard/admin/analytics/Analytics';
 import Sales from '@/app/(features)/dashboard/admin/sales/Sales';
 import UserList from '@/app/(features)/dashboard/admin/management/users/UserList';
