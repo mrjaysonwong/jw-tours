@@ -130,11 +130,13 @@ const userSchema = new Schema(
 );
 
 /* 
-$text index optional best use case for
+$text index optional best use case for full-text search
 blog, articles, descriptions, product listing
 comments, reviews,
 */
+
 // userSchema.index({
+// 'email.email': 'text',
 //   firstName: 'text',
 //   lastName: 'text',
 //   role: 'text',

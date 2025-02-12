@@ -131,6 +131,7 @@ const TableContent = ({
         {sortedUsers.map((row, index) => {
           const isItemSelected = isSelected(row._id);
           const labelId = `enhanced-table-checkbox-${index}`;
+
           const primaryEmail = row.email.find((e) => e.isPrimary === true);
 
           const statusColor = statusLabelColorMap[row.status];
@@ -185,7 +186,6 @@ const TableContent = ({
                   <span className="name">
                     {row.firstName} {row.lastName}
                   </span>
-                  {/* <span className="name">{row.fullName}</span> */}
                 </Box>
               </TableCell>
 

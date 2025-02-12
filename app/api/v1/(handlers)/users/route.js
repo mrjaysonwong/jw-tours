@@ -25,7 +25,7 @@ const buildUserFilter = (query) => {
         $or: [
           { firstName: { $regex: indexedQuery, $options: 'i' } },
           { lastName: { $regex: indexedQuery, $options: 'i' } },
-          { 'email.email': { $regex: query, $options: 'i' } },
+          { 'email.email': { $regex: indexedQuery, $options: 'i' } },
           { role: { $regex: indexedQuery, $options: 'i' } },
           { status: { $regex: indexedQuery, $options: 'i' } },
         ],
@@ -37,7 +37,7 @@ const buildUserFilter = (query) => {
 // GET: /api/v1/users
 export async function GET(Request) {
   const searchParams = Request.nextUrl.searchParams;
-  const query = searchParams.get('q')?.toLowerCase();
+  const query = searchParams.get('q');
   const page = parseInt(searchParams.get('page')) || 1;
   const limit = parseInt(searchParams.get('limit')) || 20;
 

@@ -76,19 +76,6 @@ const tokenSchema = new Schema({
   },
 });
 
-tokenSchema.index({
-  userId: 1,
-  'email.email': 1,
-  'email.token': 1,
-  'email.expireTimestamp': 1,
-});
-
-tokenSchema.index({
-  'phone.email': 1,
-  'phone.token': 1,
-  'phone.expireTimestamp': 1,
-});
-
 const Token = models?.token || model('token', tokenSchema);
 
 export default Token;

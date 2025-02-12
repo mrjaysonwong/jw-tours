@@ -15,7 +15,6 @@ import AddIcon from '@mui/icons-material/Add';
 import { useUserListData } from '@/hooks/useUserListData';
 import LoadingSpinner from '@/components/loaders/LoadingSpinner';
 import CustomError from '@/components/errors/CustomError';
-
 import {
   TableContent,
   EnhancedTableToolbar,
@@ -30,6 +29,12 @@ export const statusMap = {
   3: 'suspended',
   4: 'inactive',
 };
+
+// recap
+// fix edit user
+// review add new user
+// proceed to next feature account management
+
 
 const UserList = () => {
   const [order, setOrder] = useState('asc');
