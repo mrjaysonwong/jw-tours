@@ -5,14 +5,14 @@ import { Button, Typography, Divider } from '@mui/material';
 import { StyledAuthCard } from '@/components/styled/StyledCards';
 import { ACTION_TYPES } from '@/constants/api';
 
-const MESSAGES = {
+const messageMap = {
   [ACTION_TYPES.SIGNIN]: 'the sign-in link',
   [ACTION_TYPES.SEND_ACCOUNT_VERIFICATION]: 'the verification link',
   [ACTION_TYPES.SEND_PASSWORD_RESET]: 'the password reset link',
 };
 
 const generateMessage = (actionType) => {
-  const messageText = MESSAGES[actionType];
+  const messageText = messageMap[actionType];
 
   return (
     <Typography>

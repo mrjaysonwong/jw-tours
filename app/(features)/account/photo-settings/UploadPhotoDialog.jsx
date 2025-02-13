@@ -78,7 +78,7 @@ const UploadPhotoDialog = ({
           yourself. Then crop and adjust it to perfection.
         </Typography>
       </DialogContent>
-      
+
       <DialogActions sx={{ py: 2, display: 'flex', justifyContent: 'center' }}>
         <Button
           component="label"

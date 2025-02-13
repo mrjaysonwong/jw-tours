@@ -1,3 +1,4 @@
+import React from 'react';
 import { Select, FormControl, InputLabel, MenuItem } from '@mui/material';
 
 const RoleFilter = ({ role, handleChangeRole }) => {
@@ -25,4 +26,4 @@ const RoleFilter = ({ role, handleChangeRole }) => {
   );
 };
 
-export default RoleFilter;
+export default React.memo(RoleFilter);

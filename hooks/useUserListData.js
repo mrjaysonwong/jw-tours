@@ -4,6 +4,7 @@ import axios from 'axios';
 
 // internal imports
 import { getLastSegment } from '@/helpers/pageHelpers';
+import { fetchRandomUsers } from '@/data/randomUsers';
 
 export const useUserListData = (debouncedText, page, rowsPerPage) => {
   const pathname = usePathname();
@@ -21,6 +22,26 @@ export const useUserListData = (debouncedText, page, rowsPerPage) => {
       const { data } = await axios.get(url);
 
       return data;
+
+      /* Test large data set */
+      // const { users } = await fetchRandomUsers();
+
+      // const filteredUsers = debouncedText
+      //   ? users.filter((user) =>
+      //       `${user.firstName} ${user.lastName}`
+      //         .toLowerCase()
+      //         .includes(debouncedText.toLowerCase())
+      //     )
+      //   : users;
+
+      // const start = page * rowsPerPage;
+      // const paginatedUsers = filteredUsers.slice(start, start + rowsPerPage);
+
+      // return {
+      //   data: paginatedUsers,
+      //   total: users.length, // Simulated total users count
+      // };
+
     } catch (error) {
       console.error(error);
       throw new Error('Failed to fetch data.');
@@ -37,6 +58,8 @@ export const useUserListData = (debouncedText, page, rowsPerPage) => {
     isLoading,
     users: data?.data,
     total: data?.total,
+    // users: data?.data || [],
+    // total: data?.total || 0,
     isError,
     error,
     refetch,

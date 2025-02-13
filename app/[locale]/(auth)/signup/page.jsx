@@ -6,7 +6,7 @@ import { auth } from '@/auth';
 import { redirect } from '@/navigation';
 import { createMetadata } from '@/helpers/metadataHelpers';
 import PageLayout from '@/components/layout/PageLayout';
-import SignUpForm from '@/app/(features)/authentication/SignUpForm';
+import SignUpForm from '@/components/forms/SignUpForm';
 import AnimateGradient from '@/components/bg-gradients/AnimatedGradient';
 
 export async function generateMetadata({ params: { locale } }) {

@@ -32,7 +32,7 @@ export const UserSessionProvider = ({ session, children }) => {
       <UserSessionContext.Provider value={session}>
         {children}
       </UserSessionContext.Provider>
-      {/* <ReactQueryDevtools initialIsOpen={false} /> */}
+      {/* <ReactQueryDevtools initialIsOpen={true} /> */}
     </QueryClientProvider>
   );
 };
@@ -70,7 +70,7 @@ export const UserDataProvider = ({ children }) => {
 export const UserListDataProvider = ({ children }) => {
   const pathname = usePathname();
   const lastSegment = getLastSegment(pathname);
-  const isUserList = lastSegment === 'users'
+  const isUserList = lastSegment === 'users';
   // const isUserList = lastSegment === 'user-list';
 
   const {

@@ -1,3 +1,4 @@
+import React from 'react';
 import { Toolbar, Typography, Tooltip, IconButton } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 
@@ -34,4 +35,4 @@ const EnhancedTableToolbar = ({ numSelected }) => {
   );
 };
 
-export default EnhancedTableToolbar;
+export default React.memo(EnhancedTableToolbar);

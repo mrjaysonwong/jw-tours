@@ -62,7 +62,7 @@ const CustomTab = ({ value, setValue }) => {
               icon={<LockOutlinedIcon />}
               iconPosition="start"
               label="Security"
-              {...a11yProps(1, 'security')}
+              {...a11yProps(2, 'security')}
             />
           )}
         </Tabs>

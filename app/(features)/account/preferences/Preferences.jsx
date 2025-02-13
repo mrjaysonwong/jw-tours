@@ -25,7 +25,7 @@ const DetailsGrid = () => {
   };
 
   return (
-    <Box>
+    <>
       <Box sx={{ textAlign: 'right' }}>
         <Button
           size="small"
@@ -52,7 +52,7 @@ const DetailsGrid = () => {
         user={user}
         refetch={refetch}
       />
-    </Box>
+    </>
   );
 };
 

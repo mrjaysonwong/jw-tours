@@ -13,12 +13,12 @@ import AlertMessage from '@/components/alerts/AlertMessage';
 import CustomError from '@/components/errors/CustomError';
 import LoadingSpinner from '@/components/loaders/LoadingSpinner';
 
-const TITLES = {
+const titleMap = {
   0: 'Personal Details',
   1: 'Contact Information',
 };
 
-const SUBTITLES = {
+const subTitleMap = {
   0: "Update your info and find out how it's used.",
   1: 'Review and update your contact details to ensure seamless communication.',
 };
@@ -58,8 +58,8 @@ const Profile = () => {
   return (
     <>
       <Box sx={{ mb: 2 }}>
-        <Typography variant="h5">{TITLES[value]}</Typography>
-        <Typography>{SUBTITLES[value]}</Typography>
+        <Typography variant="h5">{titleMap[value]}</Typography>
+        <Typography>{subTitleMap[value]}</Typography>
       </Box>
 
       <UserDetails value={value} setValue={setValue} />

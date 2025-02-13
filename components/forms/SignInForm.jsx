@@ -9,7 +9,7 @@ import OAuth from '@/app/(features)/authentication/OAuth';
 import RoleSelector from '@/app/(features)/authentication/RoleSelector';
 import { PATHNAMES } from '@/constants/pathname';
 
-export const SignInForm = ({ header, showOAuth, showRoleSelector }) => {
+const SignInForm = ({ header, isDashboard, showRoleSelector }) => {
   return (
     <>
       {header && (
@@ -24,7 +24,7 @@ export const SignInForm = ({ header, showOAuth, showRoleSelector }) => {
 
       <SignInFormFields />
 
-      {showOAuth && (
+      {!isDashboard && (
         <>
           <Divider sx={{ my: 2 }}>
             <Chip label="or" />
@@ -58,3 +58,6 @@ export const SignInForm = ({ header, showOAuth, showRoleSelector }) => {
     </>
   );
 };
+
+
+export default SignInForm

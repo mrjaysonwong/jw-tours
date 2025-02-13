@@ -1,3 +1,4 @@
+import React, { useCallback } from 'react';
 import { CsvBuilder } from 'filefy';
 import { Grid, Button, Typography, Chip, Box } from '@mui/material';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
@@ -7,47 +8,44 @@ import FilterAltOffIcon from '@mui/icons-material/FilterAltOff';
 import { RoleFilter, TabsFilter } from '.';
 import { statusMap } from './UserList';
 
-const FilterChip = ({
-  filterType,
-  label,
-  setSearchTerm,
-  setValue,
-  setRole,
-}) => {
-  const handleDelete = () => {
-    switch (filterType) {
-      case 'Role':
-        setRole('');
-        break;
-      case 'Status':
-        setValue(0);
-        break;
+const FilterChip = React.memo(
+  ({ filterType, label, setSearchTerm, setValue, setRole }) => {
+    const handleDelete = useCallback(() => {
+      switch (filterType) {
+        case 'Role':
+          setRole('');
+          break;
+        case 'Status':
+          setValue(0);
+          break;
+        default:
+          setSearchTerm('');
+      }
+    }, [filterType, setRole, setValue, setSearchTerm]);
 
-      default:
-        setSearchTerm('');
-    }
-  };
+    return (
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          px: 1,
+          py: 0.5,
+          border: '1px solid',
+          borderColor: 'divider',
+          borderRadius: '14px',
+          mt: 1,
+        }}
+      >
+        <Typography variant="body2" sx={{ mr: 1, fontWeight: 500 }}>
+          {filterType}:
+        </Typography>
+        <Chip size="small" label={label} onDelete={handleDelete} />
+      </Box>
+    );
+  }
+);
 
-  return (
-    <Box
-      sx={{
-        display: 'flex',
-        alignItems: 'center',
-        px: 1,
-        py: 0.5,
-        border: '1px solid',
-        borderColor: 'divider',
-        borderRadius: '14px',
-        mt: 1,
-      }}
-    >
-      <Typography variant="body2" sx={{ mr: 1, fontWeight: 500 }}>
-        {filterType}:
-      </Typography>
-      <Chip size="small" label={label} onDelete={handleDelete} />
-    </Box>
-  );
-};
+FilterChip.displayName = 'FilterChip';
 
 const TableToolbar = ({
   role,
@@ -178,4 +176,4 @@ const TableToolbar = ({
   );
 };
 
-export default TableToolbar;
+export default React.memo(TableToolbar);

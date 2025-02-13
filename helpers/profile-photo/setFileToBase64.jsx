@@ -1,4 +1,9 @@
+import FormData from 'form-data';
+import axios from 'axios';
+
+// internal imports
 import { emptyFileInput } from './emptyFileInput';
+
 
 export async function setFileToBase64(
   event,
@@ -54,19 +59,50 @@ export async function setFileToBase64(
       // destinationWidth, destinationHeight
       ctx.drawImage(image, 0, 0, newWidth, newHeight);
 
-      const resizedImage = canvas.toDataURL(file.type);
+      canvas.toBlob(async (blob) => {
+        const formData = new FormData();
+        formData.append('media', blob, file.name);
 
-      setEditDialogOpen(true);
-      setSelectedImage(resizedImage);
+        try {
+          const url = '/api/v1/image-moderation';
+          const headers = {
+            'Content-Type': 'multipart/form-data',
+          };
+          const { data } = await axios.post(url, formData, {
+            headers,
+          });
+
+          if (data.summary.action === 'reject') {
+            handleAlertMessage(
+              'Inappropriate content detected. Please upload a different image.',
+              'error'
+            );
+            emptyFileInput();
+            setEditDialogOpen(false);
+
+            return;
+          }
+
+          const resizedImage = canvas.toDataURL(file.type);
+
+          setEditDialogOpen(true);
+          setSelectedImage(resizedImage);
+          setUploadDialogOpen(false);
+        } catch (error) {
+          console.error('Image moderation error:', error);
+          setEditDialogOpen(false);
+          emptyFileInput();
+          handleAlertMessage('An error occured. Try again.', 'error');
+        }
+      }, file.type);
     };
   };
 
-  if (file) {
-    reader.readAsDataURL(file);
+  // Error on Corrupt or Non-Readable File
+  reader.onerror = () => {
+    console.error('Error reading file');
+    handleAlertMessage('Error reading file. Try again.', 'error');
+  };
 
-    setEditDialogOpen(true);
-    setUploadDialogOpen(false);
-  } else {
-    setSelectedImage(null);
-  }
+  reader.readAsDataURL(file);
 }

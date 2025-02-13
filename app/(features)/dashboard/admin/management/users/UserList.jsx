@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import Link from 'next/link';
 import { useDebounce } from 'use-debounce';
 import {
@@ -30,19 +30,13 @@ export const statusMap = {
   4: 'inactive',
 };
 
-// recap
-// fix edit user
-// review add new user
-// proceed to next feature account management
-
-
 const UserList = () => {
   const [order, setOrder] = useState('asc');
-  const [orderBy, setOrderBy] = useState('fullName');
+  const [orderBy, setOrderBy] = useState('lastName');
 
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
-  const [selected, setSelected] = useState([]);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [selected, setSelected] = useState(new Set());
 
   const [role, setRole] = useState('');
   const [value, setValue] = useState(0);
@@ -58,81 +52,71 @@ const UserList = () => {
   const filteredUsers = useMemo(() => {
     if (!users) return [];
 
-    return users
-      .map((user) => ({
-        ...user,
-        fullName: `${user.firstName} ${user.lastName}`,
-      }))
-      .filter((user) => {
-        const matchesRole = !role || user.role === role;
-        const matchesStatus =
-          statusMap[value] === null || user.status === statusMap[value];
+    return users.filter((user) => {
+      const matchesRole = !role || user.role === role;
+      const matchesStatus =
+        statusMap[value] === null || user.status === statusMap[value];
 
-        return matchesRole && matchesStatus;
-      });
+      return matchesRole && matchesStatus;
+    });
   }, [users, role, value]);
 
-  const handleSelectAllClick = (event) => {
-    if (event.target.checked) {
-      const newSelected = users.map((e) => e._id);
-      setSelected(newSelected);
-
-      return;
-    }
-
-    // Deselect all items
-    setSelected([]);
-  };
-
-  const handleClick = (event, id) => {
-    const selectedIndex = selected.indexOf(id);
-    let newSelected = [];
-
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, id);
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(
-        selected.slice(0, selectedIndex),
-        selected.slice(selectedIndex + 1)
+  const handleSelectAllClick = useCallback(
+    (event) => {
+      setSelected(
+        event.target.checked ? new Set(users.map((e) => e._id)) : new Set()
       );
-    }
-    setSelected(newSelected);
-  };
+    },
+    [users]
+  );
 
-  const handleClearFilters = () => {
+  const handleClick = useCallback((event, id) => {
+    setSelected((prevSelected) => {
+      const newSelected = new Set(prevSelected);
+
+      if (newSelected.has(id)) {
+        newSelected.delete(id); // Deselect
+      } else {
+        newSelected.add(id); // Select
+      }
+
+      return newSelected;
+    });
+  }, []);
+
+  const handleClearFilters = useCallback(() => {
     setRole('');
     setSearchTerm('');
     setPage(0);
     setValue(0);
-  };
+  }, []);
 
-  const handleRequestSort = (event, property) => {
-    const isAsc = orderBy === property && order === 'asc';
-    setOrder(isAsc ? 'desc' : 'asc');
-    setOrderBy(property);
-  };
+  const handleRequestSort = useCallback(
+    (event, property) => {
+      const isAsc = orderBy === property && order === 'asc';
+      setOrder(isAsc ? 'desc' : 'asc');
+      setOrderBy(property);
+    },
+    [order, orderBy]
+  );
 
-  const handleChangePage = (event, newPage) => {
+  const handleChangePage = useCallback((event, newPage) => {
     setPage(newPage);
-  };
+  }, []);
 
-  const handleChangeRowsPerPage = (event) => {
+  const handleChangeRowsPerPage = useCallback((event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
-  };
+  }, []);
 
-  const handleChangeRole = (event) => {
+  const handleChangeRole = useCallback((event) => {
     setRole(event.target.value);
-  };
+  }, []);
 
-  const handleChangeTab = (event, newValue) => {
+  const handleChangeTab = useCallback((event, newValue) => {
     setValue(newValue);
     setPage(0);
-  };
+  }, []);
 
   return (
     <>
@@ -191,8 +175,8 @@ const UserList = () => {
                   setRole={setRole}
                 />
 
-                {selected.length > 0 && (
-                  <EnhancedTableToolbar numSelected={selected.length} />
+                {selected.size > 0 && (
+                  <EnhancedTableToolbar numSelected={selected.size} />
                 )}
 
                 <TableContainer>
@@ -203,8 +187,6 @@ const UserList = () => {
                     order={order}
                     orderBy={orderBy}
                     handleRequestSort={handleRequestSort}
-                    page={page}
-                    rowsPerPage={rowsPerPage}
                     onSelectAllClick={handleSelectAllClick}
                     handleClick={handleClick}
                     total={total}
@@ -212,7 +194,7 @@ const UserList = () => {
                 </TableContainer>
 
                 <TablePagination
-                  rowsPerPageOptions={[5, 10, 25, 50, 100, 200]}
+                  rowsPerPageOptions={[5, 10, 25, 50, 250, 500]}
                   component="div"
                   count={role || value ? filteredUsers.length : total}
                   rowsPerPage={rowsPerPage}

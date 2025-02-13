@@ -1,3 +1,4 @@
+import React from 'react';
 import { Tabs, Tab, Typography, Box } from '@mui/material';
 
 import { statusLabelColorMap } from '@/utils/colorMap';
@@ -57,4 +58,4 @@ const TabFilter = ({ value, handleChangeTab, users }) => {
   );
 };
 
-export default TabFilter;
+export default React.memo(TabFilter);

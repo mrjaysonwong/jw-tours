@@ -67,7 +67,6 @@ const Address = () => {
               <Autocomplete
                 name={name}
                 value={value}
-                // loading={loading && !error.show}
                 loading={isLoading}
                 loadingText={`Loading...`}
                 noOptionsText={

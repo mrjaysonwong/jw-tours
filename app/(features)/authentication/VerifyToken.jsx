@@ -16,8 +16,6 @@ const VerifyToken = ({ token, email, action, callbackUrl }) => {
   const router = useRouter();
   const decodedCallbackUrl = decodeURIComponent(callbackUrl);
 
-  console.log({ decodedCallbackUrl });
-
   useEffect(() => {
     const handleSignIn = async () => {
       try {

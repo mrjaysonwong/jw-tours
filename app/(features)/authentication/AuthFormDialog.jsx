@@ -6,24 +6,10 @@ import { Dialog, DialogContent, Box, Tabs, Tab } from '@mui/material';
 
 // internal imports
 import { DialogContext } from '@/components/layout/header/Navbar';
-import { SignInForm } from '@/app/(features)/authentication/SignInForm';
-import SignUpForm from '@/app/(features)/authentication/SignUpForm';
-
-const TabPanel = (props) => {
-  const { children, value, index, ...other } = props;
-
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`vertical-tabpanel-${index}`}
-      aria-labelledby={`vertical-tab-${index}`}
-      {...other}
-    >
-      {value === index && <Box sx={{ py: 2 }}>{children}</Box>}
-    </div>
-  );
-};
+import SignInForm from '@/components/forms/SignInForm';
+import SignUpForm from '@/components/forms/SignUpForm';
+import CustomTabPanel from '@/components/tabs/CustomTabPanel';
+import { a11yProps } from '@/utils/a11yprops';
 
 const AuthFormDialog = () => {
   const [value, setValue] = useState(0);
@@ -50,22 +36,22 @@ const AuthFormDialog = () => {
           <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
             <Tabs
               variant="fullWidth"
-              indicatorColor="primary"
               value={value}
               onChange={handleChange}
               aria-label="Auth Tabs"
             >
-              <Tab label="Sign In" />
-              <Tab label="Sign Up" />
+              <Tab label="Sign In" {...a11yProps(0, 'signin')} />
+              <Tab label="Sign Up" {...a11yProps(0, 'signup')} />
             </Tabs>
           </Box>
 
-          <TabPanel value={value} index={0}>
-            <SignInForm showOAuth={true} showRoleSelector={false} />
-          </TabPanel>
-          <TabPanel value={value} index={1}>
+          <CustomTabPanel value={value} index={0}>
+            <SignInForm isDashboard={false} showRoleSelector={false} />
+          </CustomTabPanel>
+
+          <CustomTabPanel value={value} index={1}>
             <SignUpForm showCancel={true} />
-          </TabPanel>
+          </CustomTabPanel>
         </DialogContent>
       </Dialog>
     </>

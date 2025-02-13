@@ -39,7 +39,7 @@ export async function GET(Request) {
   const searchParams = Request.nextUrl.searchParams;
   const query = searchParams.get('q');
   const page = parseInt(searchParams.get('page')) || 1;
-  const limit = parseInt(searchParams.get('limit')) || 20;
+  const limit = parseInt(searchParams.get('limit')) || 10;
 
   try {
     const session = await auth();

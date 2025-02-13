@@ -54,7 +54,7 @@ export default function AdminDashboard({ slug }) {
 
   return (
     <Box sx={{ display: 'flex', minHeight: '100dvh' }}>
-      {/* <HideOnScroll> */}
+      <HideOnScroll>
         <AppBar
           color="inherit"
           elevation={0}
@@ -80,7 +80,7 @@ export default function AdminDashboard({ slug }) {
             </UserDataProvider>
           </Toolbar>
         </AppBar>
-      {/* </HideOnScroll> */}
+      </HideOnScroll>
 
       <NavDrawer
         mobileOpen={mobileOpen}

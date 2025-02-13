@@ -5,7 +5,7 @@ import { Card, CardContent } from '@mui/material';
 import { auth } from '@/auth';
 import { redirect } from '@/navigation';
 import PageLayout from '@/components/layout/PageLayout';
-import { SignInForm } from '@/app/(features)/authentication/SignInForm';
+import SignInForm from '@/components/forms/SignInForm';
 import AnimateGradient from '@/components/bg-gradients/AnimatedGradient';
 
 export const metadata = {
@@ -26,7 +26,7 @@ export default async function SignInPage() {
       <PageLayout marginY={5}>
         <Card>
           <CardContent>
-            <SignInForm header="Sign In" showOAuth={true} showCancel={true} />
+            <SignInForm header="Sign In" isDashboard={false} showCancel={true} />
           </CardContent>
         </Card>
       </PageLayout>

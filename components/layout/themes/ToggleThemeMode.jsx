@@ -26,7 +26,7 @@ const poppins = Poppins({
   display: 'swap',
 });
 
-const montserrat = Poppins({
+const montserrat = Montserrat({
   weight: ['300', '400', '500', '700'],
   subsets: ['latin'],
   display: 'swap',
@@ -50,7 +50,7 @@ const ToggleThemeMode = ({ storedTheme, children }) => {
     () =>
       createTheme({
         typography: {
-          fontFamily: montserrat.style.fontFamily,
+          fontFamily: poppins.style.fontFamily,
         },
 
         palette: {
