@@ -64,6 +64,7 @@
     "totp-generator": "^1.0.0",
     "twilio": "^5.2.2",
     "use-debounce": "^10.0.0",
+    "uuid": "^11.1.0",
     "yup": "^1.4.0",
     "zustand": "^4.5.2"
   },
