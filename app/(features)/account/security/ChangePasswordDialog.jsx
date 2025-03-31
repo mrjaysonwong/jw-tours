@@ -17,9 +17,9 @@ import { useMessageStore } from '@/stores/messageStore';
 import { errorHandler } from '@/helpers/errorHelpers';
 import FormSubmitButton from '@/components/buttons/FormSubmitButton';
 import FormInput from '@/components/inputs/FormInput';
-import { API_URLS } from '@/constants/api';
+import { API_URLS } from '@/config/apiRoutes';
 
-const ChangePasswordDialog = ({ open, setOpen, userId }) => {
+const ChangePasswordDialog = ({ isDialogOpen, setIsDialogOpen, userId }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
 
@@ -34,7 +34,7 @@ const ChangePasswordDialog = ({ open, setOpen, userId }) => {
   };
 
   const handleClose = () => {
-    setOpen(false);
+    setIsDialogOpen(false);
   };
 
   const {
@@ -49,8 +49,8 @@ const ChangePasswordDialog = ({ open, setOpen, userId }) => {
 
       const { data } = await axios.patch(url, formData);
 
-      setOpen(false);
-      handleAlertMessage(data.statusText, 'success');
+      setIsDialogOpen(false);
+      handleAlertMessage(data.message, 'success');
     } catch (error) {
       const { errorMessage } = errorHandler(error);
       handleAlertMessage(errorMessage, 'error');
@@ -59,7 +59,7 @@ const ChangePasswordDialog = ({ open, setOpen, userId }) => {
 
   return (
     <>
-      <Dialog open={open} scroll="body">
+      <Dialog open={isDialogOpen} scroll="body">
         <DialogTitle>Change Password</DialogTitle>
 
         <form onSubmit={handleSubmit(onSubmit)}>
@@ -106,14 +106,13 @@ const ChangePasswordDialog = ({ open, setOpen, userId }) => {
             />
           </DialogContent>
 
-          <DialogActions sx={{ mx: 2, py: 2 }}>
+          <DialogActions sx={{ px: 3, py: 2 }}>
             <Button type="button" disabled={isSubmitting} onClick={handleClose}>
               Cancel
             </Button>
 
             <FormSubmitButton
               label="Change Password"
-              action="add"
               isSubmitting={isSubmitting}
               isSubmitSuccessful={isSubmitSuccessful}
             />

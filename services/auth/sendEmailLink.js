@@ -1,18 +1,19 @@
 // internal imports
 import { findUserEmail } from '@/services/user/userQueries';
 import { rateLimiter } from '@/services/rate-limiter/rateLimiter';
+import { HttpError } from '@/helpers/errorHelpers';
 import { handleRateLimitError } from '@/helpers/errorHelpers';
 import { generateEmailVerificationData } from '@/services/auth/generateEmailVerificationData';
-import { ACTION_TYPES } from '@/constants/api';
+import { ACTIONS, STATUS_CODES } from '@/constants/common';
 import { manageUserEmailToken } from '@/services/token/manageUserEmailToken';
 import { sendEmail } from '@/services/email/sendEmail';
 
-function generateSubjectTitle(actionType) {
+function getSubject(actionType) {
   switch (actionType) {
-    case ACTION_TYPES.SIGNIN:
+    case ACTIONS.SIGNIN:
       return 'JW Tours Sign-in Link';
 
-    case ACTION_TYPES.FORGOT_PASSWORD:
+    case ACTIONS.FORGOT_PASSWORD:
       return 'Password Reset Request';
 
     default:
@@ -27,16 +28,24 @@ export async function sendEmailLink(email, actionType, callbackUrl) {
     let statusCode;
 
     if (userExists) {
+      const isSuspended = userExists.status === 'suspended';
+
+      if (isSuspended) {
+        throw new HttpError({
+          message: 'Your account has been suspended. Please contact support.',
+          status: STATUS_CODES.FORBIDDEN,
+        });
+      }
+
       const isSignInOrForgot =
-        actionType === ACTION_TYPES.SIGNIN ||
-        actionType === ACTION_TYPES.FORGOT_PASSWORD;
+        actionType === ACTIONS.SIGNIN || actionType === ACTIONS.FORGOT_PASSWORD;
 
       const isVerified = userExists.email.some(
         (e) => e.isVerified && isSignInOrForgot
       );
 
       const isPending =
-        userExists.status === 'pending' && actionType === ACTION_TYPES.SIGNUP;
+        userExists.status === 'pending' && actionType === ACTIONS.SIGNUP;
 
       if (isVerified || isPending) {
         await rateLimiter.consume(email, 1);
@@ -62,7 +71,7 @@ export async function sendEmailLink(email, actionType, callbackUrl) {
         // Send the email content
         await sendEmail({
           to: email,
-          subject: generateSubjectTitle(actionType),
+          subject: getSubject(actionType),
           html: emailHtml,
         });
 

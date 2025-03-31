@@ -7,7 +7,7 @@ import { AppRouterCacheProvider } from '@mui/material-nextjs/v13-appRouter';
 // internal imports
 import '@/app/[locale]/globals.css';
 import { auth } from '@/auth';
-import AuthSessionProvider from '@/app/(features)/authentication/contexts/AuthSessionProvider';
+import AuthSessionProvider from '@/contexts/AuthSessionProvider';
 import AuthRedirect from '@/app/(features)/authentication/AuthRedirect';
 import Navbar from '@/components/layout/header/Navbar';
 import ThemeModeIconButton from '@/components/layout/themes/ThemeModeIconButton';
@@ -16,6 +16,7 @@ import ToggleThemeMode from '@/components/layout/themes/ToggleThemeMode';
 import { UserSessionProvider, UserDataProvider } from '@/contexts/UserProvider';
 import { locales } from '@/navigation';
 import { createMetadata } from '@/helpers/metadataHelpers';
+import GlobalAlert from '@/components/alerts/GlobalAlert';
 
 export async function generateMetadata({ params: { locale } }) {
   return createMetadata(locale, 'layout');
@@ -55,6 +56,7 @@ export default async function RootLayout({ children, params }) {
                     {children}
                     <ThemeModeIconButton />
                     <Footer />
+                    <GlobalAlert />
                   </ToggleThemeMode>
                 </AuthRedirect>
               </UserSessionProvider>
@@ -65,3 +67,4 @@ export default async function RootLayout({ children, params }) {
     </html>
   );
 }
+

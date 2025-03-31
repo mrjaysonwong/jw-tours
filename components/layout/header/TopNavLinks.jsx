@@ -1,94 +1,127 @@
-import React, { useState } from 'react';
-import Link from 'next/link';
-import { Box, Paper, Button, Grid } from '@mui/material';
+import React, { useRef, useState } from 'react';
+import { useRouter, usePathname } from 'next/navigation';
+import { Paper, Grid, useMediaQuery } from '@mui/material';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 
 // internal imports
 import { StyledNavLinksContainer } from '@/components/styled/StyledContainers';
+import { stripLocale } from '@/helpers/pageHelpers';
+import ClickAwayListener from '@/utils/components/ClickAwayListener';
 
-export default function TopNavLinks({ linksTransLations }) {
-  const [selectedLabel, setSelectedLabel] = useState(null);
-  const [dropDownMenuOpen, setDropdownMenuOpen] = useState(null);
+const TopNavLinks = ({ linksTransLations }) => {
+  const [showDropdown, setShowDropdown] = useState({});
 
-  const handleMouseEnter = (label) => {
-    setSelectedLabel(label);
-    setDropdownMenuOpen(true);
+  const router = useRouter();
+  const pathname = usePathname();
+  const strippedPathname = stripLocale(pathname);
+
+  const dropdownRef = useRef(null);
+  const notLargeScreen = useMediaQuery('(max-width:1200px)');
+
+  const handleToggle = (dropdown) => {
+    setShowDropdown((prev) => {
+      return {
+        [dropdown]: !prev[dropdown], // Close if already open, otherwise open it
+      };
+    });
   };
 
-  const handleMouseLeave = () => {
-    setSelectedLabel(null);
-    setDropdownMenuOpen(null);
+  const handleClick = (href) => {
+    setShowDropdown({});
+    router.push(href);
   };
 
-  const handleClick = () => {
-    setDropdownMenuOpen(null);
-    setSelectedLabel(null);
+  const handleOnKeyDown = ({ dropDownMenu, label, href, e }) => {
+    if (e.key === 'Enter') {
+      if (dropDownMenu) {
+        handleToggle(label);
+      } else {
+        e.preventDefault();
+        handleClick(href);
+      }
+    }
   };
 
-  const renderEndIcon = (label) =>
-    dropDownMenuOpen && selectedLabel === label ? (
-      <ExpandLess />
-    ) : (
-      <ExpandMore />
-    );
+  const handleClickAway = (event) => {
+    setShowDropdown({});
+  };
 
   return (
     <StyledNavLinksContainer>
-      {linksTransLations.map((item) => {
-        const { label, href, dropDownMenu } = item;
+      <ClickAwayListener onClickAway={handleClickAway}>
+        <ul>
+          {linksTransLations.map((link, index) => {
+            const { href, dropDownMenu, label } = link;
+            const isDropdownOpen = showDropdown[label];
 
-        if (dropDownMenu) {
-          return (
-            <Box
-              key={label}
-              className="dropdown"
-              onMouseEnter={() => handleMouseEnter(label)}
-              onMouseLeave={handleMouseLeave}
-            >
-              <Button
-                className="dropbtn"
-                disableRipple
-                endIcon={renderEndIcon(label)}
-                sx={{ '&.MuiButton-root:hover': { bgcolor: 'transparent' } }}
-              >
-                {label}
-              </Button>
+            const isSubLinkActive = dropDownMenu.some(
+              (subLink) =>
+                subLink.href === strippedPathname && strippedPathname !== '/'
+            );
 
-              {dropDownMenuOpen && (
-                <Paper
-                  className={'dropdown-content'}
-                  elevation={3}
-                  sx={{ borderRadius: '0px 0px 6px 6px' }}
+            return (
+              <li key={index}>
+                <div
+                  tabIndex={0}
+                  className={`toggle-list ${isSubLinkActive ? 'active' : ''}`}
+                  onClick={() =>
+                    dropDownMenu ? handleToggle(label) : handleClick(href)
+                  }
+                  onKeyDown={(e) => handleOnKeyDown({ ...link, e })}
+                  onMouseEnter={() => !notLargeScreen && handleToggle(label)}
+                  onMouseLeave={() => !notLargeScreen && setShowDropdown({})}
                 >
-                  <Grid container>
-                    {item.dropDownMenu
-                      .sort((a, b) => a.label.localeCompare(b.label))
-                      .map(({ label, href }) => (
-                        <Grid key={label} item md={6}>
-                          <Link href={href} onClick={handleClick}>
-                            {label}
-                          </Link>
-                        </Grid>
-                      ))}
-                  </Grid>
-                </Paper>
-              )}
-            </Box>
-          );
-        } else {
-          return (
-            <Link key={label} href={href}>
-              <Button
-                disableRipple
-                sx={{ '&.MuiButton-root:hover': { bgcolor: 'transparent' } }}
-              >
-                {label}
-              </Button>
-            </Link>
-          );
-        }
-      })}
+                  {label}
+                  {dropDownMenu && (
+                    <span style={{ display: 'flex', alignItems: 'center' }}>
+                      {isDropdownOpen ? <ExpandLess /> : <ExpandMore />}
+                    </span>
+                  )}
+                </div>
+
+                {dropDownMenu && (
+                  <Paper
+                    className={`dropdown ${isDropdownOpen ? 'open' : ''}`}
+                    elevation={3}
+                    onMouseEnter={() => !notLargeScreen && handleToggle(label)}
+                    onMouseLeave={() => !notLargeScreen && setShowDropdown({})}
+                    ref={dropdownRef}
+                  >
+                    <Grid container spacing={2}>
+                      {dropDownMenu
+                        .sort((a, b) => a.label.localeCompare(b.label))
+                        .map((subLink, index) => {
+                          return (
+                            <Grid key={`${index}-${subLink.label}`} item md={6}>
+                              <ul>
+                                <li
+                                  data-list="dropdown"
+                                  tabIndex={0}
+                                  onClick={() => handleClick(subLink.href)}
+                                  onKeyDown={(e) => {
+                                    if (e.key === 'Enter') {
+                                      e.preventDefault();
+                                      handleClick(subLink.href);
+                                    }
+                                  }}
+                                >
+                                  {subLink.label}
+                                </li>
+                              </ul>
+                            </Grid>
+                          );
+                        })}
+                    </Grid>
+                  </Paper>
+                )}
+              </li>
+            );
+          })}
+        </ul>
+      </ClickAwayListener>
     </StyledNavLinksContainer>
   );
-}
+};
+
+export default TopNavLinks;

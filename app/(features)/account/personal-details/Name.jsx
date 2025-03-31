@@ -1,7 +1,7 @@
 import { Grid } from '@mui/material';
 
 // internal imports
-import { useEditUserDetailsContext } from '@/app/(features)/account/contexts/EditUserDetailsProvider';
+import { useEditUserDetailsContext } from '@/contexts/EditUserDetailsProvider';
 import FormInput from '@/components/inputs/FormInput';
 
 const Name = () => {

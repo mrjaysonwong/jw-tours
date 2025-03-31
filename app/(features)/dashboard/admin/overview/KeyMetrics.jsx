@@ -9,7 +9,7 @@ import {
 } from '@mui/material';
 import StyleIcon from '@mui/icons-material/Style';
 
-const cardList = () => {
+const CardList = () => {
   return (
     <Grid container spacing={3}>
       {Array.from({ length: 4 }).map((e, index) => (
@@ -42,5 +42,5 @@ const cardList = () => {
 };
 
 export default function KeyMetrics() {
-  return <>{cardList()}</>;
+  return <CardList />;
 }

@@ -1,6 +1,9 @@
 import * as yup from 'yup';
 import { EMAIL_REGEX } from '@/constants/regex';
 
+export const emailValidTypes = ['email', 'update-email', 'delete-email'];
+export const mobileValidTypes = ['mobile', 'update-mobile', 'delete-mobile'];
+
 export const emailSchema = yup.object({
   email: yup
     .string()

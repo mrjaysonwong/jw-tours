@@ -1,4 +1,4 @@
-import { STATUS_CODES, ERROR_MESSAGES } from '@/constants/api';
+import { STATUS_CODES, ERROR_MESSAGES } from '@/constants/common';
 import { GET } from '../app/api/v1/(handlers)/places/route';
 
 const mockGetResponse = (statusText, status) => ({

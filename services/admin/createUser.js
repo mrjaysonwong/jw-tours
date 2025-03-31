@@ -4,7 +4,7 @@ import { hash } from 'bcryptjs';
 // internal imports
 import { findUserEmail } from '../user/userQueries';
 import { HttpError } from '@/helpers/errorHelpers';
-import { STATUS_CODES } from '@/constants/api';
+import { STATUS_CODES } from '@/constants/common';
 import User from '@/models/userModel';
 
 export async function createUser(formData) {

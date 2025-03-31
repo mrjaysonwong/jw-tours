@@ -1,4 +1,7 @@
 // third-party imports
+import React, { useState, useEffect } from 'react';
+import { fireBaseAuth } from '@/firebase.config';
+import { RecaptchaVerifier, signInWithPhoneNumber } from 'firebase/auth';
 import {
   Button,
   Dialog,
@@ -26,38 +29,66 @@ import FormSubmitButton from '@/components/buttons/FormSubmitButton';
 import FormInput from '@/components/inputs/FormInput';
 import { useMessageStore } from '@/stores/messageStore';
 import { errorHandler } from '@/helpers/errorHelpers';
-import { phoneNumbers } from '@/data/countries/phoneNumbers';
-import { API_URLS } from '@/constants/api';
+import { countryData } from '@/data/countries/countryData';
+import { API_URLS } from '@/config/apiRoutes';
+import VerifyOTPDialog from './VerifyOTPDialog';
 
 const AddContactDialog = ({
+  title,
   isAddContactOpen,
   setIsAddContactOpen,
-  setIsOTPOpen,
-  setEmail,
-  setPhoneDetails,
   type,
 }) => {
-  const isEmailType = type === 'email';
-  const { userId } = useUserDetailsContext();
+  const [recaptchaVerifier, setRecaptchaVerifier] = useState(null);
+  const [confirmationResult, setConfirmationResult] = useState(null);
+  const [isOTPOpen, setIsOTPOpen] = useState(false);
+  const [email, setEmail] = useState('');
+  const [phoneDetails, setPhoneDetails] = useState({
+    phone: {
+      dialCode: '',
+      phoneNumber: '',
+    },
+  });
+
   const { handleAlertMessage } = useMessageStore();
 
-  const sortedNumbers = phoneNumbers.sort((a, b) => a.code - b.code);
+  const { userId } = useUserDetailsContext();
+  const isEmailType = type === 'email';
+  const sortedNumbers = countryData.sort((a, b) => a.code - b.code);
 
   const {
     register,
     control,
     handleSubmit,
-    resetField,
-    formState: { errors, isSubmitting, isSubmitSuccessful },
+    reset,
+    formState: { errors, isSubmitting },
   } = useForm({
     resolver: yupResolver(isEmailType ? emailSchema : phoneNumberSchema),
   });
 
-  const handleOnClose = () => {
+  const handleClose = () => {
     setIsAddContactOpen(false);
-    resetField(type);
   };
 
+  useEffect(() => {
+    if (!fireBaseAuth) return;
+
+    const verifier = new RecaptchaVerifier(
+      fireBaseAuth,
+      'recaptcha-container',
+      {
+        size: 'invisible',
+      }
+    );
+
+    setRecaptchaVerifier(verifier);
+
+    return () => {
+      verifier.clear();
+    };
+  }, []);
+
+  // for dev test use 127.0.0.1:3000 send mobile otp
   const onSubmit = async (formData) => {
     try {
       const url = `${API_URLS.USERS}/${userId}/send-otp`;
@@ -69,23 +100,25 @@ const AddContactDialog = ({
         setEmail(formData.email);
       } else {
         const { dialCode, phoneNumber } = formData.phone;
-
         setPhoneDetails({ phone: { dialCode, phoneNumber } });
+
+        const completePhone = `+${dialCode}${phoneNumber}`;
+        const confirmationResult = await signInWithPhoneNumber(
+          fireBaseAuth,
+          completePhone,
+          recaptchaVerifier
+        );
+
+        setConfirmationResult(confirmationResult);
       }
       setIsOTPOpen(true);
-      setIsAddContactOpen(false);
-      handleAlertMessage(data.statusText, 'success');
+      reset();
+      handleAlertMessage(data.message, 'success');
     } catch (error) {
       const { errorMessage } = errorHandler(error);
       handleAlertMessage(errorMessage, 'error');
     }
   };
-
-  const renderTitle = () =>
-    isEmailType ? 'Add Email Address' : 'Add Mobile Number';
-
-  const renderText = () =>
-    isEmailType ? 'email address' : 'mobile number via SMS';
 
   const EmailInput = () => (
     <FormInput
@@ -105,17 +138,20 @@ const AddContactDialog = ({
           control={control}
           render={({ field }) => (
             <Autocomplete
-              {...field}
               id="country-select"
-              options={sortedNumbers}
-              noOptionsText={`Can't find? Search by dial-code`}
-              autoHighlight
-              getOptionLabel={(option) => `+${option.dialCode}`}
               value={
                 sortedNumbers.find(
                   (option) => option.dialCode === field.value
                 ) || null
               }
+              options={sortedNumbers}
+              getOptionLabel={(option) =>
+                `${option.label}, +${option.dialCode}`
+              }
+              isOptionEqualToValue={(option, value) => {
+                return option.dialCode === value.dialCode;
+              }}
+              noOptionsText={`Can't find? Search by dial-code`}
               onChange={(_, newValue) => {
                 field.onChange(newValue ? newValue.dialCode : '');
               }}
@@ -149,12 +185,19 @@ const AddContactDialog = ({
                     error={!!errors.phone?.dialCode}
                     inputProps={{
                       ...params.inputProps,
-                      autoComplete: 'off',
+                      value: field.value
+                        ? `+${field.value}`
+                        : params.inputProps.value,
                     }}
                   />
                   <ErrorText error={errors.phone?.dialCode} />
                 </>
               )}
+              slotProps={{
+                paper: {
+                  elevation: 4,
+                },
+              }}
             />
           )}
         />
@@ -172,34 +215,47 @@ const AddContactDialog = ({
     </Grid>
   );
 
-  const renderField = () => (isEmailType ? <EmailInput /> : <PhoneInput />);
+  const inputFields = isEmailType ? <EmailInput /> : <PhoneInput />;
 
   return (
-    <Dialog open={isAddContactOpen}>
-      <DialogTitle>{renderTitle()}</DialogTitle>
+    <>
+      <Dialog open={isAddContactOpen}>
+        <DialogTitle>{title}</DialogTitle>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <DialogContent dividers sx={{ borderBottom: 'none' }}>
+            <DialogContentText>
+              A one-time password (OTP) will be sent to your{' '}
+              {isEmailType ? 'email address' : 'mobile number via SMS'}
+            </DialogContentText>
 
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <DialogContent dividers sx={{ borderBottom: 'none' }}>
-          <DialogContentText sx={{ mb: 3 }}>
-            A one-time password (OTP) will be sent to your {renderText()}.
-          </DialogContentText>
+            {inputFields}
+          </DialogContent>
 
-          {renderField()}
-        </DialogContent>
+          <DialogActions sx={{ px: 3, py: 2 }}>
+            <Button type="button" disabled={isSubmitting} onClick={handleClose}>
+              Cancel
+            </Button>
 
-        <DialogActions sx={{ mx: 2, py: 2 }}>
-          <Button type="button" disabled={isSubmitting} onClick={handleOnClose}>
-            Cancel
-          </Button>
+            <FormSubmitButton label="Send OTP" isSubmitting={isSubmitting} />
+          </DialogActions>
+        </form>
+      </Dialog>
 
-          <FormSubmitButton
-            label="Send OTP"
-            action="create"
-            isSubmitting={isSubmitting}
-          />
-        </DialogActions>
-      </form>
-    </Dialog>
+      <div id="recaptcha-container"></div>
+
+      {isOTPOpen && (
+        <VerifyOTPDialog
+          title={`Verify your ${email ? 'Email Address' : 'Mobile Number'}`}
+          isOTPOpen={isOTPOpen}
+          setIsOTPOpen={setIsOTPOpen}
+          setIsAddContactOpen={setIsAddContactOpen}
+          email={email}
+          phoneDetails={phoneDetails}
+          type={type}
+          confirmationResult={confirmationResult}
+        />
+      )}
+    </>
   );
 };
 

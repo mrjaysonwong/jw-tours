@@ -1,3 +1,4 @@
+import { useRouter } from 'next/navigation';
 import { Typography, Button } from '@mui/material';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 
@@ -5,6 +6,8 @@ import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import { StyledHeadlineContainer } from '../styled/StyledContainers';
 
 const Headline = ({ subHeader }) => {
+  const router = useRouter();
+
   return (
     <StyledHeadlineContainer>
       <Typography variant="h2">Memories Crafted Just for You</Typography>
@@ -14,6 +17,7 @@ const Headline = ({ subHeader }) => {
       <Button
         disableRipple
         variant="contained"
+        onClick={() => router.push('/tours')}
         endIcon={<KeyboardArrowRightIcon />}
       >
         Learn more

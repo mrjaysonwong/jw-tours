@@ -3,7 +3,7 @@ import { findUserEmail } from '@/services/user/userQueries';
 import { rateLimiter } from '@/services/rate-limiter/rateLimiter';
 import { handleRateLimitError } from '@/helpers/errorHelpers';
 import { generateEmailVerificationData } from '@/services/auth/generateEmailVerificationData';
-import { ACTION_TYPES } from '@/constants/api';
+import { ACTIONS } from '@/constants/common';
 import { manageUserEmailToken } from '@/services/token/manageUserEmailToken';
 import { sendEmail } from '@/services/email/sendEmail';
 
@@ -24,7 +24,7 @@ export async function sendPasswordResetLink(email) {
           emailHtml,
         } = generateEmailVerificationData({
           email,
-          actionType: ACTION_TYPES.FORGOT_PASSWORD,
+          actionType: ACTIONS.FORGOT_PASSWORD,
           firstName: userExists.firstName,
         });
 

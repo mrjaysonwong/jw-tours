@@ -7,21 +7,7 @@ import { Box, Tab, useTheme } from '@mui/material';
 // internal imports
 import { StyledHeroTabs } from '../styled/StyledTabs';
 import { StyledHeroOverlay } from '../styled/StyledOverlays';
-import {
-  TabPanelOne,
-  TabPanelTwo,
-  TabPanelThree,
-  TabPanelFour,
-  TabPanelFive,
-} from './index';
-
-const tabComponents = [
-  TabPanelOne,
-  TabPanelTwo,
-  TabPanelThree,
-  TabPanelFour,
-  TabPanelFive,
-];
+import { heroTabComponents } from '@/config/componentMapping';
 
 const TabPanel = (props) => {
   const { children, value, index, ...other } = props;
@@ -30,8 +16,8 @@ const TabPanel = (props) => {
     <div
       role="tabpanel"
       hidden={value !== index}
-      id={`horizontal-tabpanel-${index}`}
-      aria-labelledby={`horizontal-tab-${index}`}
+      id={`hero-tabpanel-${index}`}
+      aria-labelledby={`hero-tab-${index}`}
       {...other}
     >
       {value === index && <>{children}</>}
@@ -42,10 +28,10 @@ const TabPanel = (props) => {
 const HeroTabsLanding = ({ data }) => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const selectedTab = searchParams.get('selectedTab');
-  const aid = searchParams.get('aid');
+  const tab = searchParams.get('tab');
+  const id = searchParams.get('id');
 
-  const [value, setValue] = useState(0 || +aid);
+  const [value, setValue] = useState(0 || +id);
 
   const theme = useTheme();
   const isDarkMode = theme.palette.mode === 'dark';
@@ -57,22 +43,22 @@ const HeroTabsLanding = ({ data }) => {
     const tabLabel = label.toLowerCase();
 
     if (tabLabel) {
-      router.replace(`/?selectedTab=${tabLabel}&aid=${newValue}`);
+      router.replace(`/?tab=${tabLabel}&id=${newValue}`);
     }
   };
 
   const tabLabel = useMemo(() => {
-    const { label } = data[0 || +aid];
+    const { label } = data[0 || +id];
     return label.toLowerCase();
-  }, [data, aid]);
+  }, [data, id]);
 
   useEffect(() => {
-    if (selectedTab !== tabLabel) {
+    if (tab !== tabLabel) {
       router.replace('/');
     }
 
-    setValue(+aid);
-  }, [tabLabel, selectedTab, aid, router]);
+    setValue(+id);
+  }, [tabLabel, tab, id, router]);
 
   return (
     <Box
@@ -83,7 +69,7 @@ const HeroTabsLanding = ({ data }) => {
       }}
     >
       {data.map((item, index) => {
-        const TabComponent = tabComponents[index];
+        const TabComponent = heroTabComponents[index];
         return (
           <TabPanel key={index} value={value} index={index}>
             <TabComponent item={item} />

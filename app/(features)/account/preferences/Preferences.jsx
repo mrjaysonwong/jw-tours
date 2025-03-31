@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Typography, Grid, Divider, Button, Box } from '@mui/material';
+import { Typography, Grid, Divider, Button, Box, Card } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 
 // internal imports
@@ -8,9 +8,10 @@ import EditPreferencesDialog from './EditPreferencesDialog';
 import CustomError from '@/components/errors/CustomError';
 import { LOCALE_MAP } from '@/constants/locale_map';
 import LoadingSpinner from '@/components/loaders/LoadingSpinner';
+import GridItem from '@/components/grid/GridItem';
 
 const DetailsGrid = () => {
-  const [open, setOpen] = useState(false);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const { user, isLoading, refetch, isError, error } = useUserDataContext();
 
@@ -18,40 +19,46 @@ const DetailsGrid = () => {
 
   if (isLoading) return <LoadingSpinner h="50dvh" />;
 
-  const locale = LOCALE_MAP[user?.langCode] || 'Not Provided';
+  const locale = LOCALE_MAP[user?.langCode] || 'Not provided';
 
   const handleEditClick = () => {
-    setOpen(true);
+    setIsDialogOpen(true);
   };
 
   return (
     <>
-      <Box sx={{ textAlign: 'right' }}>
-        <Button
-          size="small"
-          variant="contained"
-          startIcon={<EditIcon />}
-          onClick={handleEditClick}
-        >
-          Edit
-        </Button>
-      </Box>
+      <Card sx={{ px: 2, py: 3 }}>
+        <Box sx={{ textAlign: 'right' }}>
+          <Button
+            size="small"
+            variant="contained"
+            startIcon={<EditIcon />}
+            onClick={handleEditClick}
+          >
+            Edit
+          </Button>
+        </Box>
 
-      <Grid container sx={{ py: 2 }}>
-        <Grid item xs={12} lg={6}>
-          <Typography>Language</Typography>
-        </Grid>
-        <Grid item xs={12} lg={6}>
-          <Typography>{locale}</Typography>
-        </Grid>
-      </Grid>
+        <Grid container sx={{ py: 2 }}>
+          <GridItem label="Language" textData={locale} />
 
-      <EditPreferencesDialog
-        open={open}
-        setOpen={setOpen}
-        user={user}
-        refetch={refetch}
-      />
+          <GridItem
+            label="Newsletter Subscription"
+            textData={
+              !user.subscription.isSubscribed ? 'Not Subscribed' : 'Subscribed'
+            }
+          />
+        </Grid>
+      </Card>
+
+      {isDialogOpen && (
+        <EditPreferencesDialog
+          isDialogOpen={isDialogOpen}
+          setIsDialogOpen={setIsDialogOpen}
+          user={user}
+          refetch={refetch}
+        />
+      )}
     </>
   );
 };
@@ -62,7 +69,7 @@ const Preferences = () => {
       <Box>
         <Typography variant="h5">Preferences</Typography>
         <Typography>
-          Change your language, and accessibility requirements.
+          Change your language, and subscribe to newsletter.
         </Typography>
       </Box>
 

@@ -58,13 +58,23 @@ const ToggleThemeMode = ({ storedTheme, children }) => {
           background: {
             default:
               mode === 'light'
-                ? 'var(--color-light-main)'
+                ? 'var(--color-light-secondary)'
                 : 'var(--color-dark-main)',
             paper: mode === 'light' ? '#ffffff' : '#181818',
           },
           primary: {
             main: '#2d9562',
             light: '#197e4d',
+          },
+        },
+
+        components: {
+          MuiDialog: {
+            styleOverrides: {
+              paper: {
+                backgroundColor: mode === 'dark' && 'black',
+              },
+            },
           },
         },
       }),

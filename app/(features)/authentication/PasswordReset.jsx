@@ -13,16 +13,15 @@ import { newPasswordSchema } from '@/validation/yup/user/passwordSchema';
 import FormInput from '@/components/inputs/FormInput';
 import FormSubmitButton from '@/components/buttons/FormSubmitButton';
 import { errorHandler } from '@/helpers/errorHelpers';
-import AlertMessage from '@/components/alerts/AlertMessage';
 import { useMessageStore } from '@/stores/messageStore';
-import { API_URLS } from '@/constants/api';
+import { API_URLS } from '@/config/apiRoutes';
 
 const PasswordReset = ({ token }) => {
   const [showPassword, setShowPassword] = useState(false);
 
   const router = useRouter();
 
-  const { alert, handleAlertMessage, handleClose } = useMessageStore();
+  const { handleAlertMessage } = useMessageStore();
 
   const handleShowPassword = () => {
     setShowPassword((show) => !show);
@@ -47,7 +46,7 @@ const PasswordReset = ({ token }) => {
 
       const { data } = await axios.patch(url, formData, { headers });
 
-      handleAlertMessage(data.statusText, 'success');
+      handleAlertMessage(data.message, 'success');
       router.replace('/signin', { scroll: false });
       reset();
     } catch (error) {
@@ -88,13 +87,6 @@ const PasswordReset = ({ token }) => {
           />
         </Box>
       </form>
-
-      <AlertMessage
-        open={alert.open}
-        message={alert.message}
-        severity={alert.severity}
-        onClose={handleClose}
-      />
     </>
   );
 };

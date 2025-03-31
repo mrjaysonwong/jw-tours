@@ -4,23 +4,36 @@
 @import url('https://fonts.googleapis.com/css2?family=Bodoni+Moda+SC:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&family=Ga+Maamli&display=swap');
 
 :root {
+  /* Light Theme */
   --color-light-main: #fffafa;
-  --color-light-secondary: #fff;
+  --color-light-secondary: #f5f5f5;
+
+  /* Dark Theme */
   --color-dark-main: #121212;
   --color-dark-secondary: #1f201f;
   --color-dark: #1c1c1c;
+
+  /* Brand Colors */
   --color-blue-dark: #0a66c2;
   --color-blue-darker: #2f579c;
   --color-blue-light: #2487d8;
+
+  /* Text Colors */
   --color-text-main: #2d9562;
+
+  /* Status Colors */
+  --color-positive: #4caf50;
+  --color-negative: #f04438;
+
+  /* Green Shades */
   --color-green-light: #2d9562;
   --color-green-dark: #28563f;
   --color-green-alpha: rgba(45, 149, 98, 0.24);
-  --color-positive: #4caf50;
-  --color-negative: #f04438;
+
+  /* Border Colors */
   --border-color: rgba(113, 113, 113, 0.3);
 
-  --test: #4a719bb3;
+  --test: #2d956317;
 }
 
 * {
@@ -54,3 +67,5 @@ a {
   box-shadow: inset 0 0 2px rgb(118, 118, 118);
   border-radius: 20px;
 } */
+
+

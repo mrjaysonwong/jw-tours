@@ -13,33 +13,40 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import axios from 'axios';
 
 // internal imports
-import { Name, Gender, DateOfBirth, Nationality, Address, Role } from './index';
+import {
+  Name,
+  Gender,
+  DateOfBirth,
+  Nationality,
+  Languages,
+  Address,
+  Role,
+} from './index';
 import { personalDetailsSchema } from '@/validation/yup/user/personalDetailsSchema';
 import { useUserDetailsContext } from '@/contexts/UserProvider';
-import AlertMessage from '@/components/alerts/AlertMessage';
 import { useMessageStore } from '@/stores/messageStore';
 import FormSubmitButton from '@/components/buttons/FormSubmitButton';
-import { EditUserDetailsProvider } from '@/app/(features)/account/contexts/EditUserDetailsProvider';
-import { API_URLS } from '@/constants/api';
+import { EditUserDetailsProvider } from '@/contexts/EditUserDetailsProvider';
+import { API_URLS } from '@/config/apiRoutes';
 
-const EditDetailsDialog = ({ open, setOpen }) => {
+const EditDetailsDialog = ({ isDialogOpen, setIsDialogOpen }) => {
   const params = useParams();
-  const { userId, user, refetch, adminRefetch } = useUserDetailsContext();
+  const { userId, user, refetch } = useUserDetailsContext();
 
   const { update } = useSession();
-  const { alert, handleAlertMessage, handleClose } = useMessageStore();
+  const { handleAlertMessage } = useMessageStore();
 
   const {
     register,
     control,
     handleSubmit,
-    formState: { errors, isSubmitting, isSubmitSuccessful },
+    formState: { errors, isSubmitting },
   } = useForm({
     resolver: yupResolver(personalDetailsSchema),
   });
 
-  const handleOnClose = () => {
-    setOpen(false);
+  const handleClose = () => {
+    setIsDialogOpen(false);
   };
 
   const onSubmit = async (formData) => {
@@ -48,16 +55,14 @@ const EditDetailsDialog = ({ open, setOpen }) => {
 
       const { data } = await axios.patch(url, formData);
 
-      if (params.id) {
-        adminRefetch();
-      } else {
-        refetch();
+      if (!params.id) {
         // Trigger update session
         update({});
       }
 
-      setOpen(false);
-      handleAlertMessage(data.statusText, 'success');
+      refetch();
+      setIsDialogOpen(false);
+      handleAlertMessage(data.message, 'success');
     } catch (error) {
       handleAlertMessage('An error occured. Try again.', 'error');
     }
@@ -72,7 +77,7 @@ const EditDetailsDialog = ({ open, setOpen }) => {
 
   return (
     <>
-      <Dialog open={open} scroll="body">
+      <Dialog open={isDialogOpen} scroll="body" closeAfterTransition={true}>
         <DialogTitle>Update Personal Details</DialogTitle>
 
         <form onSubmit={handleSubmit(onSubmit)}>
@@ -84,34 +89,20 @@ const EditDetailsDialog = ({ open, setOpen }) => {
                 <Gender />
                 <DateOfBirth />
                 <Nationality />
+                <Languages />
                 <Address />
               </EditUserDetailsProvider>
             </Grid>
           </DialogContent>
-          <DialogActions sx={{ mx: 2, py: 2 }}>
-            <Button
-              type="button"
-              onClick={handleOnClose}
-              disabled={isSubmitting}
-            >
+          <DialogActions sx={{ px: 3, py: 2 }}>
+            <Button type="button" onClick={handleClose} disabled={isSubmitting}>
               Cancel
             </Button>
 
-            <FormSubmitButton
-              label="Update"
-              action="update"
-              isSubmitting={isSubmitting}
-            />
+            <FormSubmitButton label="Update" isSubmitting={isSubmitting} />
           </DialogActions>
         </form>
       </Dialog>
-
-      <AlertMessage
-        open={alert.open}
-        message={alert.message}
-        severity={alert.severity}
-        onClose={handleClose}
-      />
     </>
   );
 };

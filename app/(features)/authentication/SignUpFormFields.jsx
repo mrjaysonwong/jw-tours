@@ -10,23 +10,23 @@ import { Box, Button, Grid } from '@mui/material';
 import { DialogContext } from '@/components/layout/header/Navbar';
 import FormSubmitButton from '@/components/buttons/FormSubmitButton';
 import { signUpSchema } from '@/validation/yup/auth/signUpSchema';
-import AlertMessage from '@/components/alerts/AlertMessage';
 import { errorHandler } from '@/helpers/errorHelpers';
 import { useMessageStore } from '@/stores/messageStore';
 import SignUpConfirmation from './SignUpConfirmation';
 import FormInput from '@/components/inputs/FormInput';
-import { API_URLS } from '@/constants/api';
+import { API_URLS } from '@/config/apiRoutes';
 
 const SignUpFormFields = ({ showCancel = false }) => {
   const [showPassword, setShowPassword] = useState(false);
-  const { setOpen } = useContext(DialogContext);
-  const [isConfirmation, setIsConfirmation] = useState(false);
+  const { setIsDialogOpen } = useContext(DialogContext);
+  const [isConfirmationDialogOpen, setIsConfirmationDialogOpen] =
+    useState(false);
   const emailRef = useRef('');
 
   const transl8 = useTranslations('signup_page');
   const cTransl8 = useTranslations('common');
 
-  const { alert, handleAlertMessage, handleClose } = useMessageStore();
+  const { handleAlertMessage } = useMessageStore();
 
   const handleShowPassword = () => {
     setShowPassword((show) => !show);
@@ -49,12 +49,11 @@ const SignUpFormFields = ({ showCancel = false }) => {
 
       if (data) {
         reset();
-        setIsConfirmation(true);
+        setIsConfirmationDialogOpen(true);
         emailRef.current = formData.email;
       }
     } catch (error) {
       const { errorMessage } = errorHandler(error);
-
       handleAlertMessage(errorMessage, 'error');
     }
   };
@@ -129,7 +128,7 @@ const SignUpFormFields = ({ showCancel = false }) => {
                   variant="outlined"
                   type="button"
                   disabled={isSubmitting}
-                  onClick={() => setOpen(false)}
+                  onClick={() => setIsDialogOpen(false)}
                   sx={{ mt: 2 }}
                 >
                   Cancel
@@ -140,18 +139,11 @@ const SignUpFormFields = ({ showCancel = false }) => {
         </Grid>
       </form>
 
-      {isConfirmation ? (
+      {isConfirmationDialogOpen && (
         <SignUpConfirmation
-          open={isConfirmation}
-          setOpen={setIsConfirmation}
+          isDialogOpen={isConfirmationDialogOpen}
+          setIsDialogOpen={setIsConfirmationDialogOpen}
           email={emailRef.current}
-        />
-      ) : (
-        <AlertMessage
-          open={alert.open}
-          message={alert.message}
-          severity={alert.severity}
-          onClose={handleClose}
         />
       )}
     </>

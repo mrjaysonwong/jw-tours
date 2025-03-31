@@ -2,7 +2,7 @@
 import User from '@/models/userModel';
 import { PROJECTED_FIELDS } from '@/constants/projected_fields';
 import { HttpError } from '@/helpers/errorHelpers';
-import { STATUS_CODES, ERROR_MESSAGES } from '@/constants/api';
+import { STATUS_CODES, ERROR_MESSAGES } from '@/constants/common';
 
 // projection email.$ returns only matching array element
 export async function findUserEmail({ email }) {
@@ -74,7 +74,7 @@ export async function findUser({ userId, email, password }) {
   return userExists;
 }
 
-export async function findUserById(userId, projection = '_id') {
+export async function findUserById(userId, projection = {}) {
   const userExists = await User.findById(userId).select(projection);
 
   if (!userExists) {

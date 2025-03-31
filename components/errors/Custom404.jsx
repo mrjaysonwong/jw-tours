@@ -9,12 +9,8 @@ import { Typography, Box } from '@mui/material';
 import { StyledMainContainer } from '@/components/styled/StyledContainers';
 import HistoryBackButton from '../buttons/HistoryBackButton';
 
-const Custom404 = (props) => {
+const Custom404 = ({ resource = 'page' }) => {
   const t = useTranslations('not_found_page');
-
-  const propsType = props.resource
-    ? t('paragraphs.resource')
-    : t('paragraphs.page');
 
   return (
     <StyledMainContainer>
@@ -30,7 +26,7 @@ const Custom404 = (props) => {
           {t('headers.there_was_problem')}
         </Typography>
         <Typography sx={{ my: 1 }}>
-          {t('paragraphs.props_type', { propsType })}
+          We could not find the {resource} you were looking for.
         </Typography>
       </Box>
 

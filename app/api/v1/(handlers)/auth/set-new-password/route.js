@@ -4,6 +4,7 @@ import { headers } from 'next/headers';
 import { handleApiError, HttpError } from '@/helpers/errorHelpers';
 import { newPasswordSchema } from '@/validation/yup/user/passwordSchema';
 import { setNewPassword } from '@/services/auth/setNewPassword';
+import { STATUS_CODES } from '@/constants/common';
 
 // PATCH: /api/v1/auth/set-new-password
 export async function PATCH(Request) {
@@ -19,21 +20,19 @@ export async function PATCH(Request) {
     if (!authToken) {
       throw new HttpError({
         message: 'Not authorized, no token',
-        status: 401,
+        status: STATUS_CODES.UNAUTHORIZED,
       });
     }
 
-    const token = await setNewPassword(formData, authToken);
+    await setNewPassword(formData, authToken);
 
-    const responsePayload =
-      process.env.NODE_ENV === 'development'
-        ? { statusText: 'Password Successfully Updated!', token }
-        : { statusText: 'Password Successfully Updated!' };
-
-    return Response.json(responsePayload, { status: 200 });
+    return Response.json(
+      { message: 'Password Successfully Updated!' },
+      { status: 200, headers: { 'Set-Cookie': `token=${authToken}` } }
+    );
   } catch (error) {
-    const { statusText, status } = handleApiError(error);
+    const { message, status } = handleApiError(error);
 
-    return Response.json({ statusText }, { status });
+    return Response.json({ message }, { status });
   }
 }

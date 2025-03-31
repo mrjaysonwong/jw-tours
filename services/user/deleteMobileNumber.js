@@ -1,7 +1,7 @@
 // internal imports
 import { findUserPhoneNumberWithId } from './userQueries';
 import { HttpError } from '@/helpers/errorHelpers';
-import { STATUS_CODES } from '@/constants/api.js';
+import { STATUS_CODES } from '@/constants/common.js';
 import User from '@/models/userModel';
 
 export async function deleteMobileNumber(phone, userId) {

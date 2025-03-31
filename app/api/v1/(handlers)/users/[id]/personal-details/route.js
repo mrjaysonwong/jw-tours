@@ -1,7 +1,5 @@
-import { validateSession } from '@/validation/validateSesssion';
+import { validateSessionAndUser } from '@/services/auth/validateSessionAndUser';
 import { personalDetailsSchema } from '@/validation/yup/user/personalDetailsSchema';
-import connectMongo from '@/services/db/connectMongo';
-import { findUserById } from '@/services/user/userQueries';
 import { handleApiError } from '@/helpers/errorHelpers';
 import { updatePersonalDetails } from '@/services/user';
 
@@ -10,8 +8,6 @@ export async function PATCH(Request, { params }) {
   const userId = params.id;
 
   try {
-    await validateSession();
-
     const formData = await Request.json();
 
     await personalDetailsSchema.validate(
@@ -19,21 +15,19 @@ export async function PATCH(Request, { params }) {
       { abortEarly: false }
     );
 
-    // connect to database
-    await connectMongo();
-    await findUserById(userId);
+    await validateSessionAndUser(userId);
 
     await updatePersonalDetails({ formData, userId });
 
     return Response.json(
       {
-        statusText: 'Successfully Updated',
+        message: 'Successfully Updated',
       },
       { status: 200 }
     );
   } catch (error) {
-    const { statusText, status } = handleApiError(error);
+    const { message, status } = handleApiError(error);
 
-    return Response.json({ statusText }, { status });
+    return Response.json({ message }, { status });
   }
 }

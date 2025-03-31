@@ -12,7 +12,7 @@ const Error = ({ error, reset, hasQueryError }) => {
 
   const handleTryAgain = () => {
     if (reset) {
-      reset();
+      reset() || location.reload();
     } else if (hasQueryError) {
       router.replace('/signin', { scroll: false });
     } else {

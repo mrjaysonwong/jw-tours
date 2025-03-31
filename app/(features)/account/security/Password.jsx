@@ -17,13 +17,13 @@ import { useMessageStore } from '@/stores/messageStore';
 import ChangePasswordDialog from './ChangePasswordDialog';
 import { StyledGridCard } from '@/components/styled/StyledCards';
 import { errorHandler } from '@/helpers/errorHelpers';
-import { API_URLS } from '@/constants/api';
+import { API_URLS } from '@/config/apiRoutes';
 
 const Password = ({ userId, user, email }) => {
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const params = useParams();
   const { handleAlertMessage } = useMessageStore();
-  const [open, setOpen] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleResetPasswordClick = async () => {
     try {
@@ -34,7 +34,7 @@ const Password = ({ userId, user, email }) => {
 
       const { data } = await axios.post(url, requestData);
 
-      handleAlertMessage(data.statusText, 'success');
+      handleAlertMessage(data.message, 'success');
     } catch (error) {
       const { errorMessage } = errorHandler(error);
       handleAlertMessage(errorMessage, 'error');
@@ -44,7 +44,7 @@ const Password = ({ userId, user, email }) => {
   };
 
   const handleChangePasswordClick = () => {
-    setOpen(true);
+    setIsDialogOpen(true);
   };
 
   return (
@@ -55,7 +55,7 @@ const Password = ({ userId, user, email }) => {
             <Typography variant="h6">Password</Typography>
           </Grid>
 
-          {user?.password && (
+          {user?.hasPassword && (
             <Grid item xs={12} lg={4}>
               <Typography>
                 Change or Reset password regularly to keep account secure.
@@ -64,7 +64,7 @@ const Password = ({ userId, user, email }) => {
           )}
 
           <Grid item xs={12} lg={5}>
-            {user?.password ? (
+            {user?.hasPassword ? (
               <ButtonGroup
                 variant="outlined"
                 size="small"
@@ -113,7 +113,15 @@ const Password = ({ userId, user, email }) => {
                   onClick={handleResetPasswordClick}
                   sx={{ my: 1 }}
                 >
-                  {isSubmitting ? renderCircularProgress() : 'Add'}
+                  {isSubmitting ? (
+                    <CircularProgress
+                      aria-describedby="loading"
+                      aria-busy={true}
+                      size="1.5rem"
+                    />
+                  ) : (
+                    'Add'
+                  )}
                 </Button>
               </>
             )}
@@ -121,8 +129,12 @@ const Password = ({ userId, user, email }) => {
         </Grid>
       </StyledGridCard>
 
-      {open && (
-        <ChangePasswordDialog open={open} setOpen={setOpen} userId={userId} />
+      {isDialogOpen && (
+        <ChangePasswordDialog
+          isDialogOpen={isDialogOpen}
+          setIsDialogOpen={setIsDialogOpen}
+          userId={userId}
+        />
       )}
     </>
   );

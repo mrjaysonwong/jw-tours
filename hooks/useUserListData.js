@@ -3,13 +3,11 @@ import { usePathname } from 'next/navigation';
 import axios from 'axios';
 
 // internal imports
-import { getLastSegment } from '@/helpers/pageHelpers';
 import { fetchRandomUsers } from '@/data/randomUsers';
 
 export const useUserListData = (debouncedText, page, rowsPerPage) => {
   const pathname = usePathname();
-  const lastSegment = getLastSegment(pathname);
-  const isUserList = lastSegment === 'users';
+  const isEnabled = pathname.includes('/dashboard/users');
 
   const fetchUsers = async () => {
     try {
@@ -41,7 +39,6 @@ export const useUserListData = (debouncedText, page, rowsPerPage) => {
       //   data: paginatedUsers,
       //   total: users.length, // Simulated total users count
       // };
-
     } catch (error) {
       console.error(error);
       throw new Error('Failed to fetch data.');
@@ -51,7 +48,7 @@ export const useUserListData = (debouncedText, page, rowsPerPage) => {
   const { isLoading, data, isError, error, refetch, status } = useQuery({
     queryKey: ['users', debouncedText, page, rowsPerPage],
     queryFn: fetchUsers,
-    enabled: !!isUserList,
+    enabled: !!isEnabled,
   });
 
   return {

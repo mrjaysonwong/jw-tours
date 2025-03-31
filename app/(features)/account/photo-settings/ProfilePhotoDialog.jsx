@@ -9,11 +9,9 @@ import {
   EditPhotoDialog,
   DeletePhotoDialog,
 } from '@/app/(features)/account/photo-settings';
-import { useMessageStore } from '@/stores/messageStore';
-import AlertMessage from '@/components/alerts/AlertMessage';
 
 const ProfilePhotoDialog = () => {
-  const { open, setOpen } = useProfilePhotoContext();
+  const { isDialogOpen, setIsDialogOpen } = useProfilePhotoContext();
 
   const [isUploadDialogOpen, setUploadDialogOpen] = useState(false);
   const [isEditDialogOpen, setEditDialogOpen] = useState(false);
@@ -21,10 +19,8 @@ const ProfilePhotoDialog = () => {
 
   const [selectedImage, setSelectedImage] = useState(null);
 
-  const { alert, handleClose } = useMessageStore();
-
-  const handleOnClose = () => {
-    setOpen(false);
+  const handleClose = () => {
+    setIsDialogOpen(false);
   };
 
   const handleAddClick = () => {
@@ -37,12 +33,12 @@ const ProfilePhotoDialog = () => {
 
   return (
     <>
-      <Dialog open={open} scroll="body" closeAfterTransition={false}>
-        {open &&
+      <Dialog open={isDialogOpen} scroll="body" closeAfterTransition={false}>
+        {isDialogOpen &&
           (!isUploadDialogOpen && !isEditDialogOpen ? (
             <ProfilePhotoContent
               handleAddClick={handleAddClick}
-              handleOnClose={handleOnClose}
+              handleClose={handleClose}
               handleDeleteClick={handleDeleteClick}
             />
           ) : isUploadDialogOpen ? (
@@ -64,19 +60,12 @@ const ProfilePhotoDialog = () => {
 
       {isDeleteDialogOpen && (
         <DeletePhotoDialog
-          open={isDeleteDialogOpen}
-          setOpen={setDeleteDialogOpen}
+          isDialogOpen={isDeleteDialogOpen}
+          setIsDialogOpen={setDeleteDialogOpen}
         />
       )}
-
-      <AlertMessage
-        open={alert.open}
-        message={alert.message}
-        severity={alert.severity}
-        onClose={handleClose}
-      />
     </>
   );
 };
 
-export default ProfilePhotoDialog
+export default ProfilePhotoDialog;

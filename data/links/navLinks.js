@@ -1,6 +1,6 @@
 export function navLinks(t) {
   const linksTranslations = [
-    { label: t('labels.home'), href: '/' },
+    // { label: t('labels.home'), href: '/' },
     {
       label: t('labels.destinations'),
       dropDownMenu: [

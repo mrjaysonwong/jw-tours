@@ -1,19 +1,12 @@
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import axios from 'axios';
-import { usePathname } from 'next/navigation';
-import { stripLocale } from '@/helpers/pageHelpers';
+
+import { API_URLS } from '@/config/apiRoutes';
 
 export const useUserData = (userId) => {
-  const pathname = usePathname();
-  const strippedPathname = stripLocale(pathname);
-  const isNestedRoute = strippedPathname.split('/').length > 2;
-  const isAccountSettings = pathname.includes('mysettings') && isNestedRoute;
-
   const fetchUser = async () => {
     try {
-      const url = `/api/v1/users/self${
-        isAccountSettings ? '' : `?projection=basic`
-      }`;
+      const url = `${API_URLS.USERS}/${userId}/self`;
 
       const { data } = await axios.get(url);
 
@@ -43,7 +36,7 @@ export const useUserData = (userId) => {
 export const useAdminUserData = (userId) => {
   const fetchUser = async () => {
     try {
-      const url = `/api/v1/users/${userId}`;
+      const url = `${API_URLS.USERS}/${userId}`;
 
       const { data } = await axios.get(url);
 
@@ -59,7 +52,7 @@ export const useAdminUserData = (userId) => {
     data,
     isError,
     error,
-    refetch: adminRefetch,
+    refetch,
     status,
   } = useQuery({
     queryKey: ['edit', userId],
@@ -76,7 +69,7 @@ export const useAdminUserData = (userId) => {
     ...data,
     isError,
     error,
-    adminRefetch,
+    refetch,
     status,
   };
 };

@@ -8,32 +8,26 @@ import {
   Box,
   IconButton,
   Container,
-  Slide,
-  useScrollTrigger,
+  Badge,
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
+import NotificationsNoneOutlinedIcon from '@mui/icons-material/NotificationsNoneOutlined';
 
 // internal imports
 import ProfileMenu from '@/components/menus/ProfileMenu';
-import { dashboardComponents } from '@/config/uiComponents';
+import {
+  dashboardComponents,
+  dashboardEditComponents,
+} from '@/config/componentMapping';
 import { stripLocale } from '@/helpers/pageHelpers';
 import { UserDataProvider } from '@/contexts/UserProvider';
 import NavDrawer from './NavDrawer';
 import { getLastSegment } from '@/helpers/pageHelpers';
+import HideOnScroll from '@/utils/components/HideOnScroll';
 
-const drawerWidth = 280;
+const drawerWidth = 260;
 
-const HideOnScroll = ({ children }) => {
-  const trigger = useScrollTrigger({ threshold: 200 });
-
-  return (
-    <Slide appear={false} direction="down" in={!trigger}>
-      {children}
-    </Slide>
-  );
-};
-
-export default function AdminDashboard({ slug }) {
+export default function AdminDashboard({ categorySlug, actionSlug, slug }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
 
@@ -42,9 +36,18 @@ export default function AdminDashboard({ slug }) {
 
   const lastSegment = getLastSegment(pathname);
 
-  const currentComponent = overview
-    ? dashboardComponents.overview
-    : dashboardComponents[slug || lastSegment] || null;
+  const componentKey = overview
+    ? 'overview'
+    : actionSlug
+    ? `${categorySlug}_${actionSlug}`
+    : categorySlug;
+
+  const componentEditKey = `${slug}_${lastSegment}`;
+
+  const currentComponent =
+    dashboardComponents[componentKey] ||
+    dashboardEditComponents[componentEditKey] ||
+    null;
 
   const handleDrawerToggle = () => {
     if (!isClosing) {
@@ -53,59 +56,81 @@ export default function AdminDashboard({ slug }) {
   };
 
   return (
-    <Box sx={{ display: 'flex', minHeight: '100dvh' }}>
-      <HideOnScroll>
-        <AppBar
-          color="inherit"
-          elevation={0}
-          position="fixed"
+    <>
+      <Box sx={{ display: 'flex', minHeight: '100dvh' }}>
+        <HideOnScroll>
+          <AppBar
+            color="inherit"
+            elevation={0}
+            position="fixed"
+            sx={{
+              width: { md: `calc(100% - ${drawerWidth}px)` },
+              ml: { sm: `${drawerWidth}px` },
+            }}
+          >
+            <Toolbar sx={{ py: 1, svg: { fontSize: '2rem' } }}>
+              <IconButton
+                color="inherit"
+                aria-label="open drawer"
+                edge="start"
+                onClick={handleDrawerToggle}
+                sx={{
+                  mr: 2,
+                  display: { md: 'none' },
+                }}
+              >
+                <MenuIcon />
+              </IconButton>
+
+              <Box sx={{ ml: 'auto' }}>
+                <IconButton>
+                  <Badge
+                    badgeContent={4}
+                    color="error"
+                    sx={{
+                      '& .MuiBadge-badge': {
+                        right: 5,
+                      },
+                    }}
+                  >
+                    <NotificationsNoneOutlinedIcon />
+                  </Badge>
+                </IconButton>
+
+                <UserDataProvider>
+                  <ProfileMenu />
+                </UserDataProvider>
+              </Box>
+            </Toolbar>
+          </AppBar>
+        </HideOnScroll>
+
+        <NavDrawer
+          mobileOpen={mobileOpen}
+          setMobileOpen={setMobileOpen}
+          setIsClosing={setIsClosing}
+          drawerWidth={drawerWidth}
+        />
+
+        <Container
+          component="main"
           sx={{
-            width: { md: `calc(100% - ${drawerWidth}px)` },
-            ml: { sm: `${drawerWidth}px` },
+            minHeight: '100dvh',
+            flexGrow: 1,
+            p: 2,
+            mt: 7,
+            mx: { lg: 1 },
+            width: { xs: `calc(100% - ${drawerWidth}px)` },
+
+            h5: {
+              my: 2,
+              fontWeight: 550,
+            },
           }}
         >
-          <Toolbar>
-            <IconButton
-              color="inherit"
-              aria-label="open drawer"
-              edge="start"
-              onClick={handleDrawerToggle}
-              sx={{ mr: 2, display: { md: 'none' }, svg: { fontSize: '2rem' } }}
-            >
-              <MenuIcon />
-            </IconButton>
-
-            <UserDataProvider>
-              <ProfileMenu />
-            </UserDataProvider>
-          </Toolbar>
-        </AppBar>
-      </HideOnScroll>
-
-      <NavDrawer
-        mobileOpen={mobileOpen}
-        setMobileOpen={setMobileOpen}
-        setIsClosing={setIsClosing}
-        drawerWidth={drawerWidth}
-      />
-
-      <Container
-        component="main"
-        sx={{
-          minHeight: '100dvh',
-          flexGrow: 1,
-          p: 2,
-          mt: 7,
-          mx: { lg: 1 },
-          width: { xs: `calc(100% - ${drawerWidth}px)` },
-
-          h5: {
-            my: 2,
-          },
-        }}
-      >
-        {currentComponent && React.createElement(currentComponent)}
-      </Container>
-    </Box>
+          {currentComponent && React.createElement(currentComponent)}
+        </Container>
+      </Box>
+    </>
   );
 }

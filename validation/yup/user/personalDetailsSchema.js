@@ -4,51 +4,17 @@ import utc from 'dayjs/plugin/utc';
 
 // internal imports
 import { nationalities } from '@/data/countries/nationalities';
+import { languages } from '@/data/countries/languages';
 
 dayjs.extend(utc);
 
 export const validGenders = ['', 'male', 'female', 'other'];
 export const validStatus = ['', 'active', 'pending', 'suspended', 'inactive'];
-export const validRoles = ['', 'user', 'guide', 'partner', 'agent'];
+export const validRoles = ['', 'user', 'guide', 'agent'];
 
 const minYear = '1900'; // Minimum year
-const maxDate = dayjs(); // Maximum date is today
 
 const nationalitySet = new Set(nationalities.map((item) => item.label));
-
-// function getDateOfBirth() {
-//   return yup
-//     .string()
-//     .trim()
-//     .test(
-//       'is-valid-date',
-//       'Date of Birth must be in the format YYYY-MM-DD',
-//       (value) => {
-//         if (!value) return true; // Allow empty values
-
-//         // Strict format YYYY-MM-DD
-//         const regex =
-//           /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$|^[A-Za-z]{3},/;
-
-//         // Check if the value matches the regex
-//         if (!regex.test(value)) return false;
-
-//         // Check if the date is valid as an ISO 8601 or RFC 2822 string
-//         const parsedDate = dayjs.utc(value);
-//         return parsedDate.isValid();
-//       }
-//     )
-//     .test('is-valid-year', 'Date cannot be this early', (value) => {
-//       const getYear = dayjs(value).year();
-
-//       return getYear >= minYear;
-//     })
-//     .test('is-not-future-date', 'Date cannot be in the future', (value) => {
-//       const parsedDate = dayjs(value);
-
-//       return parsedDate.isBefore(maxDate) || parsedDate.isSame(maxDate);
-//     });
-// }
 
 function getDateOfBirth() {
   return yup
@@ -88,16 +54,19 @@ export const personalDetailsSchema = yup.object().shape({
       (value) => !value || nationalitySet.has(value)
     )
     .notRequired(),
+  languages: yup
+    .array()
+    .of(yup.string().oneOf(languages, 'Invalid language'))
+    .notRequired(),
   address: yup
     .object()
     .shape({
-      street: yup.string().max(100, 'Street must not exceed 100 characters.'),
-      homeTown: yup
-        .string()
-        .max(128, 'Home town must not exceed 128 characters.'),
-      postalCode: yup
-        .string()
-        .max(10, 'Postal code must not exceed 10 characters.'),
+      name: yup.string(),
+      neighbourhood: yup.string(),
+      city: yup.string(),
+      state: yup.string(),
+      postcode: yup.string(),
+      country: yup.string(),
     })
     .notRequired(),
   role: yup
@@ -116,3 +85,17 @@ export const statusSchema = yup.object({
     .oneOf(validStatus, 'Invalid status'),
 });
 
+export const userIdSchema = yup.object({
+  userIds: yup
+    .array()
+    .of(
+      yup
+        .string()
+        .matches(
+          /^[a-fA-F0-9]{24}$/,
+          'Invalid MongoDB ObjectId, must be 24 hex characters.'
+        ) // Ensures exactly 24 hex chars
+    )
+    .min(1, 'At least one user ID is required') // Prevents empty array
+    .required('User IDs are required'),
+});

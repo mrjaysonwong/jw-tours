@@ -8,7 +8,7 @@ export const usePlacesData = (debouncedText) => {
 
       const options = {
         params: {
-          namePrefix: `${debouncedText}`,
+          searchString: `${debouncedText}`,
         },
       };
 
@@ -17,7 +17,7 @@ export const usePlacesData = (debouncedText) => {
       return data;
     } catch (error) {
       console.error(error);
-      throw new Error('Failed to fetch location. Try again.');
+      throw new Error('Failed to fetch location. Close and try again.');
     }
   };
 

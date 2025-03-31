@@ -1,10 +1,20 @@
 import * as yup from 'yup';
 import { otpTypeSchema, otpSchema } from '@/validation/yup/auth/otpSchema';
-import { getSchemaFields } from '../getSchemaFields';
+import {
+  emailSchema,
+  phoneNumberSchema,
+  emailValidTypes,
+  mobileValidTypes,
+} from '../user/contactDetailsSchema';
 
-export const verifyContactSchema = (type) =>
+export const verifyContactSchema = (identifier) =>
   yup.object().shape({
     type: otpTypeSchema.fields.type,
     otp: otpSchema.fields.otp,
-    ...getSchemaFields(type),
+    ...(emailValidTypes.includes(identifier) && {
+      email: emailSchema.fields.email,
+    }),
+    ...(mobileValidTypes.includes(identifier) && {
+      phone: phoneNumberSchema.fields.phone,
+    }),
   });

@@ -42,7 +42,7 @@ export const adminProfileMenuLinks = [
   },
   {
     label: 'User Management',
-    href: '/admin/dashboard/user-list',
+    href: '/admin/dashboard/users',
     icon: <SupervisedUserCircleIcon />,
   },
   {

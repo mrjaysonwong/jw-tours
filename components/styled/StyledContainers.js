@@ -2,6 +2,7 @@
 
 import { Box, Container } from '@mui/material';
 import { styled } from '@mui/system';
+import { scrollbarStyles } from '@/components/styled/StyledScrollBars';
 
 export const StyledMainContainer = styled(Container)({
   minHeight: '100dvh',
@@ -28,11 +29,10 @@ export const StyledContainer = styled(Container)({
   padding: '2rem 1rem 2rem 1rem',
 
   a: {
-    textDecoration: 'none',
     color: 'var(--color-blue-light)',
   },
 
-  'h5, h4, h3': {
+  'h6, h5, h4, h3': {
     fontWeight: 550,
   },
 });
@@ -85,57 +85,60 @@ export const StyledNavIconsContainer = styled(Box)({
 });
 
 export const StyledNavLinksContainer = styled(Box)(({ theme }) => {
-  const { palette } = theme;
-  const isDarkMode = palette.mode === 'dark';
-
   return {
-    button: {
-      minWidth: '130px',
-      textTransform: 'uppercase',
-      color: isDarkMode ? 'white' : 'black',
+    ul: {
+      display: 'flex',
+      alignItems: 'center',
+      listStyle: 'none',
+    },
+
+    li: {
+      padding: '5px',
+    },
+
+    '& .toggle-list': {
+      userSelect: 'none',
+      cursor: 'pointer',
+      padding: '10px 20px',
+      display: 'flex',
+      alignItems: 'center',
 
       '&:hover': {
         color: 'var(--color-green-light)',
       },
     },
 
-    a: {
-      float: 'left',
-    },
+    '& .dropdown': {
+      userSelect: 'none',
+      position: 'absolute',
+      maxWidth: '340px',
+      borderRadius: '0px 0px 6px 6px',
+      padding: 15,
 
-    '.dropdown': {
-      float: 'left',
-    },
-
-    '.dropdown-content': {
-      // display: 'none',
       opacity: 0,
       visibility: 'hidden',
-      position: 'absolute',
-      maxWidth: '450px',
-      // transition: 'max-height 1s ease, opacity 0.1s ease, visibility 0.3s ease',
-      maxHeight: 0,
-      overflow: 'hidden',
-      zIndex: 1, // Ensure dropdown is above other content
+      transition: 'height 0.3s ease, opacity 0.3s ease, visibility 0.3s ease',
+      // transform: 'scaleY(0)',
+      // transformOrigin: 'top',
     },
 
-    '.dropdown-content a': {
-      color: 'inherit',
-      padding: '12px 16px',
-      textAlign: 'left',
-      textTransform: 'uppercase',
-      fontSize: '0.9rem',
-      fontWeight: '500',
-    },
-
-    '.dropdown-content a:hover': {
-      color: 'var(--color-text-main)',
-    },
-
-    '.dropdown:hover .dropdown-content': {
-      maxHeight: '500px', // Adjust as needed based on your content height
+    '& .dropdown.open': {
       opacity: 1,
       visibility: 'visible',
+      height: 'auto',
+      // transform: 'scaleY(1)',
+    },
+
+    '& .dropdown li': {
+      cursor: 'pointer',
+
+      '&:hover': {
+        color: 'var(--color-green-light)',
+      },
+    },
+
+    '& .active': {
+      color: 'var(--color-green-light)',
     },
   };
 });
@@ -164,7 +167,6 @@ export const StyledItemContainer = styled(Box)(({ theme }) => {
   const { breakpoints, palette } = theme;
   const xtraSmallScreen = breakpoints.up('xs');
   const largeScreen = breakpoints.up('lg');
-  const isDarkMode = palette.mode === 'dark';
 
   return {
     width: '100%',
@@ -172,9 +174,12 @@ export const StyledItemContainer = styled(Box)(({ theme }) => {
     display: 'flex',
 
     '&:not(:last-child)': {
-      borderBottom: `1px solid ${
-        isDarkMode ? 'rgba(255, 255, 255, 0.12)' : 'rgba(4, 4, 4, 0.12)'
-      } `,
+      borderBottom: `1px solid ${palette.divider}`,
+    },
+
+    '& > div:first-of-type > p': {
+      fontWeight: 450,
+      color: 'dimgray',
     },
 
     [xtraSmallScreen]: {
@@ -186,3 +191,40 @@ export const StyledItemContainer = styled(Box)(({ theme }) => {
     },
   };
 });
+
+export const StyledDrawerSectionContainer = styled(Box)(({ theme }) => ({
+  padding: '0px 15px',
+  ...scrollbarStyles,
+
+  ul: {
+    listStyle: 'none',
+  },
+
+  '& .container': {
+    marginBottom: '10px',
+  },
+
+  '& .section-title': {
+    fontWeight: 450,
+    fontSize: '12px',
+    padding: 10,
+    textTransform: 'uppercase',
+    color: 'gray',
+  },
+
+  '& .list-btn': {
+    borderRadius: '6px',
+  },
+
+  '& .dropdown': {
+    paddingTop: '4px',
+    paddingBottom: '4px',
+    paddingLeft: 7,
+    borderLeft: `1px solid ${theme.palette.divider}`,
+  },
+
+  '& .MuiListItemIcon-root': {
+    minWidth: 0,
+    marginRight: 12,
+  },
+}));

@@ -1,6 +1,7 @@
 export function a11yProps(index, a11ylabel) {
+  const safeLabel = a11ylabel.toLowerCase().replace(/\s+/g, '-');
   return {
-    id: `${a11ylabel}-tab-${index}`,
-    'aria-controls': `${a11ylabel}-tabpanel-${index}`,
+    id: `${safeLabel}-tab-${index}`,
+    'aria-controls': `${safeLabel}-tabpanel-${index}`,
   };
 }

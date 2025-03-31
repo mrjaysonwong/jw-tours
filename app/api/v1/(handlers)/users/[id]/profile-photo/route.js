@@ -1,6 +1,4 @@
-import { validateSession } from '@/validation/validateSesssion';
-import connectMongo from '@/services/db/connectMongo';
-import { findUserById } from '@/services/user/userQueries';
+import { validateSessionAndUser } from '@/services/auth/validateSessionAndUser';
 import { handleApiError } from '@/helpers/errorHelpers';
 import { updateProfilePhoto, deleteProfilePhoto } from '@/services/user';
 import { updatePhotoSchema } from '@/validation/yup/user/profilePhotoSchema';
@@ -10,18 +8,13 @@ export async function PATCH(Request, { params }) {
   const userId = params.id;
 
   try {
-    await validateSession();
-
     const requestData = await Request.json();
 
     const schema = updatePhotoSchema(requestData.actionType);
     await schema.validate({ ...requestData }, { abortEarly: false });
 
-    // connect to database
-    await connectMongo();
-
     const projection = 'image';
-    const userExists = await findUserById(userId, projection);
+    const { userExists } = await validateSessionAndUser(userId, projection);
 
     if (requestData.actionType === 'delete-photo') {
       await deleteProfilePhoto(userId, userExists);
@@ -31,13 +24,13 @@ export async function PATCH(Request, { params }) {
 
     return Response.json(
       {
-        statusText: 'Successfully Updated',
+        message: 'Successfully Updated',
       },
       { status: 200 }
     );
   } catch (error) {
-    const { statusText, status } = handleApiError(error);
+    const { message, status } = handleApiError(error);
 
-    return Response.json({ statusText }, { status });
+    return Response.json({ message }, { status });
   }
 }

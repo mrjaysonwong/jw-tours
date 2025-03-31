@@ -16,7 +16,7 @@ export const accountSettingsLinks = [
     href: '/mysettings/preferences',
     label: 'Preferences',
     icon: <TuneOutlinedIcon />,
-    text: 'Change your language, and accessibility requirements.',
+    text: 'Change your language, and subscribe to newsletter.',
   },
   {
     href: '/mysettings/security',

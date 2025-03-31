@@ -1,4 +1,4 @@
-import { STATUS_CODES, ERROR_MESSAGES } from '@/constants/api.js';
+import { STATUS_CODES, ERROR_MESSAGES } from '@/constants/common.js';
 
 /* handle client-side error */
 export const errorHandler = (error) => {
@@ -7,7 +7,7 @@ export const errorHandler = (error) => {
     const { status, statusText, data } = error.response;
 
     const errorMessage =
-      status === 500 ? ERROR_MESSAGES.SERVER_ERROR_LOCAL : data.statusText;
+      status === 500 ? ERROR_MESSAGES.SERVER_ERROR_LOCAL : data.message;
 
     return {
       status,
@@ -63,24 +63,33 @@ export class HttpError extends Error {
 }
 
 export function handleApiError(error) {
-  console.error(error.name === 'ValidationError' ? error.inner : error);
+  if (process.env.NODE_ENV !== 'production') {
+    console.error(error.name === 'ValidationError' ? error.inner : error);
+  }
 
   if (error instanceof HttpError) {
     return {
-      statusText: error.message.split(','),
+      message: error.message.split(','),
       status: error.status,
     };
   }
 
   if (error.name === 'ValidationError') {
     return {
-      statusText: error.errors,
+      message: error.errors,
       status: STATUS_CODES.BAD_REQUEST,
     };
   }
 
   return {
-    statusText: ERROR_MESSAGES.SERVER_ERROR,
+    message: ERROR_MESSAGES.SERVER_ERROR,
     status: STATUS_CODES.SERVER_ERROR,
   };
 }
+
+export const fireBaseAuthErrorMap = {
+  'auth/invalid-verification-code': 'Invalid OTP. Please try again.',
+  'auth/code-expired': 'OTP has expired. Please request a new one.',
+  'auth/too-many-requests': 'Too many incorrect attempts. Try again later.',
+  default: 'Failed to verify OTP. Please check the OTP.',
+};

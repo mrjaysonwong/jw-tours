@@ -1,6 +1,6 @@
 // internal imports
 import { HttpError } from '@/helpers/errorHelpers';
-import { STATUS_CODES} from '@/constants/api';
+import { STATUS_CODES} from '@/constants/common';
 import User from '@/models/userModel';
 import Token from '@/models/tokenModel';
 

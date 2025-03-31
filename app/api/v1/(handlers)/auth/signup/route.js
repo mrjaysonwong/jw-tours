@@ -2,7 +2,7 @@
 import { signUpSchema } from '@/validation/yup/auth/signUpSchema';
 import connectMongo from '@/services/db/connectMongo';
 import { handleApiError } from '@/helpers/errorHelpers';
-import { createUserAccount } from '@/services/user/createUserAccount';
+import { registerUser } from '@/services/user/registerUser';
 
 // POST: /api/v1/auth/signup
 export async function POST(Request) {
@@ -14,17 +14,17 @@ export async function POST(Request) {
     // connect to database
     await connectMongo();
 
-    await createUserAccount(formData);
+    await registerUser(formData);
 
     return Response.json(
       {
-        statusText: `Verification link has been sent to ${formData.email}`,
+        message: `Verification link has been sent to ${formData.email}`,
       },
       { status: 201 }
     );
   } catch (error) {
-    const { statusText, status } = handleApiError(error);
+    const { message, status } = handleApiError(error);
 
-    return Response.json({ statusText }, { status });
+    return Response.json({ message }, { status });
   }
 }

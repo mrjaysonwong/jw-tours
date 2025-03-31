@@ -1,17 +1,21 @@
-export const descendingComparator = (a, b, orderBy) => {
+function descendingComparator(a, b, orderBy) {
   const aValue = a[orderBy]?.toString().toLowerCase() || '';
   const bValue = b[orderBy]?.toString().toLowerCase() || '';
+
+  if (orderBy === 'createdAt') {
+    return new Date(bValue) - new Date(aValue); // Compare as Date objects
+  }
 
   if (bValue < aValue) return -1;
   if (bValue > aValue) return 1;
   return 0;
-};
+}
 
-export const getComparator = (order, orderBy) => {
+export function getComparator(order, orderBy) {
   return order === 'desc'
     ? (a, b) => descendingComparator(a, b, orderBy)
     : (a, b) => -descendingComparator(a, b, orderBy);
-};
+}
 
 // Since 2020 all major browsers ensure sort stability with Array.prototype.sort().
 export function stableSort(array, comparator) {

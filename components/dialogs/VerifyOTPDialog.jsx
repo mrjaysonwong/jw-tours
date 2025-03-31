@@ -1,5 +1,6 @@
+// third-party imports
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import {
   Button,
   Dialog,
@@ -14,74 +15,136 @@ import {
 import axios from 'axios';
 
 // internal imports
-import { useUserDetailsContext } from '@/contexts/UserProvider';
+import {
+  useUserDetailsContext,
+  useUserSessionContext,
+} from '@/contexts/UserProvider';
 import { useMessageStore } from '@/stores/messageStore';
 import { errorHandler } from '@/helpers/errorHelpers';
 import FormSubmitButton from '@/components/buttons/FormSubmitButton';
-import { API_URLS } from '@/constants/api';
+import { sleep } from '@/utils/sleep';
+import { getUrl } from '@/utils/authActionMap';
+import { getRequestData } from '@/helpers/requestHelpers';
+import { fireBaseAuthErrorMap } from '@/helpers/errorHelpers';
+import { getLastSegment } from '@/helpers/pageHelpers';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
 const VerifyOTPDialog = ({
+  title,
   isOTPOpen,
   setIsOTPOpen,
+  setIsDialogOpen,
+  setIsAddContactOpen,
   phoneDetails,
   email,
   type,
+  selected = [],
+  password,
+  confirmationResult,
 }) => {
-  const params = useParams();
-
-  const { userId, refetch, adminRefetch } = useUserDetailsContext();
-
   const [counter, setCounter] = useState(60);
   const [otp, setOTP] = useState('');
-
-  const notSixDigits = otp.length < 6 || otp === '';
-
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const notEnteredAllDigits = otp.length < 6 || otp === '';
+
+  const { userId, refetch } = useUserDetailsContext();
+
+  const session = useUserSessionContext();
+  const isAdmin = session.user.role === 'admin';
+  const adminEmail = session.user.email;
+
+  const pathname = usePathname();
+  const isUserList = getLastSegment(pathname) === 'users';
 
   const { handleAlertMessage } = useMessageStore();
 
   const dCode = phoneDetails?.phone?.dialCode || '';
   const phoneNumber = phoneDetails?.phone?.phoneNumber || '';
   const dialCode = dCode.replace(/\+/g, '');
-  const maskedPart =
+  const maskedPhone =
     phoneNumber.length >= 4 ? '*'.repeat(phoneNumber.length - 4) : '';
   const lastFourDigits = phoneNumber.slice(-4);
 
-  const handleOnClose = () => setIsOTPOpen(false);
+  const handleClose = () => {
+    setIsOTPOpen(false);
+  };
 
   const handleChange = (event) => setOTP(event.target.value);
+
+  const verifyFirebaseOTP = async () => {
+    try {
+      await confirmationResult.confirm(otp);
+    } catch (error) {
+      throw error;
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
 
     try {
-      const url = `${API_URLS.USERS}/${userId}/verify-otp`;
+      const action = 'verify';
+      const url = getUrl({ type, action, userId });
 
-      const requestData = {
+      const requestData = getRequestData({
         type,
         otp,
         email,
-        phone: { dialCode, phoneNumber },
-      };
+        dialCode,
+        phoneNumber,
+        selected,
+      });
 
-      const { data } = await axios.patch(url, requestData);
+      const { data } =
+        type === '2FA-account-deletion'
+          ? await axios.delete(url, requestData)
+          : await axios.patch(url, requestData);
 
-      if (params.id) {
-        adminRefetch();
-      } else {
-        refetch();
+      if (data.message === 'Mobile number was already verified.') {
+        handleAlertMessage(data.message, 'error');
+        return;
       }
 
-      handleAlertMessage(data.statusText, 'success');
+      if (confirmationResult) {
+        await verifyFirebaseOTP();
+
+        await axios.patch(url, {
+          type,
+          otp,
+          phone: { dialCode, phoneNumber },
+          isFirebaseAuthOk: true,
+        });
+      }
+
+      handleAlertMessage(data.message, 'success');
       setIsOTPOpen(false);
+
+      if (isAdmin && isUserList) {
+        // for admin account deletion
+        setIsDialogOpen(false);
+
+        await sleep(4000);
+        location.reload();
+      } else {
+        // non-admin
+        refetch();
+        setIsAddContactOpen(false);
+      }
     } catch (error) {
-      const { errorMessage } = errorHandler(error);
-      handleAlertMessage(errorMessage, 'error');
+      const fireBaseAuthError =
+        fireBaseAuthErrorMap[error.code] || fireBaseAuthErrorMap.default;
+
+      if (fireBaseAuthError && confirmationResult) {
+        handleAlertMessage(fireBaseAuthError, 'error');
+      } else {
+        const { errorMessage } = errorHandler(error);
+        handleAlertMessage(errorMessage, 'error');
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -89,13 +152,22 @@ const VerifyOTPDialog = ({
 
   const handleResendOTP = async () => {
     try {
-      const url = `${API_URLS.USERS}/${userId}/send-otp`;
+      const action = 'send';
+      const url = getUrl({ type, action, userId });
 
-      const requestData = { type, email, phone: { dialCode, phoneNumber } };
+      const requestData = getRequestData({
+        type,
+        otp,
+        email,
+        dialCode,
+        phoneNumber,
+        password,
+      });
+
       const { data } = await axios.post(url, requestData);
 
       setCounter(60);
-      handleAlertMessage(data.statusText, 'success');
+      handleAlertMessage(data.message, 'success');
     } catch (error) {
       const { errorMessage } = errorHandler(error);
       handleAlertMessage(errorMessage, 'error');
@@ -103,7 +175,7 @@ const VerifyOTPDialog = ({
   };
 
   useEffect(() => {
-    if (isOTPOpen) {
+    if (isOTPOpen && !confirmationResult) {
       setCounter(60);
       const intervalId = setInterval(() => {
         setCounter((prev) => (prev > 0 ? prev - 1 : prev));
@@ -111,29 +183,20 @@ const VerifyOTPDialog = ({
 
       return () => clearInterval(intervalId);
     }
-  }, [isOTPOpen]);
+  }, [isOTPOpen, confirmationResult]);
 
-  const sendTo = () => {
-    if (email) {
-      return <span>{email}</span>;
-    } else {
-      return (
-        <>
-          <span>+</span>
-          <span>
-            {dialCode} {maskedPart}
-            {lastFourDigits}
-          </span>
-        </>
-      );
-    }
-  };
+  const sendTo = () => (
+    <span>
+      {email ||
+        (type === '2FA-account-deletion' && isAdmin
+          ? adminEmail
+          : `+${dialCode} ${maskedPhone} ${lastFourDigits}`)}
+    </span>
+  );
 
   return (
     <Dialog open={isOTPOpen} TransitionComponent={Transition}>
-      <DialogTitle>
-        Verify your {email ? 'Email Address' : 'Mobile Number'}
-      </DialogTitle>
+      <DialogTitle>{title}</DialogTitle>
 
       <form onSubmit={handleSubmit}>
         <DialogContent dividers sx={{ borderBottom: 'none' }}>
@@ -154,27 +217,35 @@ const VerifyOTPDialog = ({
             sx={{ letterSpacing: '4px', my: 1 }}
           />
 
-          <Typography
-            color={counter ? 'gray' : 'primary.main'}
-            sx={{ cursor: counter ? 'progress' : 'pointer' }}
-          >
-            {counter ? (
-              `Resend OTP in (${counter}s)`
-            ) : (
-              <span onClick={handleResendOTP}>Resend OTP</span>
-            )}
-          </Typography>
+          {!confirmationResult && (
+            <Typography color={counter ? 'gray' : 'primary.main'}>
+              {counter ? (
+                <span style={{ cursor: counter && 'wait' }}>
+                  Resend OTP in ({counter}s)
+                </span>
+              ) : (
+                <span
+                  onClick={handleResendOTP}
+                  style={{
+                    cursor: 'pointer',
+                  }}
+                >
+                  Resend OTP
+                </span>
+              )}
+            </Typography>
+          )}
         </DialogContent>
-        <DialogActions sx={{ mx: 2, py: 2 }}>
-          <Button type="button" disabled={isSubmitting} onClick={handleOnClose}>
+
+        <DialogActions sx={{ px: 3, py: 2 }}>
+          <Button type="button" disabled={isSubmitting} onClick={handleClose}>
             Cancel
           </Button>
 
           <FormSubmitButton
             label="Verify"
-            action="update"
             isSubmitting={isSubmitting}
-            notSixDigits={notSixDigits}
+            notEnteredAllDigits={notEnteredAllDigits}
           />
         </DialogActions>
       </form>

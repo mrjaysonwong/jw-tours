@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { CsvBuilder } from 'filefy';
 import { Grid, Button, Typography, Chip, Box } from '@mui/material';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
@@ -7,6 +7,7 @@ import FilterAltOffIcon from '@mui/icons-material/FilterAltOff';
 // internal imports
 import { RoleFilter, TabsFilter } from '.';
 import { statusMap } from './UserList';
+import ConfirmationDialog from '@/components/dialogs/ConfirmationDialog';
 
 const FilterChip = React.memo(
   ({ filterType, label, setSearchTerm, setValue, setRole }) => {
@@ -34,6 +35,7 @@ const FilterChip = React.memo(
           borderColor: 'divider',
           borderRadius: '14px',
           mt: 1,
+          textTransform: filterType !== 'Keyword' && 'capitalize',
         }}
       >
         <Typography variant="body2" sx={{ mr: 1, fontWeight: 500 }}>
@@ -60,6 +62,8 @@ const TableToolbar = ({
   setValue,
   setRole,
 }) => {
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
   const handleExport = () => {
     // Define columns
     const columns = ['ID', 'FirstName', 'LastName', 'Email', 'Role', 'Status'];
@@ -83,6 +87,8 @@ const TableToolbar = ({
       .setColumns(columns)
       .addRows(csvData)
       .exportFile();
+
+    setIsDialogOpen(false);
   };
 
   return (
@@ -119,7 +125,7 @@ const TableToolbar = ({
             fullWidth
             startIcon={<FileDownloadIcon />}
             variant="contained"
-            onClick={handleExport}
+            onClick={() => setIsDialogOpen(true)}
           >
             Export
           </Button>
@@ -172,6 +178,17 @@ const TableToolbar = ({
           </>
         )}
       </Grid>
+
+      {isDialogOpen && (
+        <ConfirmationDialog
+          title="Export User List"
+          buttonLabel="Download"
+          type="export"
+          isDialogOpen={isDialogOpen}
+          setIsDialogOpen={setIsDialogOpen}
+          handleSubmit={handleExport}
+        />
+      )}
     </>
   );
 };

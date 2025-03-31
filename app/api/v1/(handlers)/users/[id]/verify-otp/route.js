@@ -1,8 +1,6 @@
 // internal imports
-import { validateSession } from '@/validation/validateSesssion';
+import { validateSessionAndUser } from '@/services/auth/validateSessionAndUser';
 import { verifyContactSchema } from '@/validation/yup/auth/verifyContactSchema';
-import connectMongo from '@/services/db/connectMongo';
-import { findUserById } from '@/services/user/userQueries';
 import { handleApiError } from '@/helpers/errorHelpers';
 import { verifyAndAddEmail, verifyAndAddMobile } from '@/services/user';
 
@@ -11,34 +9,32 @@ export async function PATCH(Request, { params }) {
   const userId = params.id;
 
   try {
-    await validateSession();
-
-    const { type, otp, email, phone } = await Request.json();
+    const { type, otp, email, phone, isFirebaseAuthOk } = await Request.json();
     const isEmailType = type === 'email';
     const data = { type, otp, email, phone };
 
     const schema = verifyContactSchema(type);
     await schema.validate({ ...data }, { abortEarly: false });
 
-    // Connect to the database
-    await connectMongo();
-
     const projection = 'email phone';
-    const userExists = await findUserById(userId, projection);
+    const {userExists} = await validateSessionAndUser(userId, projection);
 
     if (isEmailType) {
       await verifyAndAddEmail(otp, email, userId, userExists);
     } else {
-      await verifyAndAddMobile(otp, phone, userId, userExists);
+      await verifyAndAddMobile(
+        otp,
+        phone,
+        userId,
+        userExists,
+        isFirebaseAuthOk
+      );
     }
 
-    return Response.json(
-      { statusText: 'Successfully Added!' },
-      { status: 200 }
-    );
+    return Response.json({ message: 'Successfully Added!' }, { status: 200 });
   } catch (error) {
-    const { statusText, status } = handleApiError(error);
+    const { message, status } = handleApiError(error);
 
-    return Response.json({ statusText }, { status });
+    return Response.json({ message }, { status });
   }
 }

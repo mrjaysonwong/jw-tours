@@ -6,8 +6,6 @@ import { useUserDataContext } from '@/contexts/UserProvider';
 import { useUserDetailsContext } from '@/contexts/UserProvider';
 import Password from './Password';
 import DeleteAccount from './DeleteAccount';
-import { useMessageStore } from '@/stores/messageStore';
-import AlertMessage from '@/components/alerts/AlertMessage';
 import CustomError from '@/components/errors/CustomError';
 import LoadingSpinner from '@/components/loaders/LoadingSpinner';
 
@@ -40,8 +38,6 @@ export const SecurityCard = () => {
 };
 
 const Security = () => {
-  const { alert, handleClose } = useMessageStore();
-
   return (
     <>
       <Typography variant="h5">Security</Typography>
@@ -52,13 +48,6 @@ const Security = () => {
       <Divider sx={{ my: 3 }} />
 
       <SecurityCard />
-
-      <AlertMessage
-        open={alert.open}
-        message={alert.message}
-        severity={alert.severity}
-        onClose={handleClose}
-      />
     </>
   );
 };

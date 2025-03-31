@@ -1,14 +1,14 @@
 import { Box, Drawer, useTheme } from '@mui/material';
 
 // internal imports
-import NavLinks from './NavLinks';
+import DrawerLinks from './DrawerLinks';
 
-export default function NavDrawer({
+const NavDrawer = ({
   mobileOpen,
   setMobileOpen,
   setIsClosing,
   drawerWidth,
-}) {
+}) => {
   const theme = useTheme();
   const isDarkMode = theme.palette.mode === 'dark';
 
@@ -41,12 +41,11 @@ export default function NavDrawer({
           '& .MuiDrawer-paper': {
             boxSizing: 'border-box',
             width: drawerWidth,
-            overflowY: 'unset !important',
             bgcolor: isDarkMode && 'var(--color-dark-secondary)',
           },
         }}
       >
-        <NavLinks />
+        <DrawerLinks />
       </Drawer>
 
       <Drawer
@@ -57,14 +56,15 @@ export default function NavDrawer({
           '& .MuiDrawer-paper': {
             boxSizing: 'border-box',
             width: drawerWidth,
-            overflowY: 'unset !important',
-            bgcolor: isDarkMode && 'var(--color-dark-secondary)',
             border: 'none',
+            bgcolor: isDarkMode && 'var(--color-dark-secondary)',
           },
         }}
       >
-        <NavLinks />
+        <DrawerLinks />
       </Drawer>
     </Box>
   );
-}
+};
+
+export default NavDrawer;

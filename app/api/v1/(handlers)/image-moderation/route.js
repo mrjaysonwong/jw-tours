@@ -4,7 +4,9 @@ import NodeCache from 'node-cache';
 
 // internal imports
 import { handleApiError } from '@/helpers/errorHelpers';
+import { HttpError } from '@/helpers/errorHelpers';
 import { generateImageHash } from '@/utils/generateImageHash';
+import { STATUS_CODES } from '@/constants/common';
 
 // Cache for 30mins
 const cache = new NodeCache({ stdTTL: 1800, maxKeys: 25 });
@@ -15,10 +17,10 @@ export async function POST(Request) {
     const file = formData.get('media');
 
     if (!file) {
-      return Response.json(
-        { statusText: 'Image file is required' },
-        { status: 400 }
-      );
+      throw new HttpError({
+        message: 'Image file is required',
+        status: STATUS_CODES.BAD_REQUEST,
+      });
     }
 
     // Convert `file` to Buffer (required for FormData in Node.js)
@@ -45,19 +47,18 @@ export async function POST(Request) {
 
     if (response.data.status !== 'success') {
       return Response.json(
-        { statusText: 'Unexpected error occured.' },
-        { status: 500 }
+        { message: 'Unexpected error occured.' },
+        { status: STATUS_CODES.SERVER_ERROR }
       );
     }
-
 
     // Cache the response
     cache.set(imageHash, response.data);
 
     return Response.json(response.data, { status: 200 });
   } catch (error) {
-    const { statusText, status } = handleApiError(error);
+    const { message, status } = handleApiError(error);
 
-    return Response.json({ statusText }, { status });
+    return Response.json({ message }, { status });
   }
 }

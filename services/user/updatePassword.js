@@ -2,6 +2,7 @@ import { compare, hash } from 'bcryptjs';
 
 // internal imports
 import { HttpError } from '@/helpers/errorHelpers';
+import { STATUS_CODES } from '@/constants/common';
 import User from '@/models/userModel';
 
 export async function updatePassword(formData, userId, userExists) {
@@ -14,7 +15,7 @@ export async function updatePassword(formData, userId, userExists) {
     if (!passwordsMatch) {
       throw new HttpError({
         message: 'The current password you entered is incorrect.',
-        status: 400,
+        status: STATUS_CODES.BAD_REQUEST,
       });
     }
 
@@ -26,7 +27,7 @@ export async function updatePassword(formData, userId, userExists) {
     if (isNewPasswordSameAsOld) {
       throw new HttpError({
         message: 'The new password cannot be the same as the current password.',
-        status: 400,
+        status: STATUS_CODES.BAD_REQUEST,
       });
     }
 

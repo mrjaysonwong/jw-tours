@@ -6,30 +6,31 @@ import axios from 'axios';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import ReCAPTCHA from 'react-google-recaptcha';
-import { Box, Typography, Divider, Card, CardContent } from '@mui/material';
+import {
+  Box,
+  Typography,
+  Divider,
+  Card,
+  CardContent,
+} from '@mui/material';
 
 // internal imports
 import FormSubmitButton from '@/components/buttons/FormSubmitButton';
-import AlertMessage from '@/components/alerts/AlertMessage';
 import { useMessageStore } from '@/stores/messageStore';
-import EmailAuthConfirmation from '@/app/(features)/authentication/EmailAuthConfirmation';
+import EmailAuthConfirmationMessage from '@/app/(features)/authentication/EmailAuthConfirmationMessage';
 import HistoryBackButton from '@/components/buttons/HistoryBackButton';
 import { emailSchema } from '@/validation/yup/user/contactDetailsSchema';
 import { errorHandler } from '@/helpers/errorHelpers';
-import {
-  generateUrl,
-  generateTitle,
-  generateMessage,
-} from '@/utils/contentMap';
+import { getUrl, getTitle, getMessage } from '@/utils/authActionMap';
 import FormInput from '@/components/inputs/FormInput';
 import AnimateGradient from '@/components/bg-gradients/AnimatedGradient';
 
-const EmailAuthForm = ({ actionType }) => {
+const EmailAuthForm = ({ action }) => {
   let submitAttemptRef = useRef(0);
 
   const [isConfirmation, setIsConfirmation] = useState(false);
   const [captcha, setCaptcha] = useState(null);
-  const { alert, handleAlertMessage, handleClose } = useMessageStore();
+  const { handleAlertMessage } = useMessageStore();
 
   const onChange = () => {
     setCaptcha(false);
@@ -52,7 +53,7 @@ const EmailAuthForm = ({ actionType }) => {
     submitAttemptRef.current++;
 
     try {
-      const url = generateUrl(actionType);
+      const url = getUrl({ action });
       const requestData = { email: formData.email };
 
       const { data } = await axios.post(url, requestData);
@@ -60,7 +61,7 @@ const EmailAuthForm = ({ actionType }) => {
       if (data) {
         reset();
         setIsConfirmation(true);
-        handleAlertMessage(data.statusText, 'success');
+        handleAlertMessage(data.message, 'success');
       }
     } catch (error) {
       const { errorMessage } = errorHandler(error);
@@ -78,22 +79,21 @@ const EmailAuthForm = ({ actionType }) => {
       <AnimateGradient />
 
       {isConfirmation ? (
-        <EmailAuthConfirmation
-          actionType={actionType}
+        <EmailAuthConfirmationMessage
+          action={action}
           setIsConfirmation={setIsConfirmation}
-          handleClose={handleClose}
         />
       ) : (
         <Card>
           <CardContent>
             <Box>
-              <Typography variant="h5">{generateTitle(actionType)}</Typography>
+              <Typography variant="h5">{getTitle(action)}</Typography>
 
               <Divider sx={{ my: 2 }} />
 
               <Typography>
                 Enter the email address associated with your account and we will
-                send you a {generateMessage(actionType)}.
+                send you a {getMessage(action)}.
               </Typography>
             </Box>
 
@@ -135,13 +135,6 @@ const EmailAuthForm = ({ actionType }) => {
           </CardContent>
         </Card>
       )}
-
-      <AlertMessage
-        open={alert.open}
-        message={alert.message}
-        severity={alert.severity}
-        onClose={handleClose}
-      />
     </>
   );
 };

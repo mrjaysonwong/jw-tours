@@ -8,26 +8,40 @@ import { Dialog, DialogContent, Box, Tabs, Tab } from '@mui/material';
 import { DialogContext } from '@/components/layout/header/Navbar';
 import SignInForm from '@/components/forms/SignInForm';
 import SignUpForm from '@/components/forms/SignUpForm';
-import CustomTabPanel from '@/components/tabs/CustomTabPanel';
 import { a11yProps } from '@/utils/a11yprops';
+
+const TabPanel = (props) => {
+  const { children, value, index, a11ylabel, ...other } = props;
+
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`${a11ylabel}-tabpanel-${index}`}
+      aria-labelledby={`${a11ylabel}-tab-${index}`}
+      {...other}
+    >
+      {value === index && <Box sx={{ py: 3 }}>{children}</Box>}
+    </div>
+  );
+};
 
 const AuthFormDialog = () => {
   const [value, setValue] = useState(0);
-
-  const { open, setOpen } = useContext(DialogContext);
+  const { isDialogOpen, setIsDialogOpen } = useContext(DialogContext);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
 
   const handleClose = () => {
-    setOpen(false);
+    setIsDialogOpen(false);
   };
 
   return (
     <>
       <Dialog
-        open={open}
+        open={isDialogOpen}
         onClose={handleClose}
         scroll="body"
         closeAfterTransition={true}
@@ -45,13 +59,13 @@ const AuthFormDialog = () => {
             </Tabs>
           </Box>
 
-          <CustomTabPanel value={value} index={0}>
+          <TabPanel value={value} index={0} a11ylabel="sign-in">
             <SignInForm isDashboard={false} showRoleSelector={false} />
-          </CustomTabPanel>
+          </TabPanel>
 
-          <CustomTabPanel value={value} index={1}>
+          <TabPanel value={value} index={1} a11ylabel="sign-up">
             <SignUpForm showCancel={true} />
-          </CustomTabPanel>
+          </TabPanel>
         </DialogContent>
       </Dialog>
     </>

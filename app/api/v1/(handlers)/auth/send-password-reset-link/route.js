@@ -2,7 +2,7 @@
 import { emailSchema } from '@/validation/yup/user/contactDetailsSchema';
 import connectMongo from '@/services/db/connectMongo';
 import { handleApiError } from '@/helpers/errorHelpers';
-import { ACTION_TYPES } from '@/constants/api';
+import { ACTIONS } from '@/constants/common';
 import { sendEmailLink } from '@/services/auth/sendEmailLink';
 
 // POST: /api/v1/auth/send-password-reset-link
@@ -15,18 +15,18 @@ export async function POST(Request) {
     // connect to the database
     await connectMongo();
 
-    const actionType = ACTION_TYPES.FORGOT_PASSWORD;
+    const actionType = ACTIONS.FORGOT_PASSWORD;
     const statusCode = await sendEmailLink(email, actionType);
 
     return Response.json(
       {
-        statusText: `Password reset link has been sent to ${email}`,
+        message: `Password reset link has been sent to ${email}`,
       },
       { status: statusCode ?? 200 }
     );
   } catch (error) {
-    const { statusText, status } = handleApiError(error);
+    const { message, status } = handleApiError(error);
 
-    return Response.json({ statusText }, { status });
+    return Response.json({ message }, { status });
   }
 }

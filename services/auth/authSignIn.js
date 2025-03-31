@@ -6,7 +6,7 @@ import connectMongo from '@/services/db/connectMongo';
 import { findUser, findUserVerifiedEmail } from '../user/userQueries';
 import User from '@/models/userModel';
 import Token from '@/models/tokenModel';
-import { ACTION_TYPES, ROLES } from '@/constants/api';
+import { ACTIONS, ROLES } from '@/constants/common';
 
 export function constructUserObject({
   _id,
@@ -32,7 +32,7 @@ export function constructUserObject({
 }
 
 async function handleSignInCredentials(email, password, pathname) {
-  // connect to database
+  // Connect to database
   await connectMongo();
   const userExists = await findUser({ email, password });
 
@@ -42,40 +42,49 @@ async function handleSignInCredentials(email, password, pathname) {
 
   const isAdmin = userExists.role === ROLES.ADMIN;
   const passwordLess = userExists.password === '';
+  const isSuspended = userExists.status === 'suspended';
 
   const primaryEmail = userExists.email.find((e) => e.isPrimary === true);
-  const isPrimaryEmail = primaryEmail.email === email;
+  const isPrimaryEmail = primaryEmail?.email === email; // Ensure primaryEmail exists
   const isVerified = await findUserVerifiedEmail(email);
 
+  // 1. Check if the user is trying to access the admin panel but is not an admin
   if (pathname.startsWith('/admin') && !isAdmin) {
     throw new Error('This account is not allowed to sign in as Administrator.');
   }
 
+  // 2. Check if the user's email is verified
   if (!isVerified) {
     throw new Error(
       'Email must be verified. Please check your inbox for the verification email.'
     );
-  } else if (passwordLess && isPrimaryEmail) {
-    throw new Error(
-      `Please use the ${userExists.accountProvider} sign-in method`
-    );
-  } else if (passwordLess && !isPrimaryEmail) {
+  }
+
+  // 3. Check if the account is password-less and enforce proper authentication method
+  if (passwordLess) {
+    if (isPrimaryEmail) {
+      throw new Error(
+        `Please use the ${userExists.accountProvider} sign-in method.`
+      );
+    }
     throw new Error('Invalid Credentials');
   }
 
-  const passwordsMatch = await compare(password, userExists.password);
+  // 4. Check if the account is suspended
+  if (isSuspended) {
+    throw new Error('Your account has been suspended. Please contact support.');
+  }
 
+  // 5. Validate the password
+  const passwordsMatch = await compare(password, userExists.password);
   if (!passwordsMatch) {
     throw new Error('Invalid Credentials');
   }
 
+  // 6. Update account provider and return user object
   await User.updateOne(
     { 'email.email': email },
-    {
-      $set: {
-        accountProvider: 'credentials',
-      },
-    }
+    { $set: { accountProvider: 'credentials' } }
   );
 
   return constructUserObject(userExists);
@@ -99,10 +108,8 @@ async function handleSignInEmail(email, token, action) {
     throw new Error('Invalid or expired sign-in link.');
   }
 
- 
-
   const getEmail = userTokenExists.email.find((e) => e.email === email);
-  const verifiedOnce = getEmail.requestCount >= 1;
+  const verifiedOnce = getEmail.requestCount > 1;
 
   if (verifiedOnce) {
     throw new Error('Invalid or expired sign-in link.');
@@ -118,7 +125,7 @@ async function handleSignInEmail(email, token, action) {
     );
   };
 
-  if (action === ACTION_TYPES.SIGNIN) {
+  if (action === ACTIONS.SIGNIN) {
     await User.updateOne(
       { 'email.email': email },
       {
@@ -129,7 +136,7 @@ async function handleSignInEmail(email, token, action) {
     );
 
     await incrementRequestCount();
-  } else if (action === ACTION_TYPES.SIGNUP) {
+  } else if (action === ACTIONS.SIGNUP) {
     // Set isVerified to true for the newly signed-up user
     await User.updateOne(
       { 'email.email': email },
@@ -151,6 +158,12 @@ async function handleSignInOAuth(user, account) {
   // connect to database
   await connectMongo();
   const userExists = await findUser({ email: user.email });
+
+  const isSuspended = userExists.status === 'suspended';
+
+  if (isSuspended) {
+    throw new Error('Your account has been suspended. Please contact support.');
+  }
 
   const [firstName, lastName] = user?.name.split(' ');
 

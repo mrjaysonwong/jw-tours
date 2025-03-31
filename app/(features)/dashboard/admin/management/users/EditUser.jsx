@@ -2,15 +2,32 @@
 import { useState } from 'react';
 import { useParams } from 'next/navigation';
 import { Typography } from '@mui/material';
+import PermIdentityIcon from '@mui/icons-material/PermIdentity';
+import BadgeOutlinedIcon from '@mui/icons-material/BadgeOutlined';
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 
 // internal imports
 import { useAdminUserData } from '@/hooks/useUserData';
 import { UserDetailsProvider } from '@/contexts/UserProvider';
 import CustomTab from '@/components/tabs/CustomTab';
-import { useMessageStore } from '@/stores/messageStore';
-import AlertMessage from '@/components/alerts/AlertMessage';
+import { adminEditUserTabComponents } from '@/config/componentMapping';
 import CustomError from '@/components/errors/CustomError';
 import LoadingSpinner from '@/components/loaders/LoadingSpinner';
+
+const tabContent = [
+  {
+    icon: <PermIdentityIcon />,
+    label: 'Personal Details',
+  },
+  {
+    icon: <BadgeOutlinedIcon />,
+    label: 'Contact Information',
+  },
+  {
+    icon: <LockOutlinedIcon />,
+    label: 'Security',
+  },
+];
 
 const UserDetails = () => {
   const [value, setValue] = useState(0);
@@ -19,7 +36,7 @@ const UserDetails = () => {
   const {
     data: user,
     isLoading,
-    adminRefetch,
+    refetch,
     isError,
     error,
   } = useAdminUserData(params.id);
@@ -37,33 +54,30 @@ const UserDetails = () => {
     email: primaryEmail,
     isError,
     error,
-    adminRefetch,
+    refetch,
   };
 
   return (
     <>
       <UserDetailsProvider value={contextValues}>
-        <CustomTab value={value} setValue={setValue} />
+        <CustomTab
+          value={value}
+          setValue={setValue}
+          ariaLabel="edit user tabs"
+          tabContent={tabContent}
+          tabPanelComponents={adminEditUserTabComponents}
+        />
       </UserDetailsProvider>
     </>
   );
 };
 
 const EditUser = () => {
-  const { alert, handleClose } = useMessageStore();
-
   return (
     <>
-      <Typography variant="h5">Edit User</Typography>
+      <Typography variant="h5">Edit</Typography>
 
       <UserDetails />
-
-      <AlertMessage
-        open={alert.open}
-        message={alert.message}
-        severity={alert.severity}
-        onClose={handleClose}
-      />
     </>
   );
 };

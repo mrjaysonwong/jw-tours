@@ -4,13 +4,14 @@ import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
 // internal imports
-import ErrorText from '../errors/ErrorText';
+import ErrorText from '@/components/errors/ErrorText';
 
 const FormInput = ({
   register,
   inputName,
   type,
-  label,
+  label = null,
+  placeholder = null,
   errors,
   showPassword,
   handleShowPassword,
@@ -18,21 +19,47 @@ const FormInput = ({
   showNewPassword,
   handleShowNewPassword,
   defaultValue,
+  multiline = false,
+  maxRows = 1,
+  margin = 'dense',
+  hasAdornment = false,
+  handleChange = () => {},
+  autoComplete = 'on',
+  readOnly = false,
+  isDisabled = false
 }) => {
+  const { ref, onChange, ...restRegister } = register(inputName);
+
   return (
     <>
       {type !== 'password' ? (
-        // destructure and spread register, onChange, onBlur from register object props
         <TextField
-          {...register(inputName)}
+          {...restRegister}
+          inputRef={ref}
           fullWidth
           size="small"
-          margin="dense"
+          margin={margin}
           label={label}
+          placeholder={placeholder}
           name={inputName}
           defaultValue={defaultValue}
+          disabled={isDisabled}
+          onChange={(e) => {
+            onChange(e);
+            handleChange?.(e);
+          }}
           error={!!errors}
-          autoComplete="on"
+          autoComplete={autoComplete}
+          multiline={multiline}
+          maxRows={maxRows}
+          InputProps={{
+            startAdornment: hasAdornment && (
+              <InputAdornment position="start">$</InputAdornment>
+            ),
+          }}
+          inputProps={{
+            readOnly,
+          }}
         />
       ) : (
         <TextField

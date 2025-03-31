@@ -21,6 +21,7 @@ export function EmailTemplate({
   firstName,
   formattedDateString,
   action,
+  isAdmin,
 }) {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
   const isSignUp = action === 'signup';
@@ -30,7 +31,7 @@ export function EmailTemplate({
 
   const links = [
     { href: 'www.facebook.com', label: 'Facebook' },
-    { href: 'www.linkedin.com', label: 'LinkedIn' },
+    { href: 'www.instagram.com', label: 'Instagram' },
     { href: `${baseUrl}/about`, label: 'About Us' },
     { href: `${baseUrl}/contact`, label: 'Contact Us' },
   ];
@@ -84,7 +85,9 @@ export function EmailTemplate({
                 <Heading style={heading}>Hi {firstName},</Heading>
 
                 <Text style={paragraph}>
-                  Please verify your email address with the following code:
+                  Please verify{' '}
+                  {isAdmin ? 'account deletion' : 'your email address'} with the
+                  following code:
                 </Text>
 
                 <Section style={codeContainer}>

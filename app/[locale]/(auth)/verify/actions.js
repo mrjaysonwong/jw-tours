@@ -2,7 +2,7 @@
 
 import { signIn } from '@/auth';
 import { AuthError } from 'next-auth';
-import { STATUS_CODES, ERROR_MESSAGES } from '@/constants/api';
+import { STATUS_CODES, ERROR_MESSAGES } from '@/constants/common';
 
 export async function authenticate(token, email, action) {
   try {

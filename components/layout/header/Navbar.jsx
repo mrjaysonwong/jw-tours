@@ -1,129 +1,56 @@
-// 'use client';
-
-// import { UserDataProvider } from '@/contexts/UserProvider';
-// import Navbar from './Navbar';
-
-// export default function Header() {
-//   return (
-//     <header>
-//       <UserDataProvider>
-//         <Navbar />
-//       </UserDataProvider>
-//     </header>
-//   );
-// }
-
 'use client';
 
 // third-party imports
-import React, { useState, useContext, createContext } from 'react';
+import React, {
+  useState,
+  useContext,
+  createContext,
+  useEffect,
+  useCallback,
+} from 'react';
 import { usePathname } from 'next/navigation';
-import {
-  AppBar,
-  Toolbar,
-  Box,
-  Container,
-  Slide,
-  useScrollTrigger,
-  IconButton,
-} from '@mui/material';
+import { AppBar, Toolbar, Box, IconButton, Container } from '@mui/material';
 import { useTranslations } from 'next-intl';
 import MenuIcon from '@mui/icons-material/Menu';
-import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';
-import NotificationsNoneOutlinedIcon from '@mui/icons-material/NotificationsNoneOutlined';
-import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
-import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
 
 // internal imports
-import {
-  UserSessionContext,
-  UserDataContext,
-  UserDataProvider,
-} from '@/contexts/UserProvider';
+import { UserSessionContext, UserDataContext } from '@/contexts/UserProvider';
 import Logo from './Logo';
+import HideOnScroll from '@/utils/components/HideOnScroll';
 import TopNavLinks from './TopNavLinks';
 import { navLinks } from '@/data/links/navLinks';
 import AuthFormDialog from '@/app/(features)/authentication/AuthFormDialog';
 import { StyledNavIconsContainer } from '@/components/styled/StyledContainers';
 import NavDrawer from './NavDrawer';
-import { useNavDrawerStore } from '@/stores/drawerStore';
+import { useDrawerStore } from '@/stores/drawerStore';
 import { SkeletonCircular } from '@/components/loaders/Skeletons';
-import ProfileMenu from '@/components/menus/ProfileMenu';
 import {
   shouldHideOnAuthPage,
   shouldHideNavLinks,
 } from '@/helpers/pageHelpers';
+import { listenForNotifications } from '@/services/notifications/notificationActions';
+import { useMessageStore } from '@/stores/messageStore';
+import IconButtons from './IconButtons';
+import SessionIconButtons from './SessionIconButtons';
+import { useNotificationStore } from '@/stores/notificationStore';
+import SearchBar from './SearchBar';
 
 export const DialogContext = createContext({});
 
-const HideOnScroll = ({ children }) => {
-  const trigger = useScrollTrigger({ threshold: 200 });
-
-  return (
-    <Slide appear={false} direction="down" in={!trigger}>
-      {children}
-    </Slide>
-  );
-};
-
-export const NavLogo = () => {
-  return (
-    <Box sx={{ mr: 3, my: 1 }}>
-      <Logo />
-    </Box>
-  );
-};
-
-const SessionIconButtons = ({ open }) => (
-  <>
-    <IconButton>
-      <FavoriteBorderOutlinedIcon />
-    </IconButton>
-
-    <IconButton
-      aria-controls={open ? 'cart-drawer' : undefined}
-      aria-haspopup="true"
-      aria-expanded={open ? 'true' : undefined}
-    >
-      <ShoppingCartOutlinedIcon />
-    </IconButton>
-
-    <IconButton
-      aria-controls={open ? 'notifications-drawer' : undefined}
-      aria-haspopup="true"
-      aria-expanded={open ? 'true' : undefined}
-    >
-      <NotificationsNoneOutlinedIcon />
-    </IconButton>
-
-    <ProfileMenu />
-  </>
-);
-
-const IconButtons = ({ handleIconAuthClick }) => (
-  <>
-    <IconButton>
-      <FavoriteBorderOutlinedIcon />
-    </IconButton>
-
-    <IconButton>
-      <ShoppingCartOutlinedIcon />
-    </IconButton>
-
-    <IconButton
-      onClick={handleIconAuthClick}
-      aria-label="open auth dialog tabs, Sign In and Sign Up"
-    >
-      <AccountCircleOutlinedIcon />
-    </IconButton>
-  </>
-);
-
 const Navbar = () => {
-  const [open, setOpen] = useState(false);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const session = useContext(UserSessionContext);
-  const { isLoading } = useContext(UserDataContext);
+
+  const {
+    setNotifications,
+    isNotificationLoading,
+    setIsNotificationLoading,
+    setLastDoc,
+    setHasError,
+  } = useNotificationStore();
+
+  const { isLoading: isSessionLoading } = useContext(UserDataContext);
 
   const pathname = usePathname();
   const isAuthPage = shouldHideOnAuthPage(pathname);
@@ -132,11 +59,76 @@ const Navbar = () => {
   const t = useTranslations('main_nav_links');
   const linksTransLations = navLinks(t);
 
-  const { toggleNavDrawer } = useNavDrawerStore();
+  const { toggleDrawer } = useDrawerStore();
+  const { handleAlertMessage } = useMessageStore();
 
   const handleIconAuthClick = () => {
-    setOpen(true);
+    setIsDialogOpen(true);
   };
+
+  const fetchNotifications = useCallback(() => {
+    if (!session?.user?.id) return;
+
+    const unsubscribed = listenForNotifications(
+      session.user.id,
+      (newNotifications, lastVisible) => {
+        setNotifications(newNotifications);
+        setLastDoc(lastVisible);
+        setIsNotificationLoading(false);
+
+        const newNotification = newNotifications[0];
+
+        if (newNotification) {
+          const currentTime = new Date();
+          const notificationTime = new Date(
+            newNotification.createdAt.seconds * 1000
+          );
+
+          // Calculate the difference in milliseconds
+          const timeDifference = Math.abs(
+            notificationTime.getTime() - currentTime.getTime()
+          );
+
+          const tolerance = 15000;
+
+          if (timeDifference <= tolerance && session.user.role !== 'admin') {
+            handleAlertMessage(
+              newNotification.title,
+              'info',
+              'center',
+              'top',
+              newNotification.template.toUpperCase(),
+              8000
+            );
+          }
+        }
+      },
+      (error) => {
+        handleAlertMessage('Error loading notifications', 'error');
+        setIsNotificationLoading(false);
+        setHasError(true);
+      }
+    );
+
+    return unsubscribed;
+  }, [
+    session,
+    setIsNotificationLoading,
+    handleAlertMessage,
+    setLastDoc,
+    setNotifications,
+    setHasError,
+  ]);
+
+  useEffect(() => {
+    const unsubscribed = fetchNotifications();
+
+    return () => {
+      if (unsubscribed) unsubscribed();
+    };
+  }, [fetchNotifications]);
+
+  const isLoading = isSessionLoading || isNotificationLoading;
 
   if (isAuthPage) {
     return null;
@@ -144,80 +136,74 @@ const Navbar = () => {
 
   return (
     <>
-      <UserDataProvider>
-        <header>
-          <HideOnScroll>
-            <AppBar
-              component="nav"
-              position="fixed"
-              elevation={1}
-              color="inherit"
-            >
-              <Container
+      <header>
+        <HideOnScroll>
+          <AppBar
+            component="nav"
+            position="fixed"
+            elevation={1}
+            color="inherit"
+          >
+            <Container>
+              <Toolbar
                 sx={{
-                  position: 'relative',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
+                  px: { xs: 0, md: 'auto' },
                 }}
               >
-                <Toolbar
+                <Logo />
+
+                {/* <Box
                   sx={{
-                    width: '100vw',
-                    px: { xs: 0, md: 'auto' },
+                    overflowX: 'auto',
+                    display: {
+                      xs: 'none',
+                      md: isMySettingsPage ? 'none' : 'flex',
+                    },
                   }}
                 >
-                  <NavLogo />
+                  <TopNavLinks linksTransLations={linksTransLations} />
+                </Box> */}
 
-                  <Box
+                <Box sx={{ display: { xs: 'none', md: 'block' } }}>
+                  <SearchBar />
+                </Box>
+
+                <StyledNavIconsContainer>
+                  {session ? (
+                    isLoading ? (
+                      <SkeletonCircular w={32} h={32} l={4} />
+                    ) : (
+                      <SessionIconButtons />
+                    )
+                  ) : (
+                    <IconButtons handleIconAuthClick={handleIconAuthClick} />
+                  )}
+
+                  <IconButton
+                    aria-label="open nav drawer"
+                    onClick={() => toggleDrawer('navDrawerOpen', true)}
                     sx={{
-                      overflowX: 'auto',
-                      display: {
-                        xs: 'none',
-                        md: isMySettingsPage ? 'none' : 'flex',
-                      },
+                      display: isMySettingsPage
+                        ? 'none'
+                        : { sm: 'flex', md: 'none' },
                     }}
                   >
-                    <TopNavLinks linksTransLations={linksTransLations} />
-                  </Box>
+                    <MenuIcon />
+                  </IconButton>
+                </StyledNavIconsContainer>
+              </Toolbar>
+            </Container>
+          </AppBar>
+        </HideOnScroll>
+      </header>
 
-                  <StyledNavIconsContainer>
-                    {session ? (
-                      isLoading ? (
-                        <SkeletonCircular w={32} h={32} l={4} />
-                      ) : (
-                        <SessionIconButtons open={open} />
-                      )
-                    ) : (
-                      <IconButtons handleIconAuthClick={handleIconAuthClick} />
-                    )}
+      <NavDrawer linksTransLations={linksTransLations} />
 
-                    <IconButton
-                      aria-label="open nav drawer"
-                      onClick={() => toggleNavDrawer('right', true)}
-                      sx={{
-                        display: isMySettingsPage
-                          ? 'none'
-                          : { sm: 'flex', md: 'none' },
-                      }}
-                    >
-                      <MenuIcon />
-                    </IconButton>
-                  </StyledNavIconsContainer>
-                </Toolbar>
-              </Container>
-            </AppBar>
-          </HideOnScroll>
-        </header>
-
-        <NavDrawer linksTransLations={linksTransLations} />
-
-        {open && !session && (
-          <DialogContext.Provider value={{ open, setOpen }}>
-            <AuthFormDialog />
-          </DialogContext.Provider>
-        )}
-      </UserDataProvider>
+      {isDialogOpen && !session && (
+        <DialogContext.Provider value={{ isDialogOpen, setIsDialogOpen }}>
+          <AuthFormDialog />
+        </DialogContext.Provider>
+      )}
     </>
   );
 };

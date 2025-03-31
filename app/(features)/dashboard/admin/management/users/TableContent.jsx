@@ -19,16 +19,18 @@ import MoreVertMenu from '@/components/menus/MoreVertMenu';
 import { stableSort, getComparator } from '@/utils/sort';
 import { statusLabelColorMap } from '@/utils/colorMap';
 import { StyledUserListTableRow } from '@/components/styled/StyledTableRows';
+import { formatISO } from '@/utils/formats/formatDates';
 
 const headCells = [
   { id: 'lastName', label: 'Name' },
   { id: 'email', label: 'Email' },
   { id: 'role', label: 'Role' },
   { id: 'status', label: 'Status' },
-  { id: 'action', label: 'Action' },
+  { id: 'createdAt', label: 'Date Created' },
+  { id: 'actions', label: 'Actions' },
 ];
 
-const noSortColumns = ['Email', 'Action'];
+const noSortColumns = ['Email', 'Actions'];
 
 const EnhancedTableHead = React.memo(
   ({
@@ -44,7 +46,7 @@ const EnhancedTableHead = React.memo(
     };
 
     return (
-      <TableHead sx={{ background: '#a9a9a91a' }}>
+      <TableHead>
         <TableRow sx={{ th: { border: 'none' } }}>
           <TableCell padding="checkbox">
             <Checkbox
@@ -65,6 +67,7 @@ const EnhancedTableHead = React.memo(
               <TableCell
                 key={headCell.id}
                 sortDirection={orderBy === headCell.id ? order : false}
+                sx={{ whiteSpace: 'nowrap' }}
               >
                 {!shouldHide ? (
                   <TableSortLabel
@@ -99,6 +102,7 @@ const TableContent = ({
   users,
   filteredUsers,
   selected,
+  value,
   order,
   orderBy,
   handleRequestSort,
@@ -115,13 +119,13 @@ const TableContent = ({
   }, [filteredUsers, order, orderBy]);
 
   return (
-    <Table sx={{ minWidth: 650 }} aria-label="user list table">
+    <Table stickyHeader sx={{ minWidth: 650 }} aria-label="user list table">
       <EnhancedTableHead
         numSelected={selected.size}
         order={order}
         orderBy={orderBy}
         onRequestSort={handleRequestSort}
-        rowCount={users.length}
+        rowCount={value === 0 ? users.length : filteredUsers.length}
         onSelectAllClick={onSelectAllClick}
       />
       <TableBody>
@@ -181,7 +185,11 @@ const TableContent = ({
               </TableCell>
 
               <TableCell id={labelId} scope="row">
-                <MoreVertMenu menuType="table-users" userId={row._id} />
+                <span>{formatISO(row.createdAt)}</span>
+              </TableCell>
+
+              <TableCell id={labelId} scope="row">
+                <MoreVertMenu menuType="users-table" id={row._id} />
               </TableCell>
             </StyledUserListTableRow>
           );

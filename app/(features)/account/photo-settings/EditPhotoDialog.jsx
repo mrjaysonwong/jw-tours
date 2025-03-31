@@ -18,10 +18,10 @@ import axios from 'axios';
 // internal imports
 import { useProfilePhotoContext } from '@/contexts/ProfilePhotoProvider';
 import { useMessageStore } from '@/stores/messageStore';
-import { getCroppedImg } from '@/helpers/profile-photo/getCroppedImg';
+import { getCroppedImg } from '@/helpers/images/getCroppedImg';
 import { errorHandler } from '@/helpers/errorHelpers';
-import { emptyFileInput } from '@/helpers/profile-photo/emptyFileInput';
-import { API_URLS } from '@/constants/api';
+import { emptyFileInput } from '@/helpers/images/emptyFileInput';
+import { API_URLS } from '@/config/apiRoutes';
 
 const EditPhotoDialog = ({
   setEditDialogOpen,
@@ -30,7 +30,7 @@ const EditPhotoDialog = ({
 }) => {
   const params = useParams();
 
-  const { userId, refetch, adminRefetch } = useProfilePhotoContext();
+  const { userId, refetch } = useProfilePhotoContext();
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [status, setStatus] = useState('');
@@ -86,15 +86,12 @@ const EditPhotoDialog = ({
       setEditDialogOpen(false);
       setIsSubmitting(false);
 
-      if (params.id) {
-        adminRefetch();
-      } else {
-        refetch();
+      if (!params.id) {
         // Trigger update session
         update({});
       }
-
-      handleAlertMessage(data.statusText, 'success');
+      refetch();
+      handleAlertMessage(data.message, 'success');
     } catch (error) {
       const { status } = errorHandler(error);
       handleAlertMessage('An error occured. Try again.', 'error');

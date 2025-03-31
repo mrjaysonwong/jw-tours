@@ -7,13 +7,14 @@ import {
   findUserPhoneNumber,
 } from '@/services/user/userQueries';
 import { handleRateLimitError, HttpError } from '@/helpers/errorHelpers';
-import { STATUS_CODES } from '@/constants/api';
+import { STATUS_CODES } from '@/constants/common';
 import { rateLimiter } from '@/services/rate-limiter/rateLimiter';
 import { createOrUpdateOTP } from '@/services/otp/createOrUpdateOTP';
 import { formatDate } from '@/utils/formats/formatDates';
 import { sendEmail } from '@/services/email/sendEmail';
 import { sendSMS } from '@/services/sms/sendSMS';
 import { EmailTemplate } from '@/templates/EmailTemplate';
+import { ACTIONS } from '@/constants/common';
 
 function validateMaxContactLimit({ email, phone }) {
   const resource = email ? 'emails' : 'numbers';
@@ -50,14 +51,12 @@ export async function sendEmailOTP({ email: userEmail, userId, userExists }) {
 
     const formattedDateString = formatDate(epochTimeExpires);
 
-    const action = 'gen-otp';
-
     const emailHtml = render(
       <EmailTemplate
         otp={otp}
         firstName={firstName}
         formattedDateString={formattedDateString}
-        action={action}
+        action={ACTIONS.GEN_OTP}
       />
     );
 
@@ -98,15 +97,19 @@ export async function sendMobileOTP({ requestData, userId, userExists }) {
 
     await rateLimiter.consume(outbound, 1);
 
-    const { otp, statusCode } = await createOrUpdateOTP({
-      userId,
-      dialCode,
-      phoneNumber,
-    });
+       /* discontinue, currently using firebase otp */
+    // const { otp, statusCode } = await createOrUpdateOTP({
+    //   userId,
+    //   dialCode,
+    //   phoneNumber,
+    // });
 
-    await sendSMS({ outbound, otp });
+    // await sendSMS({ outbound, otp });
 
-    return statusCode;
+    // return statusCode;
+    const statusCode = 200;
+
+      return statusCode;
   } catch (error) {
     handleRateLimitError(error);
 

@@ -1,44 +1,68 @@
 // internal imports
-import { validateSession } from '@/validation/validateSesssion';
+import { validateSessionAndUser } from '@/services/auth/validateSessionAndUser';
 import { preferencesSchema } from '@/validation/yup/user/preferencesSchema';
 import { handleApiError } from '@/helpers/errorHelpers';
-import connectMongo from '@/services/db/connectMongo';
 import User from '@/models/userModel';
-import { findUserById } from '@/services/user/userQueries';
+import { subscribeToNewsletter } from '@/services/user/subscription';
 
 // PATCH: /api/v1/users/[id]/preferences
 export async function PATCH(Request, { params }) {
   const userId = params.id;
 
   try {
-    await validateSession();
-
     const formData = await Request.json();
+    const isSubscribed = formData.subscription.isSubscribed === true;
 
     await preferencesSchema.validate({ ...formData }, { abortEarly: false });
 
-    // connect to database
-    await connectMongo();
+    const projection = 'subscription';
+    const { session, userExists } = await validateSessionAndUser(
+      userId,
+      projection
+    );
 
-    await findUserById(userId);
+    // Get the IP Address
+    const ipAddress =
+      Request.headers.get('x-forwarded-for')?.split(',')[0] ||
+      Request.headers.get('cf-connecting-ip') ||
+      Request.headers.get('x-real-ip') ||
+      Request.socket?.remoteAddress ||
+      '0.0.0.0';
+
+    const validIp =
+      ipAddress === '::1' || ipAddress === '127.0.0.1' ? '0.0.0.0' : ipAddress;
+
+    const { updatedUser } = await subscribeToNewsletter(
+      isSubscribed,
+      userId,
+      session,
+      userExists,
+      validIp
+    );
 
     // Abstract functions if will add more preferences
     const updatedPreferences = await User.findOneAndUpdate(
       { _id: userId },
-      { $set: formData },
+      {
+        $set: {
+          langCode: formData.langCode,
+          'subscription.isSubscribed': formData.subscription.isSubscribed,
+          'subscription.subscriberId': updatedUser?.subscription?.subscriberId,
+        },
+      },
       { new: true }
-    ).select('langCode');
+    ).select('langCode subscription');
 
     return Response.json(
       {
-        statusText: 'Successfully Updated',
+        message: 'Successfully Updated',
         langCode: updatedPreferences.langCode,
       },
       { status: 200 }
     );
   } catch (error) {
-    const { statusText, status } = handleApiError(error);
+    const { message, status } = handleApiError(error);
 
-    return Response.json({ statusText }, { status });
+    return Response.json({ message }, { status });
   }
 }

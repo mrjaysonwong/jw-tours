@@ -38,7 +38,7 @@ import twilio from 'twilio';
 //   }
 // };
 
-/* Twilio.com
+/* Twilio.com for production, CPsms vary on locations
 # minimun balance between $20 and $2000
 */
 
@@ -58,7 +58,7 @@ export const sendSMS = async ({ otp }) => {
       to: '+639089694134',
     });
 
-    // console.log('Twilio info', message);
+    console.log('Twilio info', message);
     console.log('Twilio info body:', message.body);
   } catch (error) {
     console.error('Twilio SMS error:', error);

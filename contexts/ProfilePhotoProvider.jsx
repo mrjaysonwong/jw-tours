@@ -2,7 +2,7 @@
 
 import { createContext, useContext } from 'react';
 
-export const ProfilePhotoContext = createContext(null);
+export const ProfilePhotoContext = createContext(undefined);
 
 export const ProfilePhotoProvider = ({ value, children }) => {
   return (

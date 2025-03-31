@@ -1,7 +1,7 @@
 // internal imports
 import User from '@/models/userModel';
 import { HttpError } from '@/helpers/errorHelpers';
-import { STATUS_CODES } from '@/constants/api.js';
+import { STATUS_CODES } from '@/constants/common.js';
 import cloudinary from '@/services/cloudinary';
 
 export async function deleteProfilePhoto(userId, userExists) {

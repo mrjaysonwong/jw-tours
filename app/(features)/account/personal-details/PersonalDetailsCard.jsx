@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
-import { Card, Grid, Box, Typography, Button } from '@mui/material';
+import { Card, Grid, Box, Button } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 
 // internal imports
 import { useUserDetailsContext } from '@/contexts/UserProvider';
 import { useUserSessionContext } from '@/contexts/UserProvider';
-import { StyledItemContainer } from '@/components/styled/StyledContainers.js';
 import EditDetailsDialog from '@/app/(features)/account/personal-details/EditDetailsDialog';
+import GridItem from '@/components/grid/GridItem';
 
 const PersonalDetailsCard = () => {
-  const [open, setOpen] = useState(false);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const { user } = useUserDetailsContext();
   const session = useUserSessionContext();
   const isAdmin = session.user.role === 'admin';
@@ -17,9 +17,12 @@ const PersonalDetailsCard = () => {
   const fullName = `${user?.firstName} ${user?.lastName}`;
   const address = user?.address;
 
-  const street = address?.street;
-  const homeTown = address?.homeTown;
-  const postalCode = address?.postalCode;
+  const name = address?.name;
+  const neighbourhood = address?.neighbourhood;
+  const city = address?.city;
+  const state = address?.state;
+  const postcode = address?.postcode;
+  const country = address?.country;
 
   const DOB = user?.dateOfBirth
     ? new Date(user?.dateOfBirth).toLocaleDateString('en-US', {
@@ -27,10 +30,10 @@ const PersonalDetailsCard = () => {
         month: 'long',
         day: 'numeric',
       })
-    : 'Not Provided';
+    : 'Not provided';
 
   const handleEditClick = () => {
-    setOpen(true);
+    setIsDialogOpen(true);
   };
 
   return (
@@ -48,84 +51,43 @@ const PersonalDetailsCard = () => {
         </Box>
 
         <Grid container>
-          <StyledItemContainer>
-            <Grid item xs={12} md={6}>
-              <Typography>Full Name</Typography>
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <Typography sx={{ textTransform: 'capitalize' }}>
-                {fullName}
-              </Typography>
-            </Grid>
-          </StyledItemContainer>
+          <GridItem label="Full Name" textData={fullName} />
 
-          {isAdmin && (
-            <StyledItemContainer>
-              <Grid item xs={12} md={6}>
-                <Typography>Role</Typography>
-              </Grid>
-              <Grid item xs={12} md={6}>
-                <Typography sx={{ textTransform: 'capitalize' }}>
-                  {user.role}
-                </Typography>
-              </Grid>
-            </StyledItemContainer>
-          )}
+          {isAdmin && <GridItem label="Role" textData={user.role} />}
 
-          <StyledItemContainer>
-            <Grid item xs={12} md={6}>
-              <Typography>Gender</Typography>
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <Typography
-                sx={{
-                  ':first-letter': {
-                    textTransform: 'uppercase',
-                  },
-                }}
-              >
-                {user?.gender ? user?.gender : 'Not Provided'}
-              </Typography>
-            </Grid>
-          </StyledItemContainer>
+          <GridItem label="Gender" textData={user.gender || 'Not provided'} />
 
-          <StyledItemContainer>
-            <Grid item xs={12} md={6}>
-              <Typography>Date of Birth</Typography>
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <Typography>{DOB}</Typography>
-            </Grid>
-          </StyledItemContainer>
+          <GridItem label="Date of Birth" textData={DOB} />
 
-          <StyledItemContainer>
-            <Grid item xs={12} md={6}>
-              <Typography>Nationality</Typography>
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <Typography>
-                {user?.nationality ? user?.nationality : 'Not Provided'}
-              </Typography>
-            </Grid>
-          </StyledItemContainer>
+          <GridItem
+            label="Nationality"
+            textData={user.nationality || 'Not provided'}
+          />
 
-          <StyledItemContainer>
-            <Grid item xs={12} md={6}>
-              <Typography>Address</Typography>
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <Typography>
-                {address
-                  ? [street, homeTown, postalCode].filter(Boolean).join(', ') ||
-                    'Not Provided'
-                  : 'Not Provided'}
-              </Typography>
-            </Grid>
-          </StyledItemContainer>
+          <GridItem
+            label={user.languages.length > 1 ? 'Languages' : 'Language'}
+            textData={user.languages.join(', ') || 'Not provided'}
+          />
+
+          <GridItem
+            label="Address"
+            textData={
+              address
+                ? [name, neighbourhood, city, state, postcode, country]
+                    .filter(Boolean)
+                    .join(', ') || 'Not provided'
+                : 'Not provided'
+            }
+          />
         </Grid>
       </Card>
 
-      {open && <EditDetailsDialog open={open} setOpen={setOpen} />}
+      {isDialogOpen && (
+        <EditDetailsDialog
+          isDialogOpen={isDialogOpen}
+          setIsDialogOpen={setIsDialogOpen}
+        />
+      )}
     </>
   );
 };

@@ -2,7 +2,7 @@ import { emailSchema } from '@/validation/yup/user/contactDetailsSchema';
 import connectMongo from '@/services/db/connectMongo';
 import { handleApiError } from '@/helpers/errorHelpers';
 import { sendEmailLink } from '@/services/auth/sendEmailLink';
-import { ACTION_TYPES } from '@/constants/api';
+import { ACTIONS } from '@/constants/common';
 
 // POST: /api/v1/auth/send-signin-email-link
 export async function POST(Request) {
@@ -18,18 +18,18 @@ export async function POST(Request) {
     // connect to the database
     await connectMongo();
 
-    const actionType = ACTION_TYPES.SIGNIN;
+    const actionType = ACTIONS.SIGNIN;
     const statusCode = await sendEmailLink(email, actionType, callbackUrl);
 
     return Response.json(
       {
-        statusText: `A sign-in link has been sent to ${email}`,
+        message: `A sign-in link has been sent to ${email}`,
       },
       { status: statusCode ?? 200 }
     );
   } catch (error) {
-    const { statusText, status } = handleApiError(error);
+    const { message, status } = handleApiError(error);
 
-    return Response.json({ statusText }, { status });
+    return Response.json({ message }, { status });
   }
 }

@@ -1,39 +1,26 @@
 import { HttpError, handleApiError } from '@/helpers/errorHelpers';
-import { STATUS_CODES } from '@/constants/api';
+import { STATUS_CODES } from '@/constants/common';
 import { getLocalMessage } from '@/helpers/errorHelpers';
 
 // GET: /api/v1/places
 export async function GET(Request) {
   const searchParams = Request.nextUrl.searchParams;
-  const namePrefix = searchParams.get('namePrefix');
+  const searchString = searchParams.get('searchString');
 
   try {
-    if (!namePrefix) {
+    if (!searchString) {
       throw new HttpError({
-        message: getLocalMessage('Missing parameter namePrefix.'),
+        message: getLocalMessage('Missing parameter search string.'),
         status: STATUS_CODES.BAD_REQUEST,
       });
     }
 
-    const externalUrl = `https://wft-geo-db.p.rapidapi.com/v1/geo/places`;
+    const apiKey = process.env.LOCATION_IQ_API_KEY;
+    const options = { method: 'GET', headers: { accept: 'application/json' } };
 
-    const options = {
-      method: 'GET',
-      headers: {
-        'X-RapidAPI-Key': process.env.RAPID_API_KEY,
-        'X-RapidAPI-Host': process.env.RAPID_API_HOST,
-      },
-    };
+    const externalUrl = `https://api.locationiq.com/v1/autocomplete?key=${apiKey}&q=${searchString}&accept-language=en`;
 
-    const queryParams = new URLSearchParams({
-      namePrefix: namePrefix,
-      limit: 10,
-      sort: '-population',
-    }).toString();
-
-    const url = `${externalUrl}?${queryParams}`;
-
-    const res = await fetch(url, options);
+    const res = await fetch(externalUrl, options);
 
     if (!res.ok) {
       throw new HttpError({
@@ -44,12 +31,10 @@ export async function GET(Request) {
 
     const data = await res.json();
 
-    const result = data.data;
-
-    return Response.json(result, { status: 200 });
+    return Response.json(data, { status: 200 });
   } catch (error) {
-    const { statusText, status } = handleApiError(error);
+    const { message, status } = handleApiError(error);
 
-    return Response.json({ statusText }, { status });
+    return Response.json({ message }, { status });
   }
 }

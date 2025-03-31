@@ -2,13 +2,12 @@ import { useState } from 'react';
 import {
   Card,
   CardContent,
-  CardActions,
   Box,
   Typography,
   IconButton,
   Switch,
-  Button,
 } from '@mui/material';
+import axios from 'axios';
 
 // internal imports
 import { ProfilePhotoProvider } from '@/contexts/ProfilePhotoProvider';
@@ -19,7 +18,9 @@ import {
 import ProfileAvatar from '@/components/images/ProfileAvatar';
 import { ProfilePhotoDialog } from '@/app/(features)/account/photo-settings';
 import { statusLabelColorMap } from '@/utils/colorMap';
-
+import { API_URLS } from '@/config/apiRoutes';
+import { errorHandler } from '@/helpers/errorHelpers';
+import { useMessageStore } from '@/stores/messageStore';
 
 const StatusBadge = ({ userStatus, color, alphaColor }) => (
   <Box sx={{ textAlign: 'right' }}>
@@ -32,7 +33,7 @@ const StatusBadge = ({ userStatus, color, alphaColor }) => (
         display: 'inline-block',
         fontWeight: 500,
         color: color,
-        textTransform: 'capitalize',
+        textTransform: 'uppercase',
       }}
     >
       {userStatus}
@@ -52,58 +53,89 @@ const ProfileAvatarSection = ({ user, onPhotoClick }) => (
   </Box>
 );
 
-// admin permission toggle switch
-// suspended
+// user permission toggle switch
+// deactivate account and delete account
 
 // user permission toggle switch
-// deactivate account
+// public/private profile set profile photo as fallback
 
-// user permission toggle switch
-// public profile
+const AccountSwitch = ({ isAdmin }) => {
+  const { userId, user, refetch } = useUserDetailsContext();
+  const isSuspended = user.status === 'suspended';
+  const [checked, setChecked] = useState(isSuspended);
 
-// admin authorize delete user
+  const { handleAlertMessage } = useMessageStore();
 
-const AccountSwitch = ({ isAdmin }) => (
-  <Box sx={{ my: 2 }}>
-    <Typography>{isAdmin ? 'Suspended' : 'Activity Status'}</Typography>
-    <Box
-      sx={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-      }}
-    >
-      <Typography variant="body2" sx={{ color: 'grey' }}>
-        {isAdmin ? 'Apply disable account' : 'Public Profile'}
-      </Typography>
+  const renderStatusText = checked ? 'Suspended' : 'Suspend';
 
-      <Switch
-        inputProps={{ id: 'toggle-switch', 'aria-label': 'toggle switch' }}
-      />
+  const handleChange = (event) => {
+    setChecked(event.target.checked);
+    handleSubmit(event.target.checked);
+  };
+
+  const handleSubmit = async (newCheckedValue) => {
+    try {
+      const url = `${API_URLS.ADMIN}/users/${userId}/suspend`;
+
+      const { data } = await axios.patch(url, { formChecked: newCheckedValue });
+
+      refetch();
+      handleAlertMessage(data.message, 'success');
+    } catch (error) {
+      const { errorMessage } = errorHandler(error);
+      setChecked((prev) => !prev);
+      handleAlertMessage(errorMessage, 'error');
+    }
+  };
+
+  return (
+    <Box sx={{ my: 2 }}>
+      <Typography>{isAdmin ? renderStatusText : 'Activity Status'}</Typography>
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+        }}
+      >
+        <Typography variant="body2" sx={{ color: 'grey' }}>
+          {isAdmin ? 'Apply disable account' : 'Public Profile'}
+        </Typography>
+
+        <form>
+          <Switch
+            checked={checked}
+            onChange={handleChange}
+            inputProps={{
+              id: 'suspend-switch',
+              'aria-label': 'switch form',
+            }}
+          />
+        </form>
+      </Box>
     </Box>
-  </Box>
-);
+  );
+};
 
 const AccountManagementCard = () => {
-  const { userId, user, refetch, adminRefetch } = useUserDetailsContext();
+  const { userId, user, refetch } = useUserDetailsContext();
   const session = useUserSessionContext();
   const isAdmin = session.user.role === 'admin';
 
-  const [open, setOpen] = useState(false);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const contextValues = {
     userId,
     user,
     refetch,
-    adminRefetch,
-    open,
-    setOpen,
+    isDialogOpen,
+    setIsDialogOpen,
   };
 
-  const statusColor = statusLabelColorMap[user?.status] || '';
+  const statusColor = statusLabelColorMap[user.status] || '';
 
   const handleProfilePhotoClick = () => {
-    setOpen(true);
+    setIsDialogOpen(true);
   };
 
   return (
@@ -112,7 +144,7 @@ const AccountManagementCard = () => {
         <CardContent>
           {isAdmin && (
             <StatusBadge
-              userStatus={user?.status}
+              userStatus={user.status}
               color={statusColor.color}
               alphaColor={statusColor.alphaColor}
             />
@@ -124,12 +156,6 @@ const AccountManagementCard = () => {
           />
 
           <AccountSwitch isAdmin={isAdmin} />
-
-          {isAdmin && (
-            <CardActions sx={{ justifyContent: 'center' }}>
-              <Button variant="contained">Delete User</Button>
-            </CardActions>
-          )}
         </CardContent>
       </Card>
 

@@ -13,6 +13,7 @@ export const slides = [
     subHeader:
       'Explore historical landmarks that tell the stories of our rich past and cultural heritage.',
     icon: <MosqueOutlinedIcon />,
+    featured: true,
   },
   {
     id: '1',

@@ -7,7 +7,7 @@ const FormSubmitButton = ({
   fullWidth,
   captcha,
   isSubmitSuccessful,
-  notSixDigits,
+  notEnteredAllDigits,
 }) => {
   return (
     <>
@@ -33,9 +33,18 @@ const FormSubmitButton = ({
           <Button
             variant="contained"
             type="submit"
-            disabled={isSubmitting || captcha || notSixDigits}
+            disabled={isSubmitting || captcha || notEnteredAllDigits}
+            sx={{ ml: 'auto' }}
           >
-            {isSubmitting ? <CircularProgress size="1.5rem" /> : label}
+            {isSubmitting ? (
+              <CircularProgress
+                aria-describedby="loading"
+                aria-busy={true}
+                size="1.5rem"
+              />
+            ) : (
+              label
+            )}
           </Button>
         </>
       )}

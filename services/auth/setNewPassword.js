@@ -5,17 +5,24 @@ import { hash } from 'bcryptjs';
 import Token from '@/models/tokenModel';
 import User from '@/models/userModel';
 import { HttpError } from '@/helpers/errorHelpers';
-import { STATUS_CODES } from '@/constants/api';
+import { STATUS_CODES } from '@/constants/common';
 
 export async function setNewPassword(formData, authToken) {
   try {
     const tokenExists = await Token.findOne({
       'email.token': authToken,
-    }).select('userId email.$');
+    }).select('userId email.$ requestCount');
 
     if (!tokenExists) {
       throw new HttpError({
         message: 'Invalid token or has expired. Please request a new link.',
+        status: STATUS_CODES.BAD_REQUEST,
+      });
+    }
+
+    if (tokenExists.email[0].requestCount > 1) {
+      throw new HttpError({
+        message: 'Password has been already updated.',
         status: STATUS_CODES.BAD_REQUEST,
       });
     }
@@ -35,8 +42,6 @@ export async function setNewPassword(formData, authToken) {
         $inc: { 'email.$.requestCount': 1 },
       }
     );
-
-    return authToken;
   } catch (error) {
     throw error;
   }

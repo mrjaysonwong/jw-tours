@@ -11,6 +11,7 @@ const errorKeyWords = [
   'not allowed to sign in',
   'Email must be verified',
   'Invalid Credentials',
+  'suspended'
 ];
 
 export async function authenticate(formData, pathname) {

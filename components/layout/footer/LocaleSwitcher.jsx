@@ -25,9 +25,7 @@ const LocaleSwitcher = () => {
 
   const handleChange = (e) => {
     const langCode = e.target.value;
-    startTransition(() => {
-      router.replace(pathname, { locale: langCode });
-    });
+    router.replace(pathname, { locale: langCode });
   };
 
   useEffect(() => {
@@ -51,7 +49,6 @@ const LocaleSwitcher = () => {
             'aria-label': 'select-language',
             name: 'select-language',
           }}
-          sx={{ height: '2rem' }}
         >
           <MenuItem value="en">English</MenuItem>
           <MenuItem value="fr">Français</MenuItem>
@@ -68,7 +65,10 @@ const LocaleSwitcher = () => {
               'aria-label': 'session language',
               name: 'session-language',
             }}
-            sx={{ height: '2rem', pointerEvents: 'none', cursor: 'pointer' }}
+            sx={{
+              pointerEvents: 'none',
+              cursor: 'pointer',
+            }}
           >
             <MenuItem value={defaultLocale}>
               {LOCALE_MAP[defaultLocale]}

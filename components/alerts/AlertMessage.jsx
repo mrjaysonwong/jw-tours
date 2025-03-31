@@ -1,5 +1,5 @@
 import { forwardRef } from 'react';
-import { Alert as MuiAlert, Snackbar } from '@mui/material';
+import { Alert as MuiAlert, Snackbar, AlertTitle } from '@mui/material';
 
 const Alert = forwardRef(function Alert(props, ref) {
   return <MuiAlert {...props} ref={ref} elevation={2} variant="filled" />;
@@ -10,10 +10,11 @@ const AlertMessage = ({
   onClose,
   message,
   severity,
-  x = 'left',
+  x = 'left', 
   y = 'bottom',
+  title,
+  duration = 4000,
 }) => {
-  
   const ariaAttributes = {
     'aria-live': 'assertive',
     'aria-atomic': 'true',
@@ -25,7 +26,7 @@ const AlertMessage = ({
       <Snackbar
         open={open}
         anchorOrigin={{ horizontal: x, vertical: y }}
-        autoHideDuration={5000}
+        autoHideDuration={duration}
         onClose={onClose}
       >
         <Alert
@@ -34,6 +35,7 @@ const AlertMessage = ({
           {...ariaAttributes}
           sx={{ color: 'white' }}
         >
+          {severity === 'info' && <AlertTitle>{title}</AlertTitle>}
           {message}
         </Alert>
       </Snackbar>

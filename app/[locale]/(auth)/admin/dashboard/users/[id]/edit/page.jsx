@@ -1,5 +1,7 @@
 import { auth } from '@/auth';
 import { redirect } from 'next/navigation';
+
+// internal imports
 import AdminDashboard from '@/app/(features)/dashboard/admin/AdminDashboard';
 
 export const metadata = {
@@ -14,5 +16,5 @@ export default async function UserEditPage() {
     redirect('/admin/signin');
   }
 
-  return <AdminDashboard />;
+  return <AdminDashboard slug="users" />;
 }

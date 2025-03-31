@@ -16,7 +16,7 @@ import ProfileAvatar from '@/components/images/ProfileAvatar';
 
 const ProfilePhotoContent = ({
   handleAddClick,
-  handleOnClose,
+  handleClose,
   handleDeleteClick,
 }) => {
   const { user } = useProfilePhotoContext();
@@ -27,7 +27,7 @@ const ProfilePhotoContent = ({
       <Box sx={{ display: 'flex', position: 'relative' }}>
         <DialogTitle>Profile Photo</DialogTitle>
         <IconButton
-          onClick={handleOnClose}
+          onClick={handleClose}
           sx={{ position: 'absolute', right: 10, top: 10 }}
         >
           <CloseIcon />

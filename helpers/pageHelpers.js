@@ -17,7 +17,7 @@ const isAuthPage = (pathname) => {
     '/resend-verification',
     '/reset-password',
     '/verify',
-    '/notifications',
+    '/notifications/authentication-failed',
     '/error',
     '/admin',
     '/partners',
@@ -31,17 +31,17 @@ export function shouldHideOnAuthPage(pathname) {
   const hasLocale = isLocalePath(pathname);
   const strippedPathname = stripLocale(pathname);
 
-  return isAuthPage(pathname) || (hasLocale && isAuthPage(strippedPathname));
+  return isAuthPage(pathname) || isAuthPage(strippedPathname);
 }
 
 export function shouldHideNavLinks(pathname) {
-  const hasLocale = isLocalePath(pathname);
   const strippedPathname = stripLocale(pathname);
 
-  return (
-    pathname.startsWith('/mysettings') ||
-    (hasLocale && strippedPathname.startsWith('/mysettings'))
-  );
+  const pages = ['/mysettings', '/notifications'];
+
+  const isBasePath = pages.some((page) => strippedPathname.startsWith(page));
+
+  return isBasePath;
 }
 
 export function getLastSegment(pathname) {

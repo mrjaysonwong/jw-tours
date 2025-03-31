@@ -31,11 +31,11 @@ export const statusMap = {
 };
 
 const UserList = () => {
-  const [order, setOrder] = useState('asc');
-  const [orderBy, setOrderBy] = useState('lastName');
+  const [order, setOrder] = useState('desc');
+  const [orderBy, setOrderBy] = useState('createdAt');
 
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [rowsPerPage, setRowsPerPage] = useState(25);
   const [selected, setSelected] = useState(new Set());
 
   const [role, setRole] = useState('');
@@ -63,11 +63,14 @@ const UserList = () => {
 
   const handleSelectAllClick = useCallback(
     (event) => {
-      setSelected(
-        event.target.checked ? new Set(users.map((e) => e._id)) : new Set()
-      );
+      const isChecked = event.target.checked;
+      const targetUsers = filteredUsers || users;
+      const setMapUsers = new Set(targetUsers.map((e) => e._id));
+
+      // if checked all map set of users else deselect all
+      setSelected(isChecked ? setMapUsers : new Set());
     },
-    [users]
+    [users, filteredUsers]
   );
 
   const handleClick = useCallback((event, id) => {
@@ -120,7 +123,7 @@ const UserList = () => {
 
   return (
     <>
-      <Typography variant="h5">User List</Typography>
+      <Typography variant="h5">List</Typography>
 
       <Box
         sx={{
@@ -176,14 +179,19 @@ const UserList = () => {
                 />
 
                 {selected.size > 0 && (
-                  <EnhancedTableToolbar numSelected={selected.size} />
+                  <EnhancedTableToolbar
+                    numSelected={selected.size}
+                    selected={selected}
+                    setSelected={setSelected}
+                  />
                 )}
 
-                <TableContainer>
+                <TableContainer sx={{ maxHeight: 440 }}>
                   <TableContent
                     users={users}
                     filteredUsers={filteredUsers}
                     selected={selected}
+                    value={value}
                     order={order}
                     orderBy={orderBy}
                     handleRequestSort={handleRequestSort}

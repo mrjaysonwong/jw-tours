@@ -1,5 +1,4 @@
 import { Schema, model, models } from 'mongoose';
-import { v4 as uuidv4 } from 'uuid';
 import { EMAIL_REGEX } from '@/constants/regex';
 
 const emailSchema = new Schema(
@@ -63,15 +62,14 @@ const userSchema = new Schema(
     },
     gender: {
       type: String,
-      enum: ['', 'male', 'female', 'other'],
+      enum: ['male', 'female', 'other'],
     },
     password: {
       type: String,
-      // only type: String for OAuth login/passwordless default to undefined
     },
     role: {
       type: String,
-      enum: ['user', 'guide', 'partner', 'admin', 'agent'],
+      enum: ['user', 'guide', 'agent', 'admin'],
       default: 'user',
     },
     image: {
@@ -90,21 +88,25 @@ const userSchema = new Schema(
       type: String,
     },
     address: {
-      street: {
-        type: String,
+      name: { type: String, lowercase: true },
+      neighbourhood: { type: String, lowercase: true },
+      city: { type: String, lowercase: true },
+      state: { type: String, required: true, lowercase: true },
+      postcode: { type: String, lowercase: true },
+      country: { type: String, required: true, lowercase: true },
+    },
+    subscription: {
+      isSubscribed: {
+        type: Boolean,
+        default: false,
       },
-      homeTown: {
+      subscriberId: {
         type: String,
-      },
-      postalCode: {
-        type: String,
+        default: null,
       },
     },
-    subscribe: {
-      type: Boolean,
-    },
-    tourLangCode: {
-      type: String,
+    languages: {
+      type: [String],
     },
     specialReq: {
       type: String,
@@ -125,6 +127,9 @@ const userSchema = new Schema(
       enum: ['pending', 'active', 'suspended', 'inactive'],
       default: 'pending',
     },
+    guideCustomId: { type: String, unique: true },
+    partnerCustomId: { type: String, unique: true },
+    agentCustomId: { type: String, unique: true },
   },
   { timestamps: true }
 );
@@ -153,6 +158,6 @@ userSchema.index({
 
 userSchema.index({ 'phone.dialCode': 1, 'phone.phoneNumber': 1 });
 
-const User = models?.user || model('user', userSchema);
+const User = models?.User || model('User', userSchema);
 
 export default User;

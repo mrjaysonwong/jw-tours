@@ -1,7 +1,7 @@
 // internal imports
 import PageLayout from '@/components/layout/PageLayout';
 import EmailAuthForm from '@/app/(features)/authentication/EmailAuthForm';
-import { ACTION_TYPES } from '@/constants/api';
+import { ACTIONS } from '@/constants/common';
 
 export const metadata = {
   title: 'Resend Verification',
@@ -10,7 +10,7 @@ export const metadata = {
 export default function ResendVerificationPage() {
   return (
     <PageLayout marginY={10}>
-      <EmailAuthForm actionType={ACTION_TYPES.SEND_ACCOUNT_VERIFICATION} />
+      <EmailAuthForm action={ACTIONS.SEND_ACCOUNT_VERIFICATION} />
     </PageLayout>
   );
 }

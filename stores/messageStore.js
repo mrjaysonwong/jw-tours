@@ -1,34 +1,39 @@
 import { create } from 'zustand';
 
 export const useMessageStore = create((set) => ({
-  success: {
-    open: false,
-    message: '',
-    severity: 'success',
-  },
-  error: {
-    open: false,
-    message: '',
-    severity: 'error',
-  },
   alert: {
     open: false,
     message: '',
     severity: '',
+    horizontal: 'left',
+    vertical: 'bottom',
+    title: '',
+    autoHideDuration: 4000,
   },
 
-  handleAlertMessage: (message, severity) => {
+  handleAlertMessage: (
+    message,
+    severity,
+    horizontal,
+    vertical,
+    title,
+    autoHideDuration
+  ) => {
     set((state) => ({
       alert: {
         ...state.alert,
         open: true,
         message: message,
         severity: severity,
+        horizontal: horizontal,
+        vertical: vertical,
+        title: title,
+        autoHideDuration: autoHideDuration,
       },
     }));
   },
 
-  handleClose: () => {
+  hideAlert: () => {
     set((state) => ({
       alert: {
         ...state.alert,

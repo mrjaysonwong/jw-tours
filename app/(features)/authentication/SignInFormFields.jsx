@@ -14,7 +14,6 @@ import ReCAPTCHA from 'react-google-recaptcha';
 import { DialogContext } from '@/components/layout/header/Navbar';
 import FormSubmitButton from '@/components/buttons/FormSubmitButton';
 import { emailPasswordSchema } from '@/validation/yup/auth/signInSchema';
-import AlertMessage from '@/components/alerts/AlertMessage';
 import { authenticate } from '@/app/[locale]/(auth)/signin/actions';
 import { useMessageStore } from '@/stores/messageStore';
 import { PATHNAMES } from '@/constants/pathname';
@@ -24,14 +23,14 @@ import { errorHandler } from '@/helpers/errorHelpers';
 const SignInFormFields = () => {
   let submitAttemptRef = useRef(0);
 
-  const { open, setOpen } = useContext(DialogContext);
+  const { isDialogOpen, setIsDialogOpen } = useContext(DialogContext);
   const [captcha, setCaptcha] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
 
   const pathname = usePathname();
   const [cookies, setCookie] = useCookies();
 
-  const { alert, handleAlertMessage, handleClose } = useMessageStore();
+  const { handleAlertMessage } = useMessageStore();
 
   const handleShowPassword = () => {
     setShowPassword((show) => !show);
@@ -70,7 +69,6 @@ const SignInFormFields = () => {
       }
     } catch (error) {
       const { errorMessage } = errorHandler(error);
-
       handleAlertMessage(errorMessage, 'error');
     }
   };
@@ -118,13 +116,13 @@ const SignInFormFields = () => {
           captcha={captcha}
         />
 
-        {open && (
+        {isDialogOpen && (
           <Button
             fullWidth
             type="button"
             variant="outlined"
             disabled={isSubmitting}
-            onClick={() => setOpen(false)}
+            onClick={() => setIsDialogOpen(false)}
             sx={{ mt: 2 }}
           >
             Cancel
@@ -132,12 +130,7 @@ const SignInFormFields = () => {
         )}
       </form>
 
-      <AlertMessage
-        open={alert.open}
-        message={alert.message}
-        severity={alert.severity}
-        onClose={handleClose}
-      />
+      
     </>
   );
 };

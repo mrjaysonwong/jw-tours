@@ -1,47 +1,24 @@
-import { auth } from '@/auth';
-import connectMongo from '@/services/db/connectMongo';
-import User from '@/models/userModel';
-import { STATUS_CODES, ERROR_MESSAGES } from '@/constants/api';
+import { validateSessionAndUser } from '@/services/auth/validateSessionAndUser';
 import { handleApiError } from '@/helpers/errorHelpers';
-import { findUserById } from '@/services/user/userQueries';
 
-// GET:  /api/v1/users/[id]
+// GET: /api/v1/users/[id]
 export async function GET(Request, { params }) {
   const userId = params.id;
 
   try {
-    const session = await auth();
+    const { userExists } = await validateSessionAndUser(userId);
 
-    if (!session) {
-      return Response.json(
-        {
-          statusText: ERROR_MESSAGES.UNAUTHORIZED,
-        },
-        { status: STATUS_CODES.UNAUTHORIZED }
-      );
-    }
+    const updatedUser = {
+      ...userExists.toObject(), // convert to plain object, stripping out mongoose-specific properties
+      hasPassword: !!userExists.password,
+    };
 
-    const isAdmin = session?.user?.role === 'admin';
+    delete updatedUser.password;
 
-    if (session?.user?.id !== userId && !isAdmin) {
-      return Response.json(
-        {
-          statusText: ERROR_MESSAGES.FORBIDDEN,
-        },
-        { status: STATUS_CODES.FORBIDDEN }
-      );
-    }
-
-    // connect to database
-    await connectMongo();
-
-    const projection = {};
-    const userExists = await findUserById(userId, projection);
-
-    return Response.json({ data: userExists }, { status: 200 });
+    return Response.json({ data: updatedUser }, { status: 200 });
   } catch (error) {
-    const { statusText, status } = handleApiError(error);
+    const { message, status } = handleApiError(error);
 
-    return Response.json({ statusText }, { status });
+    return Response.json({ message }, { status });
   }
 }

@@ -4,12 +4,9 @@
 import React, { createContext, useContext } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import { usePathname } from 'next/navigation';
 
 // internal imports
 import { useUserData } from '@/hooks/useUserData';
-import { useUserListData } from '@/hooks/useUserListData';
-import { getLastSegment } from '@/helpers/pageHelpers';
 
 export const UserSessionContext = createContext(undefined);
 
@@ -23,6 +20,7 @@ export const UserDetailsContext = createContext({
   user: null,
   email: null,
 });
+export const UserNotificationsContext = createContext(undefined);
 
 const queryClient = new QueryClient();
 
@@ -67,40 +65,19 @@ export const UserDataProvider = ({ children }) => {
   );
 };
 
-export const UserListDataProvider = ({ children }) => {
-  const pathname = usePathname();
-  const lastSegment = getLastSegment(pathname);
-  const isUserList = lastSegment === 'users';
-  // const isUserList = lastSegment === 'user-list';
-
-  const {
-    data: users,
-    isLoading,
-    refetch,
-    isError,
-    error,
-  } = useUserListData(isUserList);
-
-  const contextValues = {
-    users,
-    isLoading,
-    refetch,
-    isError,
-    error,
-  };
-
-  return (
-    <UserListDataContext.Provider value={contextValues}>
-      {children}
-    </UserListDataContext.Provider>
-  );
-};
-
 export const UserDetailsProvider = ({ value, children }) => {
   return (
     <UserDetailsContext.Provider value={value}>
       {children}
     </UserDetailsContext.Provider>
+  );
+};
+
+export const UserNotificationsProvider = ({ value, children }) => {
+  return (
+    <UserNotificationsContext.Provider value={value}>
+      {children}
+    </UserNotificationsContext.Provider>
   );
 };
 
@@ -112,10 +89,10 @@ export const useUserDataContext = () => {
   return useContext(UserDataContext);
 };
 
-export const useUserListDataContext = () => {
-  return useContext(UserListDataContext);
-};
-
 export const useUserDetailsContext = () => {
   return useContext(UserDetailsContext);
+};
+
+export const useUserNotificationsContext = () => {
+  return useContext(UserNotificationsContext);
 };

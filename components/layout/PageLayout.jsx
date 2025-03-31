@@ -3,7 +3,7 @@ import { AppBar, Toolbar, Box, Container, Typography } from '@mui/material';
 
 // internal imports
 import { StyledMainContainer } from '../styled/StyledContainers';
-import { NavLogo } from './header/Navbar';
+import Logo from './header/Logo';
 
 const PageLayout = ({ children, marginY }) => {
   return (
@@ -19,7 +19,7 @@ const PageLayout = ({ children, marginY }) => {
               px: { xs: 0, md: 'auto' },
             }}
           >
-            <NavLogo />
+            <Logo />
           </Toolbar>
         </Container>
       </AppBar>

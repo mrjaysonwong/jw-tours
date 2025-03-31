@@ -5,7 +5,7 @@ import { statusLabelColorMap } from '@/utils/colorMap';
 
 const tabLabels = ['all', 'active', 'pending', 'suspended', 'inactive'];
 
-const TabFilter = ({ value, handleChangeTab, users }) => {
+const TabsFilter = ({ value, handleChangeTab, users }) => {
   return (
     <Box
       sx={{
@@ -30,6 +30,7 @@ const TabFilter = ({ value, handleChangeTab, users }) => {
           return (
             <Tab
               key={label}
+              tabIndex={0}
               label={
                 <Typography sx={{ textTransform: 'capitalize' }}>
                   {label}
@@ -58,4 +59,4 @@ const TabFilter = ({ value, handleChangeTab, users }) => {
   );
 };
 
-export default React.memo(TabFilter);
+export default React.memo(TabsFilter);

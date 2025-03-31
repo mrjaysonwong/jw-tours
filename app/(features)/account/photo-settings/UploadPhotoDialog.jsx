@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import {
   Box,
   DialogTitle,
@@ -12,7 +13,7 @@ import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 
 // internal imports
 import { useProfilePhotoContext } from '@/contexts/ProfilePhotoProvider';
-import { setFileToBase64 } from '@/helpers/profile-photo/setFileToBase64';
+import { setFileToBase64 } from '@/helpers/images/setFileToBase64';
 import { UploadInput } from '@/components/styled/StyledInputs';
 import { useMessageStore } from '@/stores/messageStore';
 import ProfileAvatar from '@/components/images/ProfileAvatar';
@@ -22,7 +23,9 @@ const UploadPhotoDialog = ({
   setEditDialogOpen,
   setSelectedImage,
 }) => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { user } = useProfilePhotoContext();
+  const isProfilePhoto = true;
 
   const { handleAlertMessage } = useMessageStore();
 
@@ -31,13 +34,15 @@ const UploadPhotoDialog = ({
   };
 
   const handleImage = (event) => {
-    setFileToBase64(
+    setFileToBase64({
       event,
       setEditDialogOpen,
       setSelectedImage,
       setUploadDialogOpen,
-      handleAlertMessage
-    );
+      handleAlertMessage,
+      setIsSubmitting,
+      isProfilePhoto,
+    });
   };
 
   return (
@@ -81,11 +86,12 @@ const UploadPhotoDialog = ({
 
       <DialogActions sx={{ py: 2, display: 'flex', justifyContent: 'center' }}>
         <Button
+          disabled={isSubmitting}
           component="label"
           variant="contained"
           startIcon={<CloudUploadIcon />}
         >
-          Upload photo
+          {isSubmitting ? 'Uploading...' : 'Upload photo'}
           <UploadInput
             type="file"
             id="file-input-image"

@@ -4,37 +4,40 @@ import { Box, IconButton, Menu, MenuItem } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 
 // internal imports
-import MenuActionDialog from '../dialogs/MenuActionDialog';
+import ContactMenuActionDialog from '@/components/dialogs/ContactMenuActionDialog';
+import TwoFactorAuthDialog from '@/components/dialogs/TwoFactorAuthDialog';
+import SendNotificationDialog from '@/components/dialogs/SendNotificationDialog';
+import { actionMap } from '@/utils/vertMenuActionMap';
+import { useSendNotificationStore } from '@/stores/notificationStore';
 
-const ACTION_OPTIONS = {
-  default: [
-    { label: 'View', action: 'view' },
-    { label: 'Edit', action: 'edit' },
-    { label: 'Delete', action: 'delete' },
-  ],
-  cards: [
-    { label: 'Set as Primary', action: 'set-primary' },
-    { label: 'Delete', action: 'delete' },
-  ],
-  'table-users': [
-    { label: 'Edit', action: 'edit' },
-    { label: 'Delete', action: 'delete' },
-  ],
-};
-
-const MoreVertMenu = ({ menuType, email, dialCode, phoneNumber, userId }) => {
-  const isMenuType = (type) => menuType === type;
-
+const MoreVertMenu = ({
+  menuType,
+  email,
+  dialCode,
+  phoneNumber,
+  id,
+  selected,
+  setSelected,
+}) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
 
-  const [isDialogOpen, setDialogOpen] = useState(false);
+  const [isContactActionOpen, setIsContactActionOpen] = useState(false);
+  const [isTwoFactorAuthOpen, setIsTwoFactorAuthOpen] = useState(false);
+  const [isSendNotificationOpen, setIsSendNotificationOpen] = useState();
   const [menuAction, setMenuAction] = useState('');
 
   const [targetEmail, setTargetEmail] = useState('');
   const [targetNumber, setTargetNumber] = useState('');
 
   const router = useRouter();
+
+  const { setSelectedUserIds } = useSendNotificationStore();
+
+  const isMenuType = (type) => menuType === type;
+
+  const isUserListTable =
+    isMenuType('users-table') || isMenuType('users-table-toolbar');
 
   const handleClickMoreVert = (event) => {
     setAnchorEl(event.currentTarget);
@@ -46,36 +49,55 @@ const MoreVertMenu = ({ menuType, email, dialCode, phoneNumber, userId }) => {
   };
 
   const handleClickAction = (event, action) => {
-    if (isMenuType('table-users')) {
-      const userId = event.currentTarget.getAttribute('data-id');
+    if (isUserListTable) {
+      const targetId = event.currentTarget.getAttribute('data-id');
 
-      router.replace(`/admin/dashboard/users/${userId}/edit`);
+      switch (action) {
+        case 'edit':
+          router.push(`/admin/dashboard/users/${targetId}/edit`);
+          break;
+
+        case 'delete':
+          setIsTwoFactorAuthOpen(true);
+          break;
+
+        case 'send-notification':
+          // setSelectedUserIds([...selected]);
+          // router.push(`/admin/dashboard/notifications/send`);
+          setIsSendNotificationOpen(true);
+          setSelectedUserIds([...selected]);
+          break;
+
+        default:
+          router.push('/admin/dashboard');
+          break;
+      }
     } else if (isMenuType('cards')) {
-      setDialogOpen(true);
+      setIsContactActionOpen(true);
 
+      // conditions for user contact-information
       if (email) {
         setTargetEmail(event.currentTarget.getAttribute('data-email'));
       } else {
         setTargetNumber(event.currentTarget.getAttribute('data-number'));
       }
-
-      handleClose();
     }
 
     setMenuAction(action);
+    setAnchorEl(null);
   };
 
-  const getOptions = () => {
-    return ACTION_OPTIONS[menuType] || ACTION_OPTIONS.default;
-  };
+  const options = actionMap[menuType] || actionMap.default;
 
-  const renderMenuItems = () => {
-    return getOptions().map((option) => {
+  const menuItems = () =>
+    options.map((option) => {
       const dataAttributes = {
-        'data-id': isMenuType('table-users') ? userId : null,
+        'data-id': isUserListTable ? id : null,
         'data-email': isMenuType('cards') && email ? email : null,
         'data-number':
-          isMenuType('cards') && dialCode ? `${dialCode} ${phoneNumber}` : null,
+          isMenuType('cards') && phoneNumber
+            ? `${dialCode} ${phoneNumber}`
+            : null,
       };
 
       return (
@@ -88,7 +110,6 @@ const MoreVertMenu = ({ menuType, email, dialCode, phoneNumber, userId }) => {
         </MenuItem>
       );
     });
-  };
 
   return (
     <>
@@ -100,7 +121,7 @@ const MoreVertMenu = ({ menuType, email, dialCode, phoneNumber, userId }) => {
         }}
       >
         <IconButton
-          aria-label="more"
+          aria-label="more options"
           id="overflow-button"
           aria-controls={open ? 'overflow-menu' : undefined}
           aria-expanded={open ? 'true' : undefined}
@@ -119,14 +140,14 @@ const MoreVertMenu = ({ menuType, email, dialCode, phoneNumber, userId }) => {
           open={open}
           onClose={handleClose}
         >
-          {renderMenuItems()}
+          {menuItems()}
         </Menu>
       </Box>
 
-      {isDialogOpen && (
-        <MenuActionDialog
-          isDialogOpen={isDialogOpen}
-          setDialogOpen={setDialogOpen}
+      {isContactActionOpen && (
+        <ContactMenuActionDialog
+          isDialogOpen={isContactActionOpen}
+          setIsDialogOpen={setIsContactActionOpen}
           menuType={menuType}
           targetEmail={targetEmail}
           targetNumber={targetNumber}
@@ -134,8 +155,25 @@ const MoreVertMenu = ({ menuType, email, dialCode, phoneNumber, userId }) => {
           setMenuAction={setMenuAction}
         />
       )}
+
+      {isTwoFactorAuthOpen && (
+        <TwoFactorAuthDialog
+          title="2FA - Account Deletion"
+          isDialogOpen={isTwoFactorAuthOpen}
+          setIsDialogOpen={setIsTwoFactorAuthOpen}
+          selected={selected}
+        />
+      )}
+
+      {isSendNotificationOpen && (
+        <SendNotificationDialog
+          isDialogOpen={isSendNotificationOpen}
+          setIsDialogOpen={setIsSendNotificationOpen}
+          setSelected={setSelected}
+        />
+      )}
     </>
   );
 };
 
-export default MoreVertMenu;
+export default React.memo(MoreVertMenu);

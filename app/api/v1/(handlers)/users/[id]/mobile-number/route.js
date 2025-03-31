@@ -1,7 +1,5 @@
-import { validateSession } from '@/validation/validateSesssion';
+import { validateSessionAndUser } from '@/services/auth/validateSessionAndUser';
 import { contactActionSchema } from '@/validation/yup/user/contactActionSchema';
-import connectMongo from '@/services/db/connectMongo';
-import { findUserById } from '@/services/user/userQueries';
 import { handleApiError } from '@/helpers/errorHelpers';
 import { updatePrimaryNumber, deleteMobileNumber } from '@/services/user';
 
@@ -10,18 +8,13 @@ export async function PATCH(Request, { params }) {
   const userId = params.id;
 
   try {
-    await validateSession();
-
     const requestData = await Request.json();
     const actionType = requestData.actionType;
 
     const schema = contactActionSchema(actionType);
     await schema.validate({ ...requestData }, { abortEarly: false });
 
-    // connect to database
-    await connectMongo();
-
-    await findUserById(userId);
+    await validateSessionAndUser(userId);
 
     let newPrimaryNumber;
 
@@ -31,19 +24,14 @@ export async function PATCH(Request, { params }) {
       await deleteMobileNumber(requestData.phone, userId);
     }
 
-    const responseMessage = actionType.includes('delete')
+    const message = actionType.includes('delete')
       ? 'Mobile number successfully deleted.'
       : `Primary number has been set to +${newPrimaryNumber}`;
 
-    return Response.json(
-      {
-        statusText: responseMessage,
-      },
-      { status: 200 }
-    );
+    return Response.json({ message }, { status: 200 });
   } catch (error) {
-    const { statusText, status } = handleApiError(error);
+    const { message, status } = handleApiError(error);
 
-    return Response.json({ statusText }, { status });
+    return Response.json({ message }, { status });
   }
 }

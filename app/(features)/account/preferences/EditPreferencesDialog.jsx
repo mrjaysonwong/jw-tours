@@ -8,6 +8,8 @@ import {
   MenuItem,
   FormControl,
   InputLabel,
+  FormControlLabel,
+  Checkbox,
 } from '@mui/material';
 import { useForm, Controller } from 'react-hook-form';
 import axios from 'axios';
@@ -17,16 +19,20 @@ import { useRouter, usePathname } from 'next/navigation';
 // internal imports
 import FormSubmitButton from '@/components/buttons/FormSubmitButton';
 import { useMessageStore } from '@/stores/messageStore';
-import AlertMessage from '@/components/alerts/AlertMessage';
 import { sleep } from '@/utils/sleep';
 import { errorHandler } from '@/helpers/errorHelpers';
-import { API_URLS } from '@/constants/api';
+import { API_URLS } from '@/config/apiRoutes';
 
-const EditPreferencesDialog = ({ open, setOpen, user }) => {
+const EditPreferencesDialog = ({
+  isDialogOpen,
+  setIsDialogOpen,
+  user,
+  refetch,
+}) => {
   const router = useRouter();
   const pathname = usePathname();
 
-  const { handleAlertMessage, alert, handleClose } = useMessageStore();
+  const { handleAlertMessage } = useMessageStore();
 
   const { update } = useSession();
 
@@ -36,8 +42,8 @@ const EditPreferencesDialog = ({ open, setOpen, user }) => {
     formState: { isSubmitting, isSubmitSuccessful },
   } = useForm();
 
-  const handleOnClose = () => {
-    setOpen(false);
+  const handleClose = () => {
+    setIsDialogOpen(false);
   };
 
   const onSubmit = async (formData) => {
@@ -48,22 +54,24 @@ const EditPreferencesDialog = ({ open, setOpen, user }) => {
 
       router.replace(pathname, { locale: data.langCode });
 
-      setOpen(false);
+      refetch();
+      setIsDialogOpen(false);
 
       // Triggers session update
       update({});
 
       await sleep(2500);
-      handleAlertMessage(data.statusText, 'success');
+      handleAlertMessage(data.message, 'success');
     } catch (error) {
       const { errorMessage } = errorHandler(error);
+      setHasError(true);
       handleAlertMessage(errorMessage, 'error');
     }
   };
 
   return (
     <>
-      <Dialog open={open} scroll="body" closeAfterTransition={false}>
+      <Dialog open={isDialogOpen} scroll="body" closeAfterTransition={false}>
         <DialogTitle>Edit Preferences</DialogTitle>
 
         <form onSubmit={handleSubmit(onSubmit)}>
@@ -81,6 +89,7 @@ const EditPreferencesDialog = ({ open, setOpen, user }) => {
                     inputProps={{
                       id: 'select-language',
                     }}
+                    sx={{ mb: 1 }}
                   >
                     <MenuItem value="en">English</MenuItem>
                     <MenuItem value="fr">Français</MenuItem>
@@ -92,29 +101,30 @@ const EditPreferencesDialog = ({ open, setOpen, user }) => {
                 )}
               />
             </FormControl>
+
+            <Controller
+              name="subscription.isSubscribed"
+              control={control}
+              defaultValue={user.subscription.isSubscribed || false}
+              render={({ field }) => (
+                <FormControlLabel
+                  {...field}
+                  control={<Checkbox checked={field.value} />}
+                  label="Subscribe to newsletter"
+                />
+              )}
+            />
           </DialogContent>
+
+          <DialogActions sx={{ px: 3, py: 2 }}>
+            <Button type="button" disabled={isSubmitting} onClick={handleClose}>
+              Cancel
+            </Button>
+
+            <FormSubmitButton label="Update" isSubmitting={isSubmitting} />
+          </DialogActions>
         </form>
-
-        <DialogActions sx={{ mx: 2, py: 2 }}>
-          <Button type="button" disabled={isSubmitting} onClick={handleOnClose}>
-            Cancel
-          </Button>
-
-          <FormSubmitButton
-            label="Update"
-            action="update"
-            isSubmitting={isSubmitting}
-            isSubmitSuccessful={isSubmitSuccessful}
-          />
-        </DialogActions>
       </Dialog>
-
-      <AlertMessage
-        open={alert.open}
-        message={alert.message}
-        severity={alert.severity}
-        onClose={handleClose}
-      />
     </>
   );
 };

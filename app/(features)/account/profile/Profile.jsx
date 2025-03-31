@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { Typography, Box } from '@mui/material';
+import PermIdentityIcon from '@mui/icons-material/PermIdentity';
+import BadgeOutlinedIcon from '@mui/icons-material/BadgeOutlined';
 
 // internal imports
 import {
@@ -8,10 +10,9 @@ import {
   useUserSessionContext,
 } from '@/contexts/UserProvider';
 import CustomTab from '@/components/tabs/CustomTab';
-import { useMessageStore } from '@/stores/messageStore';
-import AlertMessage from '@/components/alerts/AlertMessage';
 import CustomError from '@/components/errors/CustomError';
 import LoadingSpinner from '@/components/loaders/LoadingSpinner';
+import { profileSettingsTabComponents } from '@/config/componentMapping';
 
 const titleMap = {
   0: 'Personal Details',
@@ -22,6 +23,17 @@ const subTitleMap = {
   0: "Update your info and find out how it's used.",
   1: 'Review and update your contact details to ensure seamless communication.',
 };
+
+const tabContent = [
+  {
+    icon: <PermIdentityIcon />,
+    label: 'Personal Details',
+  },
+  {
+    icon: <BadgeOutlinedIcon />,
+    label: 'Contact Information',
+  },
+];
 
 const UserDetails = ({ value, setValue }) => {
   const session = useUserSessionContext();
@@ -45,7 +57,13 @@ const UserDetails = ({ value, setValue }) => {
   return (
     <>
       <UserDetailsProvider value={contextValues}>
-        <CustomTab value={value} setValue={setValue} />
+        <CustomTab
+          value={value}
+          setValue={setValue}
+          ariaLabel="profile settings tabs"
+          tabContent={tabContent}
+          tabPanelComponents={profileSettingsTabComponents}
+        />
       </UserDetailsProvider>
     </>
   );
@@ -53,7 +71,6 @@ const UserDetails = ({ value, setValue }) => {
 
 const Profile = () => {
   const [value, setValue] = useState(0);
-  const { alert, handleClose } = useMessageStore();
 
   return (
     <>
@@ -63,13 +80,6 @@ const Profile = () => {
       </Box>
 
       <UserDetails value={value} setValue={setValue} />
-
-      <AlertMessage
-        open={alert.open}
-        message={alert.message}
-        severity={alert.severity}
-        onClose={handleClose}
-      />
     </>
   );
 };

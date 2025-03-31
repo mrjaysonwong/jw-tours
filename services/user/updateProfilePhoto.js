@@ -1,7 +1,7 @@
 // internal imports
 import User from '@/models/userModel';
 import { HttpError } from '@/helpers/errorHelpers';
-import { STATUS_CODES } from '@/constants/api';
+import { STATUS_CODES } from '@/constants/common';
 import cloudinary from '@/services/cloudinary';
 
 export async function updateProfilePhoto(croppedImage, userId, userExists) {

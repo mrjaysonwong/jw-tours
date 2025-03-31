@@ -11,7 +11,7 @@ import { StyledContainer } from '@/components/styled/StyledContainers';
 import { StyledSettingsTab } from '@/components/styled/StyledTabs';
 import { accountSettingsLinks } from '@/data/links/accountSettingsLinks';
 import { UserDataProvider } from '@/contexts/UserProvider';
-import { tabComponents } from '@/config/uiComponents';
+import { mySettingsTabComponents } from '@/config/componentMapping';
 import { stripLocale } from '@/helpers/pageHelpers';
 
 const TabPanel = (props) => {
@@ -100,7 +100,7 @@ const MySettingsTabs = () => {
 
         <UserDataProvider>
           {accountSettingsLinks.map((e, index) => {
-            const TabComponent = tabComponents[index];
+            const TabComponent = mySettingsTabComponents[index];
 
             return (
               <TabPanel key={index} value={value} index={index}>
