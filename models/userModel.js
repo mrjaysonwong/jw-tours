@@ -122,9 +122,6 @@ const userSchema = new Schema(
       enum: ['pending', 'active', 'suspended', 'inactive'],
       default: 'pending',
     },
-    guideCustomId: { type: String, unique: true },
-    partnerCustomId: { type: String, unique: true },
-    agentCustomId: { type: String, unique: true },
   },
   { timestamps: true }
 );
