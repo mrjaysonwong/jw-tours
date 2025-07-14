@@ -4,6 +4,7 @@ export const ACTIONS = Object.freeze({
   SEND_PASSWORD_RESET: 'send-password-reset',
   SEND_ACCOUNT_VERIFICATION: 'send-account-verification',
   SIGNIN: 'signin',
+  SIGNUP: 'signup',
   GEN_OTP: 'gen-otp',
 });
 
