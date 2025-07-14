@@ -34,7 +34,7 @@ const TourAvailability = () => {
         inputName="duration"
         label="Duration"
         id="duration-select"
-        defaultValue={`${tour.duration.value} ${tour.duration.unit}`}
+        defaultValue={`${tour?.duration?.value} ${tour?.duration?.unit}`}
         control={control}
         options={durations}
         error={errors?.duration}

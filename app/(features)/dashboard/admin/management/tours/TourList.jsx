@@ -17,19 +17,15 @@ const TourGrid = () => {
   return (
     <>
       <Grid container spacing={3}>
-        {tours.map((tour, index) => (
-          <Grid key={index} item xs={12} sm={6} lg={4}>
-            <TourCard tour={tour} />
-          </Grid>
-        ))}
-        {/* {Array(12)
-          .fill(tours)
-          .flat()
-          .map((tour, index) => (
+        {tours.length === 0 ? (
+          <Typography>No tours yet.</Typography>
+        ) : (
+          tours.map((tour, index) => (
             <Grid key={index} item xs={12} sm={6} lg={4}>
               <TourCard tour={tour} />
             </Grid>
-          ))} */}
+          ))
+        )}
       </Grid>
     </>
   );
