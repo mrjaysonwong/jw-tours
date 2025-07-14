@@ -5,7 +5,7 @@ import NodeCache from 'node-cache';
 // internal imports
 import { handleApiError } from '@/helpers/errorHelpers';
 import { HttpError } from '@/helpers/errorHelpers';
-import { generateImageHash } from '@/utils/generateImageHash';
+import { generateImageHash } from '@/libs/crypto';
 import { STATUS_CODES } from '@/constants/common';
 
 // Cache for 30mins

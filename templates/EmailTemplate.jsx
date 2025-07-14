@@ -13,6 +13,7 @@ import {
   Text,
 } from '@react-email/components';
 import * as React from 'react';
+import { BASE_URL } from '@/constants/env';
 
 export function EmailTemplate({
   url,
@@ -23,7 +24,6 @@ export function EmailTemplate({
   action,
   isAdmin,
 }) {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
   const isSignUp = action === 'signup';
   const isGenOTP = action === 'gen-otp';
   const isEmailSignIn = action === 'signin';
@@ -32,8 +32,8 @@ export function EmailTemplate({
   const links = [
     { href: 'www.facebook.com', label: 'Facebook' },
     { href: 'www.instagram.com', label: 'Instagram' },
-    { href: `${baseUrl}/about`, label: 'About Us' },
-    { href: `${baseUrl}/contact`, label: 'Contact Us' },
+    { href: `${BASE_URL}/about`, label: 'About Us' },
+    { href: `${BASE_URL}/contact`, label: 'Contact Us' },
   ];
 
   return (

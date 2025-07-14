@@ -1,5 +1,5 @@
 // third-party imports
-import React, { useState, useRef, useContext } from 'react';
+import React, { useState, useRef } from 'react';
 import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -7,18 +7,19 @@ import axios from 'axios';
 import { Box, Button, Grid } from '@mui/material';
 
 // internal imports
-import { DialogContext } from '@/components/layout/header/Navbar';
 import FormSubmitButton from '@/components/buttons/FormSubmitButton';
 import { signUpSchema } from '@/validation/yup/auth/signUpSchema';
 import { errorHandler } from '@/helpers/errorHelpers';
 import { useMessageStore } from '@/stores/messageStore';
 import SignUpConfirmation from './SignUpConfirmation';
 import FormInput from '@/components/inputs/FormInput';
-import { API_URLS } from '@/config/apiRoutes';
+import { API_URLS } from '@/constants/apiRoutes';
+import { useAuthDialogStore } from '@/stores/dialogStore';
 
 const SignUpFormFields = ({ showCancel = false }) => {
   const [showPassword, setShowPassword] = useState(false);
-  const { setIsDialogOpen } = useContext(DialogContext);
+  const { closeAuthDialog } = useAuthDialogStore();
+
   const [isConfirmationDialogOpen, setIsConfirmationDialogOpen] =
     useState(false);
   const emailRef = useRef('');
@@ -41,7 +42,7 @@ const SignUpFormFields = ({ showCancel = false }) => {
     resolver: yupResolver(signUpSchema),
   });
 
-  const onSubmit = async (formData, event) => {
+  const onSubmit = async (formData) => {
     try {
       const url = `${API_URLS.AUTH}/signup`;
 
@@ -128,7 +129,7 @@ const SignUpFormFields = ({ showCancel = false }) => {
                   variant="outlined"
                   type="button"
                   disabled={isSubmitting}
-                  onClick={() => setIsDialogOpen(false)}
+                  onClick={() => closeAuthDialog()}
                   sx={{ mt: 2 }}
                 >
                   Cancel

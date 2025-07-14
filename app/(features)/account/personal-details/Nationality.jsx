@@ -26,18 +26,12 @@ const Nationality = () => {
               renderInput={(params) => (
                 <TextField
                   {...params}
-                 
                   margin="dense"
                   autoComplete="off"
                   size="small"
                   label="Nationality"
                 />
               )}
-              slotProps={{
-                paper: {
-                  elevation: 5,
-                },
-              }}
             />
           )}
         />

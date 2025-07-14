@@ -1,7 +1,7 @@
 import Link from 'next/link';
 
 import { StyledContainer } from '@/components/styled/StyledContainers';
-import { formatUrl } from '@/utils/formats/formatUrl';
+import { formatUrl } from '@/utils/formats/common';
 
 const GuidesList = ({ guides }) => {
   return (

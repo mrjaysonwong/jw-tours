@@ -1,84 +1,146 @@
 import { unstable_noStore as noStore } from 'next/cache';
+import { cookies } from 'next/headers';
 
 // internal imports
-import TourDetails from '@/app/(features)/tours/TourDetails';
+import TourDetails from '@/app/(features)/tours/tour-details/TourDetails';
 import Custom404 from '@/components/errors/Custom404';
-import FilteredTours from '@/app/(features)/tours/FilteredTours';
+import TourListing from '@/app/(features)/tours/TourListing';
+import { cleanSlug } from '@/utils/formats/common';
+import { getCurrencyFromCookies } from '@/helpers/pageHelpers';
+import { fetchTours, fetchTourDetails } from '@/services/tours/fetchTours';
+import { fetchTourBookings } from '@/services/bookings/fetchBookings';
+import { convertCurrency } from '@/helpers/convertCurrency';
 
-async function fetchBookings(tourId) {
-  try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/bookings?tourId=${tourId}`
-    );
+const allowedParams = ['minDuration', 'maxDuration', 'transportation', 'sort'];
 
-    if (res.status === 500) throw new Error('Failed to fetch bookings');
+const ITEMS_PER_PAGE = 16;
 
-    const { data } = await res.json();
+export async function generateMetadata({ params: { slug } }) {
+  const [geoLocation, destination, tourId] = slug;
+  const tour = await fetchTourDetails(tourId);
+  let title = `Best Tours in ${cleanSlug(geoLocation)}`;
 
-    return data;
-  } catch (error) {
-    throw error;
+  if (destination) {
+    title = `Best Tours in ${cleanSlug(geoLocation)} - ${cleanSlug(
+      destination
+    )}`;
   }
+
+  if (tour) {
+    title = tour.title;
+  }
+
+  return { title };
 }
 
-async function fetchTours(geoLocation, destination) {
-  try {
-    const filters = destination
-      ? `geolocation=${geoLocation}&destination=${destination}`
-      : `geolocation=${geoLocation}`;
+const convertPricing = async (pricing, currencyCode) => {
+  const { tourCost, serviceFee, perPersonFee = 0 } = pricing;
 
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/tours?${filters}`
-    );
+  const [cTour, cService, cPerson] = await convertCurrency(currencyCode, [
+    tourCost,
+    serviceFee,
+    perPersonFee,
+  ]);
 
-    if (res.status === 500) throw new Error('Failed to fetch tours');
+  return {
+    convertedPricing: {
+      tourCost: cTour,
+      serviceFee: cService,
+      perPersonFee: cPerson,
+    },
+    convertedTotalCost: cTour + cService + cPerson,
+  };
+};
 
-    const { data } = await res.json();
+const handleTourDetails = async (tourId, currency) => {
+  const tour = await fetchTourDetails(tourId);
+  if (!tour) return <Custom404 resource="tour" />;
 
-    return data;
-  } catch (error) {
-    throw error;
+  const bookings = await fetchTourBookings({ tourId });
+
+  const { convertedPricing, convertedTotalCost } = await convertPricing(
+    tour.pricing,
+    currency.code
+  );
+
+  const updatedTour = {
+    ...tour,
+    convertedPricing,
+    convertedTotalCost,
+    currency,
+  };
+  return <TourDetails tour={updatedTour} bookings={bookings} />;
+};
+
+const handleTourListing = async (
+  geoLocation,
+  destination,
+  currency,
+  searchParams
+) => {
+  const queryParams = new URLSearchParams();
+
+  for (const key of allowedParams) {
+    const value = searchParams[key];
+
+    // set if allowed params
+    if (value) queryParams.set(key, value);
   }
-}
 
-async function fetchTourDetails(id) {
-  try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/tours/${id}`
-    );
+  const query = queryParams.size > 0 ? `${queryParams.toString()}` : '';
 
-    if (res.status === 500) throw new Error('Failed to fetch tour details');
+  const tours = await fetchTours({ geoLocation, destination, query });
 
-    const { data } = await res.json();
+  const amounts = tours.map((t) => t.totalCost);
+  const convertedAmounts = await convertCurrency(currency.code, amounts);
 
-    return data;
-  } catch (error) {
-    throw error;
+  const convertedTours = tours.map((tour, index) => ({
+    ...tour,
+    convertedTotalCost: convertedAmounts[index],
+    currency,
+  }));
+
+  /* Demo for small-medium dataset */
+  const duplicatedTours = Array.from({ length: 32 }).flatMap(() =>
+    convertedTours.map((t) => ({ ...t }))
+  );
+
+  // Handle pagination
+  const totalPages = Math.ceil(convertedTours.length / ITEMS_PER_PAGE);
+  const currentPage = Math.max(1, parseInt(searchParams?.page || '1', 10));
+
+  if (totalPages > 0 && currentPage > totalPages) {
+    return <Custom404 resource="tours page" />;
   }
-}
 
-export default async function ToursSlugPage({ params: { slug } }) {
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const paginatedTours = convertedTours.slice(
+    startIndex,
+    startIndex + ITEMS_PER_PAGE
+  );
+
+  return (
+    <TourListing
+      tours={paginatedTours}
+      page={currentPage}
+      totalPages={totalPages}
+      geoLocation={geoLocation}
+      destination={destination}
+      totalTours={convertedTours.length}
+      searchParams={searchParams}
+    />
+  );
+};
+
+export default async function ToursSlugPage({
+  params: { slug },
+  searchParams,
+}) {
   noStore();
+  const currency = getCurrencyFromCookies(cookies);
+  const [geoLocation, destination, tourId] = slug;
 
-  const [geoLocation, destination, id] = slug;
-
-  if (id) {
-    const tour = await fetchTourDetails(id);
-
-    if (!tour) {
-      return <Custom404 resource="tour" />;
-    }
-
-    const bookings = await fetchBookings(id);
-
-    return <TourDetails tour={tour} bookings={bookings} />;
-  } else {
-    const tours = await fetchTours(geoLocation, destination);
-
-    if (tours?.length === 0) {
-      return <Custom404 resource="tours" />;
-    }
-
-    return <FilteredTours tours={tours} />;
-  }
+  return tourId
+    ? await handleTourDetails(tourId, currency)
+    : await handleTourListing(geoLocation, destination, currency, searchParams);
 }

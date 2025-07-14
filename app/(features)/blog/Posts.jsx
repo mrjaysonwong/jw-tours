@@ -1,5 +1,4 @@
 import Link from 'next/link';
-
 import {
   Box,
   Typography,
@@ -14,7 +13,7 @@ import {
 
 // internal imports
 import { StyledContainer } from '@/components/styled/StyledContainers';
-import { sleep } from '@/utils/sleep';
+import { sleep } from '@/utils/common';
 import PaginationControls from './PaginationControls';
 import HistoryBackButton from '@/components/buttons/HistoryBackButton';
 import SearchBar from './SearchBar';
@@ -164,6 +163,7 @@ export default async function Posts({ searchParams }) {
           ))}
         </Grid>
       </Box>
+
       <PaginationControls totalCount={totalCount} />
     </StyledContainer>
   );

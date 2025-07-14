@@ -22,9 +22,9 @@ import {
 import { useMessageStore } from '@/stores/messageStore';
 import { errorHandler } from '@/helpers/errorHelpers';
 import FormSubmitButton from '@/components/buttons/FormSubmitButton';
-import { sleep } from '@/utils/sleep';
-import { getUrl } from '@/utils/authActionMap';
-import { getRequestData } from '@/helpers/requestHelpers';
+import { sleep } from '@/utils/common';
+import { getUrl } from '@/helpers/authActionHelpers';
+import { getPayloadData } from '@/helpers/payloadHelpers';
 import { fireBaseAuthErrorMap } from '@/helpers/errorHelpers';
 import { getLastSegment } from '@/helpers/pageHelpers';
 
@@ -36,7 +36,7 @@ const VerifyOTPDialog = ({
   title,
   isOTPOpen,
   setIsOTPOpen,
-  setIsDialogOpen,
+  setDialogState,
   setIsAddContactOpen,
   phoneDetails,
   email,
@@ -91,7 +91,7 @@ const VerifyOTPDialog = ({
       const action = 'verify';
       const url = getUrl({ type, action, userId });
 
-      const requestData = getRequestData({
+      const payload = getPayloadData({
         type,
         otp,
         email,
@@ -102,8 +102,8 @@ const VerifyOTPDialog = ({
 
       const { data } =
         type === '2FA-account-deletion'
-          ? await axios.delete(url, requestData)
-          : await axios.patch(url, requestData);
+          ? await axios.delete(url, payload)
+          : await axios.patch(url, payload);
 
       if (data.message === 'Mobile number was already verified.') {
         handleAlertMessage(data.message, 'error');
@@ -126,7 +126,7 @@ const VerifyOTPDialog = ({
 
       if (isAdmin && isUserList) {
         // for admin account deletion
-        setIsDialogOpen(false);
+        setDialogState({ open: false });
 
         await sleep(4000);
         location.reload();
@@ -155,7 +155,7 @@ const VerifyOTPDialog = ({
       const action = 'send';
       const url = getUrl({ type, action, userId });
 
-      const requestData = getRequestData({
+      const payload = getPayloadData({
         type,
         otp,
         email,
@@ -164,7 +164,7 @@ const VerifyOTPDialog = ({
         password,
       });
 
-      const { data } = await axios.post(url, requestData);
+      const { data } = await axios.post(url, payload);
 
       setCounter(60);
       handleAlertMessage(data.message, 'success');

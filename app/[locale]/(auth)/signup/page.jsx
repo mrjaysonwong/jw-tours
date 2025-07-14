@@ -8,6 +8,11 @@ import { createMetadata } from '@/helpers/metadataHelpers';
 import PageLayout from '@/components/layout/PageLayout';
 import SignUpForm from '@/components/forms/SignUpForm';
 import AnimateGradient from '@/components/bg-gradients/AnimatedGradient';
+import { locales } from '@/navigation';
+
+export function generateStaticParams() {
+  return locales.map((locale) => ({ locale }));
+}
 
 export async function generateMetadata({ params: { locale } }) {
   return createMetadata(locale, 'signup_page', 'meta_title.signup');

@@ -1,7 +1,16 @@
 import { unstable_noStore as noStore } from 'next/cache';
 
 // internal imports
-import TourList from '@/app/(features)/tours/TourList';
+import TopDestinations from '@/app/(features)/tours/TopDestinations';
+import { locales } from '@/navigation';
+
+export function generateStaticParams() {
+  return locales.map((locale) => ({ locale }));
+}
+
+export const metadata = {
+  title: 'Top Destinations',
+};
 
 async function fetchTours() {
   try {
@@ -21,5 +30,5 @@ export default async function ToursPage() {
   noStore();
   const tours = await fetchTours();
 
-  return <TourList tours={tours} />;
+  return <TopDestinations tours={tours} />;
 }

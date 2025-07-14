@@ -18,7 +18,16 @@ export async function GET(Request) {
     const apiKey = process.env.LOCATION_IQ_API_KEY;
     const options = { method: 'GET', headers: { accept: 'application/json' } };
 
-    const externalUrl = `https://api.locationiq.com/v1/autocomplete?key=${apiKey}&q=${searchString}&accept-language=en`;
+    const params = new URLSearchParams({
+      key: apiKey,
+      q: searchString,
+      limit: '10',
+      dedupe: '1',
+      'accept-language': 'en',
+      countrycodes: 'ph',
+    });
+
+    const externalUrl = `https://api.locationiq.com/v1/autocomplete?${params.toString()}`;
 
     const res = await fetch(externalUrl, options);
 

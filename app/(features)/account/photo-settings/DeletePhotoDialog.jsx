@@ -7,18 +7,14 @@ import axios from 'axios';
 import { useProfilePhotoContext } from '@/contexts/ProfilePhotoProvider';
 import { useMessageStore } from '@/stores/messageStore';
 import { errorHandler } from '@/helpers/errorHelpers';
-import { API_URLS } from '@/config/apiRoutes';
+import { API_URLS } from '@/constants/apiRoutes';
 import ConfirmationDialog from '@/components/dialogs/ConfirmationDialog';
 
 const DeleteProfilePhotoDialog = ({ isDialogOpen, setIsDialogOpen }) => {
   const params = useParams();
-
   const { userId, refetch } = useProfilePhotoContext();
-
   const [isSubmitting, setIsSubmitting] = useState(false);
-
   const { update } = useSession();
-
   const { handleAlertMessage } = useMessageStore();
 
   const handleSubmit = async () => {
@@ -27,8 +23,8 @@ const DeleteProfilePhotoDialog = ({ isDialogOpen, setIsDialogOpen }) => {
     try {
       const url = `${API_URLS.USERS}/${userId}/profile-photo`;
 
-      const requestData = { actionType: 'delete-photo' };
-      const { data } = await axios.patch(url, requestData);
+      const payload = { actionType: 'delete-photo' };
+      const { data } = await axios.patch(url, payload);
 
       setIsDialogOpen(false);
       setIsSubmitting(false);

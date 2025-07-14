@@ -1,5 +1,10 @@
 import { Box, Typography, List, ListItem } from '@mui/material';
 import { StyledContainer } from '@/components/styled/StyledContainers';
+import { locales } from '@/navigation';
+
+export function generateStaticParams() {
+  return locales.map((locale) => ({ locale }));
+}
 
 export const metadata = {
   title: 'Privacy Policy',

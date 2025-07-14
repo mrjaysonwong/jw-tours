@@ -5,7 +5,7 @@ import { render } from '@react-email/render';
 // internal imports
 import { STATUS_CODES } from '@/constants/common';
 import { handleRateLimitError, HttpError } from '@/helpers/errorHelpers';
-import { rateLimiter } from '@/services/rate-limiter/rateLimiter';
+import { rateLimiter } from '@/libs/rateLimiter';
 import { createOrUpdateOTP } from '@/services/otp/createOrUpdateOTP';
 import { formatDate } from '@/utils/formats/formatDates';
 import { sendEmail } from '@/services/email/sendEmail';
@@ -13,9 +13,9 @@ import { EmailTemplate } from '@/templates/EmailTemplate';
 import Token from '@/models/tokenModel';
 import { ACTIONS } from '@/constants/common';
 
-export async function validatePassword(requestData, password) {
+export async function validatePassword(data, password) {
   try {
-    const passwordsMatch = await compare(requestData.password, password);
+    const passwordsMatch = await compare(data.password, password);
 
     if (!passwordsMatch) {
       throw new HttpError({

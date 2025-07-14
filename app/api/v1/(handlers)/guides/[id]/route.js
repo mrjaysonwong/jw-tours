@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 
 // internal imports
-import connectMongo from '@/services/db/connectMongo';
+import connectMongo from '@/libs/connectMongo';
 import User from '@/models/userModel';
 import { handleApiError } from '@/helpers/errorHelpers';
 import { STATUS_CODES } from '@/constants/common';

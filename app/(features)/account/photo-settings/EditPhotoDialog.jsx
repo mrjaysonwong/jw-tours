@@ -21,7 +21,7 @@ import { useMessageStore } from '@/stores/messageStore';
 import { getCroppedImg } from '@/helpers/images/getCroppedImg';
 import { errorHandler } from '@/helpers/errorHelpers';
 import { emptyFileInput } from '@/helpers/images/emptyFileInput';
-import { API_URLS } from '@/config/apiRoutes';
+import { API_URLS } from '@/constants/apiRoutes';
 
 const EditPhotoDialog = ({
   setEditDialogOpen,
@@ -75,12 +75,12 @@ const EditPhotoDialog = ({
     try {
       const url = `${API_URLS.USERS}/${userId}/profile-photo`;
 
-      const requestData = { croppedImage, actionType: 'update-photo' };
+      const payload = { croppedImage, actionType: 'update-photo' };
       // const config = {
       //   signal: AbortSignal.timeout(5000),
       // };
 
-      const { data } = await axios.patch(url, requestData);
+      const { data } = await axios.patch(url, payload);
 
       emptyFileInput();
       setEditDialogOpen(false);

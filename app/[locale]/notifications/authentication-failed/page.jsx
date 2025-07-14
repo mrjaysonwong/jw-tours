@@ -4,13 +4,13 @@ import { useTranslations } from 'next-intl';
 import { StyledMainContainer } from '@/components/styled/StyledContainers';
 import { createMetadata } from '@/helpers/metadataHelpers';
 
-export function generateMetadata({ params: { locale } }) {
-  return createMetadata(
-    locale,
-    'notifications_page',
-    'meta_title.notifications'
-  );
-}
+// export function generateMetadata({ params: { locale } }) {
+//   return createMetadata(
+//     locale,
+//     'notifications_page',
+//     'meta_title.notifications'
+//   );
+// }
 
 export default function AuthenticationFailedPage() {
   const t1 = useTranslations('common');

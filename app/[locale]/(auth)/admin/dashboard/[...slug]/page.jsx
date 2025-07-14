@@ -5,30 +5,34 @@ import AdminDashboard from '@/app/(features)/dashboard/admin/AdminDashboard';
 export const metadata = {
   title: 'Admin Dashboard',
 };
-const validCategories = new Set([
-  'analytics',
-  'sales',
-  'bookings',
-  'users',
-  'tours',
-  'payments',
-  'refunds',
-  'notifications',
-]);
-const validActions = new Set(['edit', 'new', 'reports']);
 
-export default async function AdminDashboardSlugPage({ params }) {
+// Define valid actions for each category
+const categoryActions = {
+  analytics: [],
+  sales: [],
+  revenue: [],
+  bookings: ['new', 'reports'],
+  users: ['new'],
+  tours: ['new'],
+  payments: ['new', 'reports'],
+  refunds: ['new', 'reports'],
+  notifications: ['new', 'reports'],
+};
+
+export default async function AdminDashboardSlugPage({ params: { slug } }) {
   const session = await auth();
-  if (session?.user?.role !== 'admin') return redirect('/admin/signin');
+  if (session?.user?.role !== 'admin' || !session)
+    return redirect('/admin/signin');
 
-  const { slug = [] } = params;
   const [categorySlug, actionSlug, extraSlug] = slug;
 
-  if (
-    !validCategories.has(categorySlug) ||
-    (actionSlug && !validActions.has(actionSlug)) ||
-    extraSlug
-  ) {
+  if (!categoryActions[categorySlug] || extraSlug) {
+    return redirect('/admin/dashboard');
+  }
+
+  const validActions = categoryActions[categorySlug];
+
+  if (actionSlug && !validActions.includes(actionSlug)) {
     return redirect('/admin/dashboard');
   }
 

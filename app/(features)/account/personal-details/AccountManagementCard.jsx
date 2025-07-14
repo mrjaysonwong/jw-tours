@@ -17,8 +17,8 @@ import {
 } from '@/contexts/UserProvider';
 import ProfileAvatar from '@/components/images/ProfileAvatar';
 import { ProfilePhotoDialog } from '@/app/(features)/account/photo-settings';
-import { statusLabelColorMap } from '@/utils/colorMap';
-import { API_URLS } from '@/config/apiRoutes';
+import { statusLabelColorMap } from '@/constants/statusColorMaps';
+import { API_URLS } from '@/constants/apiRoutes';
 import { errorHandler } from '@/helpers/errorHelpers';
 import { useMessageStore } from '@/stores/messageStore';
 

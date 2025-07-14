@@ -5,10 +5,10 @@ import { render } from '@react-email/render';
 import {
   findUserEmail,
   findUserPhoneNumber,
-} from '@/services/user/userQueries';
+} from '@/services/users/userQueries';
 import { handleRateLimitError, HttpError } from '@/helpers/errorHelpers';
 import { STATUS_CODES } from '@/constants/common';
-import { rateLimiter } from '@/services/rate-limiter/rateLimiter';
+import { rateLimiter } from '@/libs/rateLimiter';
 import { createOrUpdateOTP } from '@/services/otp/createOrUpdateOTP';
 import { formatDate } from '@/utils/formats/formatDates';
 import { sendEmail } from '@/services/email/sendEmail';
@@ -74,9 +74,9 @@ export async function sendEmailOTP({ email: userEmail, userId, userExists }) {
   }
 }
 
-export async function sendMobileOTP({ requestData, userId, userExists }) {
+export async function sendMobileOTP({ data, userId, userExists }) {
   try {
-    const { dialCode, phoneNumber } = requestData.phone;
+    const { dialCode, phoneNumber } = data.phone;
     const { phone } = userExists;
 
     validateMaxContactLimit({ phone });

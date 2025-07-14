@@ -14,7 +14,7 @@ const Error = ({ error, reset, hasQueryError }) => {
     if (reset) {
       reset() || location.reload();
     } else if (hasQueryError) {
-      router.replace('/signin', { scroll: false });
+      router.replace('/signin');
     } else {
       location.reload();
     }

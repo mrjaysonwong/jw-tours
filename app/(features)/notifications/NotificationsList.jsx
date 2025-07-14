@@ -27,7 +27,7 @@ import { getDateTime, formatEpochDate } from '@/utils/formats/formatDates';
 import { scrollbarStyles } from '@/components/styled/StyledScrollBars';
 import { useMessageStore } from '@/stores/messageStore';
 import { errorHandler } from '@/helpers/errorHelpers';
-import { adminNotificationTypes } from '@/utils/common';
+import { adminNotificationTypes } from '@/constants/iconMaps/icons';
 
 const ErrorContent = () => {
   return (

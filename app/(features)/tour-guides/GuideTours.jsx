@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { Typography, Box } from '@mui/material';
 
 // internal imports
-import { formatUrl } from '@/utils/formats/formatUrl';
+import { formatUrl } from '@/utils/formats/common';
 import { useGuideData } from '@/contexts/GuideProfileProvider';
 
 const GuideTours = () => {
@@ -20,11 +20,11 @@ const GuideTours = () => {
         <ul>
           {tours.map((tour) => {
             const href = `/tours/${formatUrl(
-              tour.destination.geoLocation
+              tour.geoLocation
             )}/${formatUrl(tour.destination.name)}/${tour._id}`;
             return (
               <li key={tour._id} style={{ textTransform: 'capitalize' }}>
-                <Link href={href}>
+                <Link href={href} target="_blank">
                   {tour.destination.name}
                 </Link>
               </li>

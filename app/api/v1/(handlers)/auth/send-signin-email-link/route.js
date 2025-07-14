@@ -1,5 +1,5 @@
 import { emailSchema } from '@/validation/yup/user/contactDetailsSchema';
-import connectMongo from '@/services/db/connectMongo';
+import connectMongo from '@/libs/connectMongo';
 import { handleApiError } from '@/helpers/errorHelpers';
 import { sendEmailLink } from '@/services/auth/sendEmailLink';
 import { ACTIONS } from '@/constants/common';
@@ -11,19 +11,19 @@ export async function POST(Request) {
     const refererUrl = new URL(referer);
     const callbackUrl = refererUrl.searchParams.get('callbackUrl');
 
-    const { email } = await Request.json();
+    const data = await Request.json();
 
-    await emailSchema.validate({ email }, { abortEarly: false });
+    await emailSchema.validate({ ...data }, { abortEarly: false });
 
     // connect to the database
     await connectMongo();
 
     const actionType = ACTIONS.SIGNIN;
-    const statusCode = await sendEmailLink(email, actionType, callbackUrl);
+    const statusCode = await sendEmailLink(data.email, actionType, callbackUrl);
 
     return Response.json(
       {
-        message: `A sign-in link has been sent to ${email}`,
+        message: `A sign-in link has been sent to ${data.email}`,
       },
       { status: statusCode ?? 200 }
     );

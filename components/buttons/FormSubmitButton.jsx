@@ -1,6 +1,7 @@
 import { Button, CircularProgress } from '@mui/material';
 
 const FormSubmitButton = ({
+  form,
   label,
   action,
   isSubmitting,
@@ -8,6 +9,7 @@ const FormSubmitButton = ({
   captcha,
   isSubmitSuccessful,
   notEnteredAllDigits,
+  borderRadius = 'auto',
 }) => {
   return (
     <>
@@ -17,6 +19,7 @@ const FormSubmitButton = ({
           type="submit"
           fullWidth={fullWidth}
           disabled={isSubmitting || captcha || isSubmitSuccessful}
+          sx={{ borderRadius: borderRadius }}
         >
           {isSubmitting ? (
             <CircularProgress
@@ -31,9 +34,16 @@ const FormSubmitButton = ({
       ) : (
         <>
           <Button
+            form={form}
             variant="contained"
             type="submit"
-            disabled={isSubmitting || captcha || notEnteredAllDigits}
+            fullWidth={fullWidth}
+            disabled={
+              isSubmitting ||
+              captcha ||
+              notEnteredAllDigits ||
+              isSubmitSuccessful
+            }
             sx={{ ml: 'auto' }}
           >
             {isSubmitting ? (

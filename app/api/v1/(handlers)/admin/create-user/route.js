@@ -1,21 +1,23 @@
 import { createUserSchema } from '@/validation/yup/admin/createUserSchema';
-import { validateSessionAdminRole } from '@/services/auth/validateSessionAdminRole';
+import { validateSession } from '@/services/auth/validateSession';
+import { authorizeAdmin } from '@/services/auth/authorizeRole';
 import { handleApiError } from '@/helpers/errorHelpers';
 import { createUser } from '@/services/admin/createUser';
-import connectMongo from '@/services/db/connectMongo';
+import connectMongo from '@/libs/connectMongo';
 
 // POST: /api/v1/admin/create-user
 export async function POST(Request) {
   try {
-    const formData = await Request.json();
+    const data = await Request.json();
 
-    await createUserSchema.validate({ ...formData }, { abortEarly: false });
+    await createUserSchema.validate({ ...data }, { abortEarly: false });
 
-    await validateSessionAdminRole();
+    const session = await validateSession();
+    await authorizeAdmin(session);
 
     // connect to database
     await connectMongo();
-    await createUser(formData);
+    await createUser(data);
 
     return Response.json(
       {

@@ -7,7 +7,7 @@ import ExpandMore from '@mui/icons-material/ExpandMore';
 // internal imports
 import { StyledNavLinksContainer } from '@/components/styled/StyledContainers';
 import { stripLocale } from '@/helpers/pageHelpers';
-import ClickAwayListener from '@/utils/components/ClickAwayListener';
+import ClickAwayListener from '@/components/common/ClickAwayListener';
 
 const TopNavLinks = ({ linksTransLations }) => {
   const [showDropdown, setShowDropdown] = useState({});

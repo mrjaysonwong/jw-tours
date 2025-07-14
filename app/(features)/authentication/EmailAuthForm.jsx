@@ -6,13 +6,7 @@ import axios from 'axios';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import ReCAPTCHA from 'react-google-recaptcha';
-import {
-  Box,
-  Typography,
-  Divider,
-  Card,
-  CardContent,
-} from '@mui/material';
+import { Box, Typography, Divider, Card, CardContent } from '@mui/material';
 
 // internal imports
 import FormSubmitButton from '@/components/buttons/FormSubmitButton';
@@ -21,7 +15,7 @@ import EmailAuthConfirmationMessage from '@/app/(features)/authentication/EmailA
 import HistoryBackButton from '@/components/buttons/HistoryBackButton';
 import { emailSchema } from '@/validation/yup/user/contactDetailsSchema';
 import { errorHandler } from '@/helpers/errorHelpers';
-import { getUrl, getTitle, getMessage } from '@/utils/authActionMap';
+import { getUrl, getTitle, getMessage } from '@/helpers/authActionHelpers';
 import FormInput from '@/components/inputs/FormInput';
 import AnimateGradient from '@/components/bg-gradients/AnimatedGradient';
 
@@ -44,19 +38,19 @@ const EmailAuthForm = ({ action }) => {
     register,
     handleSubmit,
     reset,
-    formState: { errors, isSubmitting, isSubmitSuccessful },
+    formState: { errors, isSubmitting },
   } = useForm({
     resolver: yupResolver(emailSchema),
   });
 
-  const onSubmit = async (formData, event) => {
+  const onSubmit = async (formData) => {
     submitAttemptRef.current++;
 
     try {
       const url = getUrl({ action });
-      const requestData = { email: formData.email };
+      const payload = { email: formData.email };
 
-      const { data } = await axios.post(url, requestData);
+      const { data } = await axios.post(url, payload);
 
       if (data) {
         reset();

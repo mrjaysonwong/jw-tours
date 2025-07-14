@@ -1,6 +1,6 @@
 // internal imports
-import { findUserEmail } from '@/services/user/userQueries';
-import { rateLimiter } from '@/services/rate-limiter/rateLimiter';
+import { findUserEmail } from '@/services/users/userQueries';
+import { rateLimiter } from '@/libs/rateLimiter';
 import { HttpError } from '@/helpers/errorHelpers';
 import { handleRateLimitError } from '@/helpers/errorHelpers';
 import { generateEmailVerificationData } from '@/services/auth/generateEmailVerificationData';
@@ -52,7 +52,7 @@ export async function sendEmailLink(email, actionType, callbackUrl) {
 
         const {
           token,
-          epochTime: expireTimestamp,
+          expireTimestamp,
           emailHtml,
         } = generateEmailVerificationData({
           email,
@@ -61,12 +61,16 @@ export async function sendEmailLink(email, actionType, callbackUrl) {
           callbackUrl,
         });
 
+      
+
         const userTokenExists = await manageUserEmailToken(
           userExists._id,
           email,
           token,
           expireTimestamp
         );
+
+        
 
         // Send the email content
         await sendEmail({

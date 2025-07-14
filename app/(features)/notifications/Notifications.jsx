@@ -6,7 +6,7 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 
 // internal imports
 import CustomTab from '@/components/tabs/CustomTab';
-import { notificationsTabComponents } from '@/config/componentMapping';
+import { notificationsTabComponents } from '@/constants/componentMaps/componentMaps';
 import LoadingSpinner from '@/components/loaders/LoadingSpinner';
 import CustomError from '@/components/errors/CustomError';
 import { useNotificationStore } from '@/stores/notificationStore';

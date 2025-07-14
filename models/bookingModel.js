@@ -1,13 +1,22 @@
 import { Schema, model, models } from 'mongoose';
-import { customAlphabet } from 'nanoid';
 
-const nanoid = customAlphabet('1234567890', 10);
+// internal imports
+import { nanoid } from '@/libs/nanoid';
+import {
+  bookingRequestSchema,
+  contactSchema,
+  meetingAndPickupSchema,
+} from './sharedSchemas';
 
 const bookingSchema = new Schema(
   {
     bookingId: {
       type: String,
-      default: () => nanoid(),
+      default: () => `BOOK-${nanoid()}`,
+      unique: true,
+    },
+    transactionId: {
+      type: String,
       unique: true,
     },
     tour: {
@@ -15,7 +24,7 @@ const bookingSchema = new Schema(
       ref: 'Tour',
       required: true,
     },
-    user: {
+    booker: {
       type: Schema.Types.ObjectId,
       ref: 'User',
       required: true,
@@ -24,13 +33,43 @@ const bookingSchema = new Schema(
       type: Date,
       default: Date.now(),
     },
-    tourDate: {
+    paymentId: {
       type: String,
-      required: true,
     },
+    paymentIntentId: {
+      type: String,
+    },
+    paymentStatus: {
+      type: String,
+      default: 'pending',
+    },
+    status: {
+      type: String,
+      default: 'pending',
+    },
+    reasonForCancellation: {
+      type: String,
+    },
+    paymentSnapshot: {
+      currencySymbol: { type: String },
+      currencyCode: { type: String },
+      convertedAmount: { type: Number },
+      paymentMethod: { type: String },
+    },
+    bookingRequest: bookingRequestSchema,
+    contact: contactSchema,
+    meetingAndPickup: meetingAndPickupSchema,
   },
   { timestamps: true }
 );
+
+bookingSchema.index({
+  tour: 1,
+  booker: 1,
+  'bookingRequest.tourDate': 1,
+  paymentIntentId: 1,
+  paymentId: 1,
+});
 
 const Booking = models?.Booking || model('Booking', bookingSchema);
 

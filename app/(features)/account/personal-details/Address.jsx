@@ -16,9 +16,10 @@ import { useEditUserDetailsContext } from '@/contexts/EditUserDetailsProvider';
 import ErrorText from '@/components/errors/ErrorText';
 import { usePlacesData } from '@/hooks/usePlacesData';
 import { getAddressParts } from '@/utils/common';
+import { capitalizeText } from '@/utils/formats/common';
 
 const Address = () => {
-  const { control } = useEditUserDetailsContext();
+  const { control, user } = useEditUserDetailsContext();
 
   const [searchTerm, setSearchTerm] = useState('');
   const [debouncedText] = useDebounce(searchTerm, 700);
@@ -34,19 +35,33 @@ const Address = () => {
     setSearchTerm(e.target.value);
   };
 
-  const filteredOptions = suggestions.map((option) => ({
-    name: option.address.name,
-    neighbourhood: option.address.neighbourhood,
-    city: option.address.city,
-    state: option.address.state,
-    postcode: option.address.postcode,
-    country: option.address.country,
-  }));
+  const filteredOptions = suggestions
+    .filter((option) => option.address.country === 'Philippines')
+    .map((option) => ({
+      name: option.address.name,
+      neighbourhood: option.address.neighbourhood,
+      city: option.address.city,
+      state: option.address.state,
+      postcode: option.address.postcode,
+      country: option.address.country,
+    }))
+    .filter(
+      (option, index, self) =>
+        index === self.findIndex((o) => o.name === option.name)
+    );
+
+  const getValue = user?.address
+    ? {
+        name: capitalizeText(user.address.name),
+        ...(user.address.city && { city: capitalizeText(user.address.city) }),
+        country: capitalizeText(user.address.country),
+      }
+    : null;
 
   return (
     <>
       <Grid item xs={12}>
-        <Divider textAlign="left" sx={{ mt: 1 }}>
+        <Divider textAlign="left" sx={{ my: 1 }}>
           <Typography variant="body2" color="darkgray">
             Address
           </Typography>
@@ -56,6 +71,7 @@ const Address = () => {
       <Grid item xs={12}>
         <Controller
           name="address"
+          defaultValue={getValue}
           control={control}
           render={({ field }) => {
             return (
@@ -64,7 +80,9 @@ const Address = () => {
                   value={
                     filteredOptions.find(
                       (opt) => opt.name === field.value?.name
-                    ) || null
+                    ) ||
+                    field.value ||
+                    null
                   }
                   filterOptions={(x) => x}
                   options={filteredOptions}
@@ -106,11 +124,6 @@ const Address = () => {
                       />
                     </>
                   )}
-                  slotProps={{
-                    paper: {
-                      elevation: 5,
-                    },
-                  }}
                 />
                 <ErrorText error={error?.message} />
               </>

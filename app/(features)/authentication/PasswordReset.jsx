@@ -14,7 +14,7 @@ import FormInput from '@/components/inputs/FormInput';
 import FormSubmitButton from '@/components/buttons/FormSubmitButton';
 import { errorHandler } from '@/helpers/errorHelpers';
 import { useMessageStore } from '@/stores/messageStore';
-import { API_URLS } from '@/config/apiRoutes';
+import { API_URLS } from '@/constants/apiRoutes';
 
 const PasswordReset = ({ token }) => {
   const [showPassword, setShowPassword] = useState(false);
@@ -36,7 +36,7 @@ const PasswordReset = ({ token }) => {
     resolver: yupResolver(newPasswordSchema),
   });
 
-  const onSubmit = async (formData, event) => {
+  const onSubmit = async (formData) => {
     try {
       const url = `${API_URLS.AUTH}/set-new-password`;
 
@@ -47,7 +47,7 @@ const PasswordReset = ({ token }) => {
       const { data } = await axios.patch(url, formData, { headers });
 
       handleAlertMessage(data.message, 'success');
-      router.replace('/signin', { scroll: false });
+      router.replace('/signin');
       reset();
     } catch (error) {
       const { errorMessage } = errorHandler(error);
@@ -56,38 +56,36 @@ const PasswordReset = ({ token }) => {
   };
 
   return (
-    <>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <FormInput
-          register={register}
-          inputName="password"
-          type="password"
-          label="Password"
-          errors={errors.password}
-          showPassword={showPassword}
-          handleShowPassword={handleShowPassword}
-        />
-        <FormInput
-          register={register}
-          inputName="confirmPassword"
-          type="password"
-          label="Confirm Password"
-          errors={errors.confirmPassword}
-          showPassword={showPassword}
-          handleShowPassword={handleShowPassword}
-        />
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <FormInput
+        register={register}
+        inputName="password"
+        type="password"
+        label="Password"
+        errors={errors.password}
+        showPassword={showPassword}
+        handleShowPassword={handleShowPassword}
+      />
+      <FormInput
+        register={register}
+        inputName="confirmPassword"
+        type="password"
+        label="Confirm Password"
+        errors={errors.confirmPassword}
+        showPassword={showPassword}
+        handleShowPassword={handleShowPassword}
+      />
 
-        <Box sx={{ mt: 2 }}>
-          <FormSubmitButton
-            label="Set new password"
-            action="auth"
-            isSubmitting={isSubmitting}
-            fullWidth={true}
-            isSubmitSuccessful={isSubmitSuccessful}
-          />
-        </Box>
-      </form>
-    </>
+      <Box sx={{ mt: 2 }}>
+        <FormSubmitButton
+          label="Set new password"
+          action="auth"
+          isSubmitting={isSubmitting}
+          fullWidth={true}
+          isSubmitSuccessful={isSubmitSuccessful}
+        />
+      </Box>
+    </form>
   );
 };
 

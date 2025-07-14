@@ -47,9 +47,8 @@ const GuideAvailability = () => {
   const { bookings } = useGuideData();
 
   //  Extract booked dates from bookings
-  const bookedDates = bookings.map((booking) => {
-    const date = dayjs(booking.tourDate);
-    return date.format('YYYY-MM-DD');
+  const bookedDates = bookings?.map((booking) => {
+    return dayjs(booking?.bookingRequest?.tourDate).format('YYYY-MM-DD');
   });
 
   const shouldDisableDate = useCallback(
@@ -57,11 +56,11 @@ const GuideAvailability = () => {
       const formattedDate = date.format('YYYY-MM-DD');
 
       return (
-        bookedDates.includes(formattedDate) ||
-        bookings.some((booking) => {
+        bookedDates?.includes(formattedDate) ||
+        bookings?.some((booking) => {
           const durationDays = getDurationInDays(booking.tour.duration);
           const isMultiDay = /day|week/.test(booking.tour.duration);
-          const startDate = dayjs(booking.tourDate);
+          const startDate = dayjs(booking?.bookingRequest?.tourDate);
 
           return (
             isMultiDay &&

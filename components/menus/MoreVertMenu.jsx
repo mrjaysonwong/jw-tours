@@ -7,8 +7,9 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import ContactMenuActionDialog from '@/components/dialogs/ContactMenuActionDialog';
 import TwoFactorAuthDialog from '@/components/dialogs/TwoFactorAuthDialog';
 import SendNotificationDialog from '@/components/dialogs/SendNotificationDialog';
-import { actionMap } from '@/utils/vertMenuActionMap';
+import { actionMap } from '@/constants/vertMenuActionMap';
 import { useSendNotificationStore } from '@/stores/notificationStore';
+import { menuActionHelpers } from '@/helpers/menuActionHelpers';
 
 const MoreVertMenu = ({
   menuType,
@@ -21,10 +22,8 @@ const MoreVertMenu = ({
 }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
+  const [dialogState, setDialogState] = useState({ type: '', open: false });
 
-  const [isContactActionOpen, setIsContactActionOpen] = useState(false);
-  const [isTwoFactorAuthOpen, setIsTwoFactorAuthOpen] = useState(false);
-  const [isSendNotificationOpen, setIsSendNotificationOpen] = useState();
   const [menuAction, setMenuAction] = useState('');
 
   const [targetEmail, setTargetEmail] = useState('');
@@ -33,11 +32,6 @@ const MoreVertMenu = ({
   const router = useRouter();
 
   const { setSelectedUserIds } = useSendNotificationStore();
-
-  const isMenuType = (type) => menuType === type;
-
-  const isUserListTable =
-    isMenuType('users-table') || isMenuType('users-table-toolbar');
 
   const handleClickMoreVert = (event) => {
     setAnchorEl(event.currentTarget);
@@ -49,39 +43,21 @@ const MoreVertMenu = ({
   };
 
   const handleClickAction = (event, action) => {
-    if (isUserListTable) {
-      const targetId = event.currentTarget.getAttribute('data-id');
+    const targetId = event.currentTarget.getAttribute('data-id');
 
-      switch (action) {
-        case 'edit':
-          router.push(`/admin/dashboard/users/${targetId}/edit`);
-          break;
-
-        case 'delete':
-          setIsTwoFactorAuthOpen(true);
-          break;
-
-        case 'send-notification':
-          // setSelectedUserIds([...selected]);
-          // router.push(`/admin/dashboard/notifications/send`);
-          setIsSendNotificationOpen(true);
-          setSelectedUserIds([...selected]);
-          break;
-
-        default:
-          router.push('/admin/dashboard');
-          break;
-      }
-    } else if (isMenuType('cards')) {
-      setIsContactActionOpen(true);
-
-      // conditions for user contact-information
-      if (email) {
-        setTargetEmail(event.currentTarget.getAttribute('data-email'));
-      } else {
-        setTargetNumber(event.currentTarget.getAttribute('data-number'));
-      }
-    }
+    menuActionHelpers({
+      event,
+      menuType,
+      action,
+      targetId,
+      setDialogState,
+      selected,
+      setSelectedUserIds,
+      router,
+      email,
+      setTargetEmail,
+      setTargetNumber,
+    });
 
     setMenuAction(action);
     setAnchorEl(null);
@@ -89,37 +65,18 @@ const MoreVertMenu = ({
 
   const options = actionMap[menuType] || actionMap.default;
 
-  const menuItems = () =>
-    options.map((option) => {
-      const dataAttributes = {
-        'data-id': isUserListTable ? id : null,
-        'data-email': isMenuType('cards') && email ? email : null,
-        'data-number':
-          isMenuType('cards') && phoneNumber
-            ? `${dialCode} ${phoneNumber}`
-            : null,
-      };
-
-      return (
-        <MenuItem
-          key={option.action}
-          {...dataAttributes}
-          onClick={(event) => handleClickAction(event, option.action)}
-        >
-          {option.label}
-        </MenuItem>
-      );
-    });
+  const dataAttributes = {
+    ...(id && { 'data-id': id }),
+    ...(menuType === 'my-contact-info' && email && { 'data-email': email }),
+    ...(menuType === 'my-contact-info' &&
+      phoneNumber && {
+        'data-number': `${dialCode} ${phoneNumber}`,
+      }),
+  };
 
   return (
     <>
-      <Box
-        sx={{
-          position: isMenuType('cards') ? 'absolute' : 'relative',
-          top: isMenuType('cards') ? 8 : 'auto',
-          right: isMenuType('cards') ? 8 : 'auto',
-        }}
-      >
+      <Box>
         <IconButton
           aria-label="more options"
           id="overflow-button"
@@ -140,15 +97,24 @@ const MoreVertMenu = ({
           open={open}
           onClose={handleClose}
         >
-          {menuItems()}
+          {options.map((option) => {
+            return (
+              <MenuItem
+                key={option.action}
+                {...dataAttributes}
+                onClick={(event) => handleClickAction(event, option.action)}
+              >
+                {option.label}
+              </MenuItem>
+            );
+          })}
         </Menu>
       </Box>
 
-      {isContactActionOpen && (
+      {dialogState.type === 'contact-info-action' && (
         <ContactMenuActionDialog
-          isDialogOpen={isContactActionOpen}
-          setIsDialogOpen={setIsContactActionOpen}
-          menuType={menuType}
+          isDialogOpen={dialogState.open}
+          setDialogState={setDialogState}
           targetEmail={targetEmail}
           targetNumber={targetNumber}
           menuAction={menuAction}
@@ -156,19 +122,19 @@ const MoreVertMenu = ({
         />
       )}
 
-      {isTwoFactorAuthOpen && (
+      {dialogState.type === '2FA' && (
         <TwoFactorAuthDialog
           title="2FA - Account Deletion"
-          isDialogOpen={isTwoFactorAuthOpen}
-          setIsDialogOpen={setIsTwoFactorAuthOpen}
+          isDialogOpen={dialogState.open}
+          setDialogState={setDialogState}
           selected={selected}
         />
       )}
 
-      {isSendNotificationOpen && (
+      {dialogState.type === 'send-notification' && (
         <SendNotificationDialog
-          isDialogOpen={isSendNotificationOpen}
-          setIsDialogOpen={setIsSendNotificationOpen}
+          isDialogOpen={dialogState.open}
+          setDialogState={setDialogState}
           setSelected={setSelected}
         />
       )}

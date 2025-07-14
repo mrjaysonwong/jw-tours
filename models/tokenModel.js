@@ -17,9 +17,6 @@ const emailSchema = new Schema(
     requestCount: {
       type: Number,
     },
-    rateLimit: {
-      type: Boolean,
-    },
   },
   { _id: false }
 );
@@ -53,9 +50,6 @@ const phoneSchema = new Schema(
     },
     requestCount: {
       type: Number,
-    },
-    rateLimit: {
-      type: Boolean,
     },
   },
   { _id: false }

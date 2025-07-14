@@ -41,7 +41,6 @@ const Logo = () => (
 
 const ListMenu = React.memo(({ link, showDropdown, handleToggle }) => {
   const params = useParams();
-  const router = useRouter();
   const pathname = usePathname();
   const strippedPathname = stripLocale(pathname);
 
@@ -60,17 +59,18 @@ const ListMenu = React.memo(({ link, showDropdown, handleToggle }) => {
 
   return !dropDownMenu ? (
     <ListItem disablePadding>
-      <ListItemButton
-        disableRipple
-        onClick={() => router.replace(href)}
-        className="list-btn"
-        sx={{
-          bgcolor: isActive ? 'var(--color-green-alpha)' : 'inherit',
-        }}
-      >
-        <ListItemIcon>{icon}</ListItemIcon>
-        <ListItemText primary={label} />
-      </ListItemButton>
+      <Link href={href} passHref>
+        <ListItemButton
+          disableRipple
+          className="list-btn"
+          sx={{
+            bgcolor: isActive ? 'var(--color-green-alpha)' : 'inherit',
+          }}
+        >
+          <ListItemIcon>{icon}</ListItemIcon>
+          <ListItemText primary={label} />
+        </ListItemButton>
+      </Link>
     </ListItem>
   ) : (
     <ListItem
@@ -111,27 +111,28 @@ const ListMenu = React.memo(({ link, showDropdown, handleToggle }) => {
 
               return (
                 <ListItem disablePadding key={`${index}-${subLink.label}`}>
-                  <ListItemButton
-                    disableRipple
-                    className="list-btn"
-                    onClick={() => router.replace(subLink.href)}
-                    sx={{
-                      display:
-                        isEdit && (!params.id || !isSubLinkActive)
-                          ? 'none'
-                          : 'flex',
-                    }}
-                  >
-                    <ListItemText
-                      primary={subLink.label}
+                  <Link href={subLink.href} passHref>
+                    <ListItemButton
+                      disableRipple
+                      className="list-btn"
                       sx={{
-                        color:
-                          subLink.href === strippedPathname
-                            ? 'var(--color-text-main)'
-                            : 'inherit',
+                        display:
+                          isEdit && (!params.id || !isSubLinkActive)
+                            ? 'none'
+                            : 'flex',
                       }}
-                    />
-                  </ListItemButton>
+                    >
+                      <ListItemText
+                        primary={subLink.label}
+                        sx={{
+                          color:
+                            subLink.href === strippedPathname
+                              ? 'var(--color-text-main)'
+                              : 'inherit',
+                        }}
+                      />
+                    </ListItemButton>
+                  </Link>
                 </ListItem>
               );
             })}
@@ -188,7 +189,9 @@ const DrawerLinks = () => {
         <Logo />
       </Toolbar>
 
-      <StyledDrawerSectionContainer>
+      <StyledDrawerSectionContainer
+        sx={{ a: { width: '100%', color: 'inherit' } }}
+      >
         <SectionList
           sourceLink={drawerDashboardLinks}
           sectionTitle="Dashboard"

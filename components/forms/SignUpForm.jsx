@@ -6,7 +6,7 @@ import { Typography, Divider, Box } from '@mui/material';
 
 // internal imports
 import SignUpFormFields from '@/app/(features)/authentication/SignUpFormFields';
-import { PATHNAMES } from '@/constants/pathname';
+import { PATHNAMES } from '@/constants/pathNames';
 
 const SignUpForm = ({ header, showCancel }) => {
   return (

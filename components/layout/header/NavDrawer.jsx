@@ -4,8 +4,6 @@ import { Drawer } from '@mui/material';
 import { useDrawerStore } from '@/stores/drawerStore';
 import DrawerLinks from './DrawerLinks';
 
-const drawerWidth = '100%';
-
 const NavDrawer = ({ linksTransLations }) => {
   const { navDrawerOpen, toggleDrawer } = useDrawerStore();
 
@@ -23,7 +21,7 @@ const NavDrawer = ({ linksTransLations }) => {
       sx={{
         '& .MuiDrawer-paper': {
           boxSizing: 'border-box',
-          width: drawerWidth,
+          width: '100%',
           backgroundImage: 'none',
           height: '100vh',
         },

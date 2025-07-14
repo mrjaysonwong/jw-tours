@@ -12,7 +12,7 @@ import {
 import CustomTab from '@/components/tabs/CustomTab';
 import CustomError from '@/components/errors/CustomError';
 import LoadingSpinner from '@/components/loaders/LoadingSpinner';
-import { profileSettingsTabComponents } from '@/config/componentMapping';
+import { profileSettingsTabComponents } from '@/constants/componentMaps/componentMaps';
 
 const titleMap = {
   0: 'Personal Details',

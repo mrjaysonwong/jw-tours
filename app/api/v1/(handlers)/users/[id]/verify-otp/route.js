@@ -1,8 +1,12 @@
 // internal imports
-import { validateSessionAndUser } from '@/services/auth/validateSessionAndUser';
 import { verifyContactSchema } from '@/validation/yup/auth/verifyContactSchema';
+import { validateSession } from '@/services/auth/validateSession';
+import connectMongo from '@/libs/connectMongo';
+import { authorizeUser } from '@/services/auth/authorizeRole';
 import { handleApiError } from '@/helpers/errorHelpers';
-import { verifyAndAddEmail, verifyAndAddMobile } from '@/services/user';
+import { verifyAndAddEmail, verifyAndAddMobile } from '@/services/users';
+
+const projection = 'email phone';
 
 // PATCH: /api/v1/users/[id]/verify-otp
 export async function PATCH(Request, { params }) {
@@ -16,8 +20,11 @@ export async function PATCH(Request, { params }) {
     const schema = verifyContactSchema(type);
     await schema.validate({ ...data }, { abortEarly: false });
 
-    const projection = 'email phone';
-    const {userExists} = await validateSessionAndUser(userId, projection);
+    const session = await validateSession();
+
+    // connect to database
+    await connectMongo();
+    const userExists = await authorizeUser({ session, userId, projection });
 
     if (isEmailType) {
       await verifyAndAddEmail(otp, email, userId, userExists);

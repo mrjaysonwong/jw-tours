@@ -21,7 +21,7 @@ import FormSubmitButton from '@/components/buttons/FormSubmitButton';
 import ErrorText from '@/components/errors/ErrorText';
 import { useMessageStore } from '@/stores/messageStore';
 import { errorHandler } from '@/helpers/errorHelpers';
-import { API_URLS } from '@/config/apiRoutes';
+import { API_URLS } from '@/constants/apiRoutes';
 
 const CreateNewUser = () => {
   const [showPassword, setShowPassword] = useState(false);

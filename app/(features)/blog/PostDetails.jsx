@@ -4,7 +4,7 @@ import ShareIcon from '@mui/icons-material/Share';
 
 // internal imports
 import { StyledContainer } from '@/components/styled/StyledContainers';
-import { sleep } from '@/utils/sleep';
+import { sleep } from '@/utils/common';
 import { formatTitle } from '@/utils/formats/formatMetadata';
 import SearchBar from './SearchBar';
 import Custom404 from '@/components/errors/Custom404';

@@ -1,8 +1,9 @@
 import { handleApiError, HttpError } from '@/helpers/errorHelpers';
 import { STATUS_CODES } from '@/constants/common';
 import { sendNotificationSchema } from '@/validation/yup/admin/sendNotificationSchema';
-import { validateSessionAdminRole } from '@/services/auth/validateSessionAdminRole';
-import connectMongo from '@/services/db/connectMongo';
+import { validateSession } from '@/services/auth/validateSession';
+import { authorizeAdmin } from '@/services/auth/authorizeRole';
+import connectMongo from '@/libs/connectMongo';
 import { templateRelatedIdCounter } from '@/services/notifications/templateRelatedIdCounter';
 import { sendNotificationToUsers } from '@/services/admin/sendNotification';
 import { sendBatch } from '@/services/email/sendBatch';
@@ -27,7 +28,8 @@ export async function POST(Request) {
       });
     }
 
-    const session = await validateSessionAdminRole();
+    const session = await validateSession();
+    await authorizeAdmin(session);
     const adminId = session.user.id;
 
     // connect to database

@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { usePathname } from 'next/navigation';
 import {
   Dialog,
   DialogTitle,
@@ -31,7 +30,7 @@ import LinkIcon from '@mui/icons-material/Link';
 import FormSubmitButton from '@/components/buttons/FormSubmitButton';
 import { useSendNotificationStore } from '@/stores/notificationStore';
 import ErrorText from '@/components/errors/ErrorText';
-import { API_URLS } from '@/config/apiRoutes';
+import { API_URLS } from '@/constants/apiRoutes';
 import { errorHandler } from '@/helpers/errorHelpers';
 import { useMessageStore } from '@/stores/messageStore';
 import FormInput from '@/components/inputs/FormInput';
@@ -108,73 +107,69 @@ const FormSelectInput = ({
   setLinkInputOpen,
 }) => {
   return (
-    <>
-      <Box sx={{ display: 'flex', py: 1 }}>
-        <Avatar sx={avatarStyle}>{icon}</Avatar>
+    <Box sx={{ display: 'flex', py: 1 }}>
+      <Avatar sx={avatarStyle}>{icon}</Avatar>
 
-        <FormControl fullWidth size="small" error={!!errors}>
-          <InputLabel htmlFor={`select-label-${inputName}`}>{label}</InputLabel>
+      <FormControl fullWidth size="small" error={!!errors}>
+        <InputLabel htmlFor={`select-label-${inputName}`}>{label}</InputLabel>
 
-          <Controller
-            name={inputName}
-            control={control}
-            defaultValue={''}
-            render={({ field }) => {
-              const handleSelectChange = (e) => {
-                field.onChange(e);
+        <Controller
+          name={inputName}
+          control={control}
+          defaultValue={''}
+          render={({ field }) => {
+            const handleSelectChange = (e) => {
+              field.onChange(e);
 
-                const selectedValue = e.target.value;
-                if (selectedValue === 'survey') {
-                  setLinkInputOpen(true);
-                  setValue('link', '');
-                } else {
-                  setLinkInputOpen(false);
-                }
-              };
+              const selectedValue = e.target.value;
+              if (selectedValue === 'survey') {
+                setLinkInputOpen(true);
+                setValue('link', '');
+              } else {
+                setLinkInputOpen(false);
+              }
+            };
 
-              return (
-                <>
-                  <Select
-                    {...field}
-                    label={label}
-                    onChange={handleSelectChange}
-                    inputProps={{
-                      id: `select-label-${inputName}`,
-                    }}
-                  >
-                    {menuItems.map((item, index) => (
-                      <MenuItem key={index} value={item.value.toLowerCase()}>
-                        {item.value}
-                      </MenuItem>
-                    ))}
-                  </Select>
+            return (
+              <>
+                <Select
+                  {...field}
+                  label={label}
+                  onChange={handleSelectChange}
+                  inputProps={{
+                    id: `select-label-${inputName}`,
+                  }}
+                >
+                  {menuItems.map((item, index) => (
+                    <MenuItem key={index} value={item.value.toLowerCase()}>
+                      {item.value}
+                    </MenuItem>
+                  ))}
+                </Select>
 
-                  <ErrorText error={errors} />
-                </>
-              );
-            }}
-          />
-        </FormControl>
-      </Box>
-    </>
+                <ErrorText error={errors} />
+              </>
+            );
+          }}
+        />
+      </FormControl>
+    </Box>
   );
 };
 
 const SendNotificationDialog = ({
   isDialogOpen,
-  setIsDialogOpen,
+  setDialogState,
   setSelected,
 }) => {
   const [isLinkInputOpen, setLinkInputOpen] = useState(false);
-
-  const pathname = usePathname();
 
   const { selectedUserIds, clearSelectedUserIds } = useSendNotificationStore();
 
   const { handleAlertMessage } = useMessageStore();
 
   const handleClose = () => {
-    setIsDialogOpen(false);
+    setDialogState({ open: false });
   };
 
   const {
@@ -189,18 +184,18 @@ const SendNotificationDialog = ({
     try {
       const url = `${API_URLS.ADMIN}/users/send-notification`;
 
-      const requestData = {
+      const payload = {
         ...(formData.link && { link: formData.link }),
         userIds: [...selectedUserIds],
         ...formData,
       };
 
-      const { data } = await axios.post(url, requestData);
+      const { data } = await axios.post(url, payload);
 
       handleAlertMessage(data.message, 'success');
 
       clearSelectedUserIds();
-      setIsDialogOpen(false);
+      setDialogState(false);
       setSelected(new Set());
     } catch (error) {
       const { errorMessage } = errorHandler(error);

@@ -28,53 +28,52 @@ const ConfirmationDialog = ({
   isSubmitting,
   isSubmitSuccessful,
 }) => {
-  const isExport = type === 'export';
+  const shouldRenderType = type === 'export';
 
   const handleClose = () => {
     setIsDialogOpen(false);
   };
 
   return (
-    <>
-      <Dialog open={isDialogOpen}>
-        <DialogTitle>{title}</DialogTitle>
-        <DialogContent dividers sx={{ borderBottom: 'none' }}>
+    <Dialog open={isDialogOpen} closeAfterTransition={false}>
+      <DialogTitle>{title}</DialogTitle>
+      <DialogContent dividers sx={{ borderBottom: 'none' }}>
+        <DialogContentText>
+          Are you sure you want to {getContextText(type)}?
+        </DialogContentText>
+
+        {!shouldRenderType && (
           <DialogContentText>
-            Are you sure you want to {getContextText(type)}?
+            This action is permanent and cannot be undone.
           </DialogContentText>
+        )}
+      </DialogContent>
+      <DialogActions sx={{ px: 3, py: 2 }}>
+        <Button
+          variant="outlined"
+          onClick={handleClose}
+          disabled={isSubmitting || isSubmitSuccessful}
+        >
+          Cancel
+        </Button>
 
-          {!isExport && (
-            <DialogContentText>
-              This action is permanent and cannot be undone.
-            </DialogContentText>
+        <Button
+          variant="contained"
+          onClick={handleSubmit}
+          disabled={isSubmitting || isSubmitSuccessful}
+        >
+          {isSubmitting ? (
+            <CircularProgress
+              aria-describedby="loading"
+              aria-busy={true}
+              size="1.5rem"
+            />
+          ) : (
+            buttonLabel
           )}
-        </DialogContent>
-        <DialogActions sx={{ px: 3, py: 2 }}>
-          <Button
-            onClick={handleClose}
-            disabled={isSubmitting || isSubmitSuccessful}
-          >
-            Cancel
-          </Button>
-
-          <Button
-            variant="contained"
-            onClick={handleSubmit}
-            disabled={isSubmitting || isSubmitSuccessful}
-          >
-            {isSubmitting ? (
-              <CircularProgress
-                aria-describedby="loading"
-                aria-busy={true}
-                size="1.5rem"
-              />
-            ) : (
-              buttonLabel
-            )}
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </>
+        </Button>
+      </DialogActions>
+    </Dialog>
   );
 };
 

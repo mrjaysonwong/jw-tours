@@ -1,11 +1,11 @@
 // third-party imports
-import jwt from 'jsonwebtoken';
 import { render } from '@react-email/render';
 
 // internal imports
-import { generateToken } from '@/services/token/generateToken';
+import { generateOpaqueToken } from '@/services/token/generateToken';
 import { formatDate } from '@/utils/formats/formatDates';
 import { EmailTemplate } from '@/templates/EmailTemplate';
+import { BASE_URL } from '@/constants/env';
 
 export function generateEmailVerificationData({
   email,
@@ -13,13 +13,10 @@ export function generateEmailVerificationData({
   firstName,
   callbackUrl,
 }) {
-  // Generate and Authenticate Email Token
-  const token = generateToken(email);
-  const decoded = jwt.verify(token, process.env.JWT_SECRET);
-  const expires = decoded.exp;
+  // Generate Token
+  const { token, expireTimestamp } = generateOpaqueToken();
 
-  const epochTime = expires * 1000; // convert to milliseconds
-  const formattedDateString = formatDate(epochTime);
+  const formattedDateString = formatDate(expireTimestamp);
   const encodedEmail = encodeURIComponent(email);
 
   let action;
@@ -35,12 +32,10 @@ export function generateEmailVerificationData({
       action = 'signup';
   }
 
-  const baseUrl = `${process.env.NEXT_PUBLIC_BASE_URL}`;
-
   const url =
     actionType === 'forgot-password'
-      ? `${baseUrl}/reset-password?token=${token}`
-      : `${baseUrl}/verify?token=${token}&email=${encodedEmail}&action=${action}&callbackUrl=${callbackUrl}`;
+      ? `${BASE_URL}/reset-password?token=${token}`
+      : `${BASE_URL}/verify?token=${token}&email=${encodedEmail}&action=${action}&callbackUrl=${callbackUrl}`;
 
   const emailHtml = render(
     <EmailTemplate
@@ -51,5 +46,5 @@ export function generateEmailVerificationData({
     />
   );
 
-  return { token, epochTime, emailHtml };
+  return { token, expireTimestamp, emailHtml };
 }

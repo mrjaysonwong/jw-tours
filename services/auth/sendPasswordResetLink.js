@@ -1,6 +1,6 @@
 // internal imports
-import { findUserEmail } from '@/services/user/userQueries';
-import { rateLimiter } from '@/services/rate-limiter/rateLimiter';
+import { findUserEmail } from '@/services/users/userQueries';
+import { rateLimiter } from '@/libs/rateLimiter';
 import { handleRateLimitError } from '@/helpers/errorHelpers';
 import { generateEmailVerificationData } from '@/services/auth/generateEmailVerificationData';
 import { ACTIONS } from '@/constants/common';
@@ -20,7 +20,7 @@ export async function sendPasswordResetLink(email) {
 
         const {
           token,
-          epochTime: expireTimestamp,
+           expireTimestamp,
           emailHtml,
         } = generateEmailVerificationData({
           email,

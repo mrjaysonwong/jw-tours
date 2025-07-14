@@ -2,8 +2,8 @@
 import { compare } from 'bcryptjs';
 
 // internal imports
-import connectMongo from '@/services/db/connectMongo';
-import { findUser, findUserVerifiedEmail } from '../user/userQueries';
+import connectMongo from '@/libs/connectMongo';
+import { findUser, findUserVerifiedEmail } from '../users/userQueries';
 import User from '@/models/userModel';
 import Token from '@/models/tokenModel';
 import { ACTIONS, ROLES } from '@/constants/common';

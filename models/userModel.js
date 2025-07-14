@@ -83,7 +83,6 @@ const userSchema = new Schema(
     accountProvider: {
       type: String,
     },
-
     dateOfBirth: {
       type: String,
     },
@@ -91,9 +90,9 @@ const userSchema = new Schema(
       name: { type: String, lowercase: true },
       neighbourhood: { type: String, lowercase: true },
       city: { type: String, lowercase: true },
-      state: { type: String, required: true, lowercase: true },
+      state: { type: String, lowercase: true },
       postcode: { type: String, lowercase: true },
-      country: { type: String, required: true, lowercase: true },
+      country: { type: String, lowercase: true },
     },
     subscription: {
       isSubscribed: {
@@ -102,26 +101,22 @@ const userSchema = new Schema(
       },
       subscriberId: {
         type: String,
-        default: null,
       },
     },
     languages: {
       type: [String],
     },
-    specialReq: {
-      type: String,
-    },
     langCode: {
       type: String,
       default: 'en',
     },
+    currency: {
+      type: String,
+      default: 'USD',
+    },
     nationality: {
       type: String,
     },
-    // currency: {
-    //   type: String,
-    //   default: '$ - USD',
-    // },
     status: {
       type: String,
       enum: ['pending', 'active', 'suspended', 'inactive'],

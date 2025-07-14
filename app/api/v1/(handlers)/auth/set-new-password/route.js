@@ -9,9 +9,9 @@ import { STATUS_CODES } from '@/constants/common';
 // PATCH: /api/v1/auth/set-new-password
 export async function PATCH(Request) {
   try {
-    const formData = await Request.json();
+    const data = await Request.json();
 
-    await newPasswordSchema.validate({ ...formData }, { abortEarly: false });
+    await newPasswordSchema.validate({ ...data }, { abortEarly: false });
 
     const headersList = headers();
     const authHeader = headersList.get('authorization');
@@ -24,7 +24,7 @@ export async function PATCH(Request) {
       });
     }
 
-    await setNewPassword(formData, authToken);
+    await setNewPassword(data, authToken);
 
     return Response.json(
       { message: 'Password Successfully Updated!' },

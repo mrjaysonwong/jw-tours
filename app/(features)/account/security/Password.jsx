@@ -17,7 +17,7 @@ import { useMessageStore } from '@/stores/messageStore';
 import ChangePasswordDialog from './ChangePasswordDialog';
 import { StyledGridCard } from '@/components/styled/StyledCards';
 import { errorHandler } from '@/helpers/errorHelpers';
-import { API_URLS } from '@/config/apiRoutes';
+import { API_URLS } from '@/constants/apiRoutes';
 
 const Password = ({ userId, user, email }) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -30,9 +30,9 @@ const Password = ({ userId, user, email }) => {
       setIsSubmitting(true);
 
       const url = `${API_URLS.USERS}/${userId}/password`;
-      const requestData = { email };
+      const payload = { email };
 
-      const { data } = await axios.post(url, requestData);
+      const { data } = await axios.post(url, payload);
 
       handleAlertMessage(data.message, 'success');
     } catch (error) {

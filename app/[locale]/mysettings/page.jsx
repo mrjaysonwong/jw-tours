@@ -5,7 +5,7 @@ import AccountSettings from '@/app/(features)/mysettings/AccountSettings';
 export default async function AccountSettingsPage() {
   const session = await auth();
 
-  if (!session) redirect('/');
+  if (!session) redirect('/signin');
 
   return <AccountSettings />;
 }

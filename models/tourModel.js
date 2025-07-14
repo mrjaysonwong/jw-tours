@@ -83,7 +83,7 @@ const tourSchema = new Schema(
     title: {
       type: String,
       required: true,
-      maxlength: 300,
+      maxlength: 60,
     },
     overview: {
       type: String,
@@ -105,22 +105,24 @@ const tourSchema = new Schema(
         maxlength: 80,
       },
       city: { type: String, lowercase: true, maxLength: 80 },
-      geoLocation: {
-        type: String,
-        lowercase: true,
-        required: true,
-        enum: geoLocations,
-      },
       country: {
         type: String,
         lowercase: true,
         required: true,
       },
-      category: {
-        type: [String],
-        required: true,
-        enum: categories,
-      },
+      lat: { type: String, required: true },
+      lon: { type: String, required: true },
+    },
+    geoLocation: {
+      type: String,
+      lowercase: true,
+      required: true,
+      enum: geoLocations,
+    },
+    category: {
+      type: [String],
+      required: true,
+      enum: categories,
     },
     itinerary: {
       type: [
@@ -139,7 +141,8 @@ const tourSchema = new Schema(
     },
     meetingLocation: {
       name: String,
-      neighbourhood: String,
+      road: String,
+      suburb: String,
       city: String,
       state: String,
       postcode: String,
@@ -199,9 +202,14 @@ const tourSchema = new Schema(
       enum: timeSlots,
     },
     duration: {
-      type: String,
-      required: true,
-      enum: durations,
+      value: {
+        type: Number,
+        required: true,
+      },
+      unit: {
+        type: String,
+        required: true,
+      },
     },
     transportation: {
       type: {
@@ -230,9 +238,26 @@ const tourSchema = new Schema(
       ],
       required: true,
     },
+    freeCancellation: {
+      isFreeCancellation: {
+        type: Boolean,
+        default: false,
+      },
+      cutOffHours: {
+        type: Number,
+        default: 24,
+        min: 0,
+      },
+    },
   },
   { timestamps: true }
 );
+
+tourSchema.index({
+  'duration.value': 1,
+  'duration.unit': 1,
+  'transportation.type': 1,
+});
 
 const Tour = models?.Tour || model('Tour', tourSchema);
 

@@ -9,7 +9,7 @@ import twilio from 'twilio';
 */
 
 // const infobipClient = new Infobip({
-//   baseUrl: process.env.INFOBIP_BASE_URL,
+//   BASE_URL : process.env.INFOBIP_BASE_URL,
 //   apiKey: process.env.INFOBIP_API_KEY,
 //   authType: AuthType.ApiKey,
 // });

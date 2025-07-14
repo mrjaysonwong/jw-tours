@@ -3,15 +3,16 @@
 import { signIn } from '@/auth';
 import { redirect } from '@/navigation';
 import { AuthError } from 'next-auth';
-import connectMongo from '@/services/db/connectMongo';
-import { findUser } from '@/services/user/userQueries';
+import connectMongo from '@/libs/connectMongo';
+import { findUser } from '@/services/users/userQueries';
+import { BASE_URL } from '@/constants/env';
 
 const errorKeyWords = [
   'sign-in method',
   'not allowed to sign in',
   'Email must be verified',
   'Invalid Credentials',
-  'suspended'
+  'suspended',
 ];
 
 export async function authenticate(formData, pathname) {
@@ -30,7 +31,7 @@ export async function authenticate(formData, pathname) {
     const isAdminPath = pathname.startsWith('/admin');
 
     const adminDashboard = `${process.env.NEXT_PUBLIC_BASE_URL}/admin/dashboard`;
-    const callbackUrl = `${process.env.NEXT_PUBLIC_BASE_URL}${pathname}` ?? '/';
+    const callbackUrl = `${BASE_URL}${pathname}` ?? '/';
 
     if (data && isAdmin && isAdminPath) {
       redirect(adminDashboard);

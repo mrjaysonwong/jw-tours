@@ -1,8 +1,9 @@
-import { validateSessionAdminRole } from '@/services/auth/validateSessionAdminRole';
+import { validateSession } from '@/services/auth/validateSession';
+import { authorizeAdmin } from '@/services/auth/authorizeRole';
 import { handleApiError } from '@/helpers/errorHelpers';
-import connectMongo from '@/services/db/connectMongo';
+import connectMongo from '@/libs/connectMongo';
 import User from '@/models/userModel';
-import { PROJECTED_FIELDS } from '@/constants/projected_fields';
+import { PROJECTED_FIELDS } from '@/constants/projectedFields';
 
 function buildUserFilter(query) {
   const baseFilter = { role: { $ne: 'admin' } };
@@ -39,8 +40,8 @@ export async function GET(Request) {
   const limit = parseInt(searchParams.get('limit')) || 10;
 
   try {
-    const method = 'GET'
-    await validateSessionAdminRole(method);
+    const session = await validateSession();
+    await authorizeAdmin(session, 'GET');
 
     // connect to database
     await connectMongo();
@@ -48,7 +49,7 @@ export async function GET(Request) {
     const filter = buildUserFilter(query);
 
     const users = await User.find(filter)
-      .select(PROJECTED_FIELDS.default)
+      .select(PROJECTED_FIELDS.DEFAULT)
       .limit(limit)
       .skip(limit * (page - 1));
 

@@ -1,7 +1,7 @@
 import { hash } from 'bcryptjs';
 
 import { handleApiError } from '@/helpers/errorHelpers';
-import connectMongo from '@/services/db/connectMongo';
+import connectMongo from '@/libs/connectMongo';
 import User from '@/models/userModel';
 
 export async function POST() {

@@ -80,7 +80,7 @@ const Footer = () => {
 
         <Grid item xs={6} lg={3}>
           <Typography variant="body2">
-            <Link href="#">Careers</Link>
+            <Link href="/protected">Careers</Link>
           </Typography>
         </Grid>
 

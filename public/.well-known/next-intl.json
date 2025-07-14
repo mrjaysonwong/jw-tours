@@ -1,0 +1,5 @@
+{
+  "locales": ["en", "fr", "it", "ja", "ko", "zh"],
+  "defaultLocale": "en",
+  "localePrefix": "as-needed"
+}

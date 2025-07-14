@@ -1,29 +1,31 @@
-import { validateSessionAdminRole } from '@/services/auth/validateSessionAdminRole';
+import { validateSession } from '@/services/auth/validateSession';
+import { authorizeAdmin } from '@/services/auth/authorizeRole';
 import { handleApiError } from '@/helpers/errorHelpers';
 import { STATUS_CODES } from '@/constants/common';
-import connectMongo from '@/services/db/connectMongo';
-import { createTourSchema } from '@/validation/yup/admin/createTourSchema';
+import connectMongo from '@/libs/connectMongo';
+import { tourSchema } from '@/validation/yup/tour/tourSchema';
 import Tour from '@/models/tourModel';
 import User from '@/models/userModel';
-import { customAlphabet } from 'nanoid';
-import { uploadTourImages } from '@/services/tour/uploadTourImages';
-
-const nanoid = customAlphabet('123456', 6);
+import { uploadTourImages } from '@/services/tours/uploadTourImages';
+import { generateUniqueId } from '@/helpers/uniqueIdHelper';
 
 // POST: /api/v1/admin/create-tour
 export async function POST(Request) {
   try {
-    const tourId = nanoid();
-    const formData = await Request.json();
+    let tourId = await generateUniqueId(Tour, 'tourId');
+    const data = await Request.json();
 
-    await createTourSchema.validate({ ...formData }, { abortEarly: false });
+    await tourSchema.validate({ ...data }, { abortEarly: false });
 
-    await validateSessionAdminRole();
+    const session = await validateSession();
+    await authorizeAdmin(session);
+
+    const [value, unit] = data.duration.split(' ');
 
     // connect to database
     await connectMongo();
 
-    const guideUser = await User.findById(formData.guide);
+    const guideUser = await User.findById(data.guide);
 
     if (!guideUser) {
       return Response.json(
@@ -33,42 +35,37 @@ export async function POST(Request) {
     }
 
     if (!guideUser.guideCustomId) {
-      let uniqueId;
-      let isUnique = false;
-
-      // Keep generating until a unique ID is found
-      while (!isUnique) {
-        uniqueId = nanoid();
-        const existingUser = await User.findOne({ guideCustomId: uniqueId });
-
-        if (!existingUser) {
-          isUnique = true;
-        }
-      }
-
-      guideUser.guideCustomId = uniqueId;
+      guideUser.guideCustomId = await generateUniqueId(User, 'guideCustomId');
       await guideUser.save();
     }
 
-    const uploadedImages = await uploadTourImages(formData.images, tourId);
+    const uploadedImages = await uploadTourImages(
+      data.images.map((img) => img.url),
+      tourId
+    );
 
     await Tour.create({
       tourId,
-      title: formData.title,
-      overview: formData.overview,
+      title: data.title,
+      overview: data.overview,
       images: uploadedImages,
-      destination: formData.destination,
-      itinerary: formData.itinerary,
-      meetingLocation: formData.meetingLocation,
-      capacity: formData.capacity,
-      pricing: formData.pricing,
-      guide: formData.guide,
-      tourAvailability: formData.tourAvailability,
-      startTime: formData.startTime,
-      duration: formData.duration,
-      transportation: formData.transportation,
-      inclusions: formData.inclusions,
-      importantInfo: formData.importantInfo,
+      destination: data.destination,
+      geoLocation: data.geoLocation,
+      itinerary: data.itinerary,
+      meetingLocation: data.meetingLocation,
+      capacity: data.capacity,
+      pricing: data.pricing,
+      freeCancellation: data.freeCancellation,
+      guide: data.guide,
+      tourAvailability: data.tourAvailability,
+      startTime: data.startTime,
+      duration: {
+        value: +value,
+        unit,
+      },
+      transportation: data.transportation,
+      inclusions: data.inclusions,
+      importantInfo: data.importantInfo,
     });
 
     return Response.json(

@@ -107,3 +107,29 @@ export const SkeletonPostList = () => {
     </StyledContainer>
   );
 };
+
+export const SkeletonReviewList = ({ l = 3 }) => {
+  return (
+    <>
+      {Array.from({ length: l }).map((_, index) => (
+        <Box key={index} sx={{ my: 2 }}>
+          <Skeleton width="120px" height={30} />
+
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <Skeleton variant="circular" width={40} height={40} sx={{ p: 2 }} />
+
+            <Box sx={{ flexDirection: 'column', width: '100%', ml: 1 }}>
+              <Skeleton width="100px" height={30} />
+              <Skeleton width="120px" height={30} />
+            </Box>
+          </Box>
+
+          <Box>
+            <Skeleton width="95%" height={30} />
+            <Skeleton width="80%" height={30} />
+          </Box>
+        </Box>
+      ))}
+    </>
+  );
+};

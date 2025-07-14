@@ -9,11 +9,11 @@ import { Typography, Box } from '@mui/material';
 import { StyledMainContainer } from '@/components/styled/StyledContainers';
 import HistoryBackButton from '../buttons/HistoryBackButton';
 
-const Custom404 = ({ resource = 'page' }) => {
+const Custom404 = ({ resource = 'page', h }) => {
   const t = useTranslations('not_found_page');
 
   return (
-    <StyledMainContainer>
+    <StyledMainContainer sx={{ minHeight: h }}>
       <Image
         src={'/assets/file-error.png'}
         width={64}

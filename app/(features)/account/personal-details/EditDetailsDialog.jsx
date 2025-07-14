@@ -21,13 +21,13 @@ import {
   Languages,
   Address,
   Role,
-} from './index';
+} from '.';
 import { personalDetailsSchema } from '@/validation/yup/user/personalDetailsSchema';
 import { useUserDetailsContext } from '@/contexts/UserProvider';
 import { useMessageStore } from '@/stores/messageStore';
 import FormSubmitButton from '@/components/buttons/FormSubmitButton';
 import { EditUserDetailsProvider } from '@/contexts/EditUserDetailsProvider';
-import { API_URLS } from '@/config/apiRoutes';
+import { API_URLS } from '@/constants/apiRoutes';
 
 const EditDetailsDialog = ({ isDialogOpen, setIsDialogOpen }) => {
   const params = useParams();

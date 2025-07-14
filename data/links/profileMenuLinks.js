@@ -23,11 +23,6 @@ export const userProfileMenuLinks = [
     icon: <WorkspacePremiumIcon />,
   },
   {
-    label: 'Wishlists',
-    href: '/wishlists',
-    icon: <BookmarksOutlinedIcon />,
-  },
-  {
     label: 'Manage Account',
     href: '/mysettings',
     icon: <ManageAccountsOutlinedIcon />,

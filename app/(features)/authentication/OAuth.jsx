@@ -8,13 +8,15 @@ import Image from 'next/image';
 import { signIn } from 'next-auth/react';
 import { IconButton, Tooltip } from '@mui/material';
 
+// internal imports
+import { BASE_URL } from '@/constants/env';
+
 const OAuth = () => {
   const [cookies, setCookie] = useCookies();
 
   const pathname = usePathname();
-  const baseUrl = `${process.env.NEXT_PUBLIC_BASE_URL}`;
 
-  const callbackUrl = `${baseUrl}${pathname}`;
+  const callbackUrl = `${BASE_URL}${pathname}`;
   const encodedCallbackUrl = encodeURIComponent(callbackUrl);
 
   return (

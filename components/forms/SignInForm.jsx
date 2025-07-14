@@ -7,9 +7,9 @@ import SignInFormFields from '@/app/(features)/authentication/SignInFormFields';
 import { StyledSignInWithContainer } from '@/components/styled/StyledContainers';
 import OAuth from '@/app/(features)/authentication/OAuth';
 import RoleSelector from '@/app/(features)/authentication/RoleSelector';
-import { PATHNAMES } from '@/constants/pathname';
+import { PATHNAMES } from '@/constants/pathNames';
 
-const SignInForm = ({ header, isDashboard, showRoleSelector }) => {
+const SignInForm = ({ header, isDashboard, showRoleSelector, showCancel }) => {
   return (
     <>
       {header && (
@@ -22,7 +22,7 @@ const SignInForm = ({ header, isDashboard, showRoleSelector }) => {
 
       {showRoleSelector && <RoleSelector />}
 
-      <SignInFormFields />
+      <SignInFormFields showCancel={showCancel} />
 
       {!isDashboard && (
         <>

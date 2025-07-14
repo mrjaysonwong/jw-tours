@@ -1,5 +1,5 @@
 import { handleApiError } from '@/helpers/errorHelpers';
-import connectMongo from '@/services/db/connectMongo';
+import connectMongo from '@/libs/connectMongo';
 import User from '@/models/userModel';
 import { STATUS_CODES } from '@/constants/common';
 

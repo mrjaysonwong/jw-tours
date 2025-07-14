@@ -6,6 +6,7 @@ import ErrorText from '@/components/errors/ErrorText';
 
 const AutoCompleteInput = ({
   inputName,
+  defaultValue,
   placeholder = null,
   label = null,
   id,
@@ -20,10 +21,10 @@ const AutoCompleteInput = ({
       {multiple ? (
         <Controller
           name={inputName}
+          defaultValue={defaultValue}
           control={control}
           render={({ field }) => (
             <Autocomplete
-              {...field}
               id={id}
               multiple
               limitTags={1}
@@ -33,13 +34,9 @@ const AutoCompleteInput = ({
               value={field.value || []}
               isOptionEqualToValue={(option, value) => option === value}
               onChange={(_, newValue) => {
-                setValue(
-                  inputName,
-                  newValue.length > 0 ? newValue : undefined,
-                  {
-                    shouldValidate: true,
-                  }
-                );
+                setValue(inputName, newValue.length > 0 ? newValue : null, {
+                  shouldValidate: true,
+                });
               }}
               renderInput={(params) => (
                 <>
@@ -49,26 +46,23 @@ const AutoCompleteInput = ({
                     size="small"
                     placeholder={placeholder}
                     error={!!error}
+                    inputRef={field.ref}
+                    name={field.name}
                   />
 
                   <ErrorText error={error?.message} />
                 </>
               )}
-              slotProps={{
-                paper: {
-                  elevation: 4,
-                },
-              }}
             />
           )}
         />
       ) : (
         <Controller
           name={inputName}
+          defaultValue={defaultValue}
           control={control}
           render={({ field }) => (
             <Autocomplete
-              {...field}
               id={id}
               options={options}
               autoHighlight
@@ -86,16 +80,13 @@ const AutoCompleteInput = ({
                     size="small"
                     label={label}
                     error={!!error}
+                    inputRef={field.ref}
+                    name={field.name}
                   />
 
                   <ErrorText error={error?.message} />
                 </>
               )}
-              slotProps={{
-                paper: {
-                  elevation: 4,
-                },
-              }}
             />
           )}
         />

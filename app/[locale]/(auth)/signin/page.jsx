@@ -7,6 +7,11 @@ import { redirect } from '@/navigation';
 import PageLayout from '@/components/layout/PageLayout';
 import SignInForm from '@/components/forms/SignInForm';
 import AnimateGradient from '@/components/bg-gradients/AnimatedGradient';
+import { locales } from '@/navigation';
+
+export function generateStaticParams() {
+  return locales.map((locale) => ({ locale }));
+}
 
 export const metadata = {
   title: 'Sign In',
@@ -26,7 +31,7 @@ export default async function SignInPage() {
       <PageLayout marginY={5}>
         <Card>
           <CardContent>
-            <SignInForm header="Sign In" isDashboard={false} showCancel={true} />
+            <SignInForm header="Sign In" isDashboard={false} />
           </CardContent>
         </Card>
       </PageLayout>

@@ -11,7 +11,7 @@ import { StyledContainer } from '@/components/styled/StyledContainers';
 import { StyledSettingsTab } from '@/components/styled/StyledTabs';
 import { accountSettingsLinks } from '@/data/links/accountSettingsLinks';
 import { UserDataProvider } from '@/contexts/UserProvider';
-import { mySettingsTabComponents } from '@/config/componentMapping';
+import { mySettingsTabComponents } from '@/constants/componentMaps/componentMaps';
 import { stripLocale } from '@/helpers/pageHelpers';
 
 const TabPanel = (props) => {

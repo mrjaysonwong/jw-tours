@@ -30,7 +30,7 @@ import FormInput from '@/components/inputs/FormInput';
 import { useMessageStore } from '@/stores/messageStore';
 import { errorHandler } from '@/helpers/errorHelpers';
 import { countryData } from '@/data/countries/countryData';
-import { API_URLS } from '@/config/apiRoutes';
+import { API_URLS } from '@/constants/apiRoutes';
 import VerifyOTPDialog from './VerifyOTPDialog';
 
 const AddContactDialog = ({
@@ -92,9 +92,9 @@ const AddContactDialog = ({
   const onSubmit = async (formData) => {
     try {
       const url = `${API_URLS.USERS}/${userId}/send-otp`;
-      const requestData = { type, ...formData };
+      const payload = { type, ...formData };
 
-      const { data } = await axios.post(url, requestData);
+      const { data } = await axios.post(url, payload);
 
       if (isEmailType) {
         setEmail(formData.email);
@@ -193,11 +193,6 @@ const AddContactDialog = ({
                   <ErrorText error={errors.phone?.dialCode} />
                 </>
               )}
-              slotProps={{
-                paper: {
-                  elevation: 4,
-                },
-              }}
             />
           )}
         />

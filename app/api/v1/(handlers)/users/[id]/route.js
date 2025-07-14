@@ -1,4 +1,6 @@
-import { validateSessionAndUser } from '@/services/auth/validateSessionAndUser';
+import { validateSession } from '@/services/auth/validateSession';
+import connectMongo from '@/libs/connectMongo';
+import { authorizeUser } from '@/services/auth/authorizeRole';
 import { handleApiError } from '@/helpers/errorHelpers';
 
 // GET: /api/v1/users/[id]
@@ -6,7 +8,11 @@ export async function GET(Request, { params }) {
   const userId = params.id;
 
   try {
-    const { userExists } = await validateSessionAndUser(userId);
+    const session = await validateSession();
+
+    // connect to database
+    await connectMongo();
+    const userExists = await authorizeUser({ session, userId });
 
     const updatedUser = {
       ...userExists.toObject(), // convert to plain object, stripping out mongoose-specific properties

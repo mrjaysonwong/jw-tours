@@ -8,9 +8,10 @@ import GuideIntroduction from './GuideIntroduction';
 import GuideAvailability from './GuideAvailability';
 import GuideTours from './GuideTours';
 import { GuideProfileProvider } from '@/contexts/GuideProfileProvider';
+import { formatLastName } from '@/utils/formats/common';
 
 const GuideProfile = ({ guide, bookings, tours }) => {
-  const lastNameInitial = guide.lastName.slice(0, 1);
+  const lastNameInitial = formatLastName(guide.lastName);
   const name = `${guide.firstName} ${lastNameInitial}`;
   const guideAddress = guide.address
     ? `${guide.address?.city || guide.address?.name}, ${guide.address?.country}`

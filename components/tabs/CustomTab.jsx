@@ -64,7 +64,8 @@ const CustomTab = ({
       </Box>
 
       {tabContent.map((el, index) => {
-        const TabComponent = tabPanelComponents[index];
+        const TabComponent =
+          tabPanelComponents[el.label] || tabPanelComponents[index];
 
         return (
           <CustomTabPanel

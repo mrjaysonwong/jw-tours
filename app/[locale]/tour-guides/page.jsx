@@ -2,6 +2,11 @@ import { unstable_noStore as noStore } from 'next/cache';
 
 // internal imports
 import GuidesList from '@/app/(features)/tour-guides/GuidesList';
+import { locales } from '@/navigation';
+
+export function generateStaticParams() {
+  return locales.map((locale) => ({ locale }));
+}
 
 async function fetchGuidesList() {
   try {

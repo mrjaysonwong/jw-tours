@@ -49,11 +49,6 @@ const Languages = () => {
                 placeholder="Languages"
               />
             )}
-            slotProps={{
-              paper: {
-                elevation: 5,
-              },
-            }}
           />
         )}
       />

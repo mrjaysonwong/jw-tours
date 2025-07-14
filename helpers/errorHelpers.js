@@ -7,7 +7,9 @@ export const errorHandler = (error) => {
     const { status, statusText, data } = error.response;
 
     const errorMessage =
-      status === 500 ? ERROR_MESSAGES.SERVER_ERROR_LOCAL : data.message;
+      status === 500
+        ? ERROR_MESSAGES.SERVER_ERROR_LOCAL
+        : data.message || ERROR_MESSAGES.UNEXPECTED_ERROR;
 
     return {
       status,

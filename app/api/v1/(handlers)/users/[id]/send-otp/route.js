@@ -1,28 +1,35 @@
 // internal imports
-import { validateSessionAndUser } from '@/services/auth/validateSessionAndUser';
+import { validateSession } from '@/services/auth/validateSession';
+import connectMongo from '@/libs/connectMongo';
+import { authorizeUser } from '@/services/auth/authorizeRole';
 import { addContactDetailsSchema } from '@/validation/yup/auth/addContactDetailsSchema';
 import { REQUEST_TYPES } from '@/constants/common';
 import { handleApiError } from '@/helpers/errorHelpers';
 import { sendEmailOTP, sendMobileOTP } from '@/services/otp/sendUserOTP';
+
+const projection = 'firstName email phone';
 
 // POST: /api/v1/users/[id]/send-otp
 export async function POST(Request, { params }) {
   const userId = params.id;
 
   try {
-    const requestData = await Request.json();
+    const data = await Request.json();
 
-    const isEmailType = REQUEST_TYPES.EMAIL === requestData.type;
+    const isEmailType = REQUEST_TYPES.EMAIL === data.type;
 
-    const schema = addContactDetailsSchema(requestData.type);
-    await schema.validate({ ...requestData }, { abortEarly: false });
+    const schema = addContactDetailsSchema(data.type);
+    await schema.validate({ ...data }, { abortEarly: false });
 
-    const projection = 'firstName email phone';
-    const {userExists} = await validateSessionAndUser(userId, projection);
+    const session = await validateSession();
+
+    // connect to database
+    await connectMongo();
+    const userExists = await authorizeUser({ session, userId, projection });
 
     const statusCode = isEmailType
-      ? await sendEmailOTP({ ...requestData, userId, userExists })
-      : await sendMobileOTP({ requestData, userId, userExists });
+      ? await sendEmailOTP({ ...data, userId, userExists })
+      : await sendMobileOTP({ data, userId, userExists });
 
     return Response.json({ message: 'OTP sent!' }, { status: statusCode });
   } catch (error) {

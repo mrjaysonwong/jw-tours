@@ -2,14 +2,14 @@
 import { hash } from 'bcryptjs';
 
 // internal imports
-import { findUserEmail } from '../user/userQueries';
+import { findUserEmail } from '../users/userQueries';
 import { HttpError } from '@/helpers/errorHelpers';
 import { STATUS_CODES } from '@/constants/common';
 import User from '@/models/userModel';
 
-export async function createUser(formData) {
+export async function createUser(data) {
   try {
-    const userEmailExists = await findUserEmail({ email: formData.email });
+    const userEmailExists = await findUserEmail({ email: data.email });
 
     if (userEmailExists) {
       throw new HttpError({
@@ -18,20 +18,20 @@ export async function createUser(formData) {
       });
     }
 
-    const hashedPassword = await hash(formData.password, 12);
+    const hashedPassword = await hash(data.password, 12);
 
     await User.create({
-      firstName: formData.firstName,
-      lastName: formData.lastName,
+      firstName: data.firstName,
+      lastName: data.lastName,
       email: [
         {
-          email: formData.email,
+          email: data.email,
           isPrimary: true,
           isVerified: true,
         },
       ],
       password: hashedPassword,
-      role: formData.role,
+      role: data.role,
       status: 'active',
     });
   } catch (error) {

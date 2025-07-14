@@ -14,7 +14,7 @@ import {
   authSignInOAuth,
   constructUserObject,
 } from './services/auth/authSignIn';
-import { findUser } from './services/user/userQueries';
+import { findUser } from './services/users/userQueries';
 
 export const {
   handlers: { GET, POST },

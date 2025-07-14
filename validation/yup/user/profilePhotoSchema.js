@@ -1,6 +1,5 @@
 import * as yup from 'yup';
 
-
 export const profilePhotoSchema = yup.object({
   croppedImage: yup.string().trim().required('Cropped image is required'),
 });

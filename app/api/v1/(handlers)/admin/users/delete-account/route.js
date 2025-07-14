@@ -1,7 +1,8 @@
 import { twoFactorAuthSchema } from '@/validation/yup/auth/twoFactorAuthSchema';
-import { validateSessionAdminRole } from '@/services/auth/validateSessionAdminRole';
+import { validateSession } from '@/services/auth/validateSession';
+import { authorizeAdmin } from '@/services/auth/authorizeRole';
 import { handleApiError } from '@/helpers/errorHelpers';
-import connectMongo from '@/services/db/connectMongo';
+import connectMongo from '@/libs/connectMongo';
 import User from '@/models/userModel';
 import { verifyOTP } from '@/services/admin/twoFactorAuth';
 import { STATUS_CODES } from '@/constants/common';
@@ -14,13 +15,14 @@ export async function DELETE(Request) {
 
     await twoFactorAuthSchema.validate({ ...data }, { abortEarly: false });
 
-    const session = await validateSessionAdminRole();
+    const session = await validateSession();
+    await authorizeAdmin(session);
+
     const adminId = session.user.id;
     const adminEmail = session.user.email;
 
     // connect to database
     await connectMongo();
-
     await verifyOTP(otp, adminId, adminEmail);
 
     const users = await User.find({ _id: { $in: userIds } });

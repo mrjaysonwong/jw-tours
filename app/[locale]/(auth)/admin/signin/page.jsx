@@ -7,6 +7,11 @@ import { Card, CardContent } from '@mui/material';
 import PageLayout from '@/components/layout/PageLayout';
 import SignInForm from '@/components/forms/SignInForm';
 import AnimateGradient from '@/components/bg-gradients/AnimatedGradient';
+import { locales } from '@/navigation';
+
+export function generateStaticParams() {
+  return locales.map((locale) => ({ locale }));
+}
 
 export const metadata = {
   title: 'Admin Sign In',

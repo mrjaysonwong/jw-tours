@@ -17,7 +17,7 @@ import axios from 'axios';
 import { useUserDetailsContext } from '@/contexts/UserProvider';
 import { useMessageStore } from '@/stores/messageStore';
 import { errorHandler } from '@/helpers/errorHelpers';
-import { API_URLS } from '@/config/apiRoutes';
+import { API_URLS } from '@/constants/apiRoutes';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -25,8 +25,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 const ContactMenuActionDialog = ({
   isDialogOpen,
-  setIsDialogOpen,
-  menuType,
+  setDialogState,
   targetEmail,
   targetNumber,
   menuAction,
@@ -53,7 +52,7 @@ const ContactMenuActionDialog = ({
     : `${getMobileNumberAction()}-mobile`;
 
   const handleClose = () => {
-    setIsDialogOpen(false);
+    setDialogState({ open: false });
     setMenuAction('');
   };
 
@@ -65,14 +64,14 @@ const ContactMenuActionDialog = ({
         ? `${API_URLS.USERS}/${userId}/email`
         : `${API_URLS.USERS}/${userId}/mobile-number`;
 
-      const requestData = targetEmail
+      const payload = targetEmail
         ? { actionType, email: targetEmail }
         : { actionType, phone: { dialCode, phoneNumber } };
 
-      const { data } = await axios.patch(url, requestData);
+      const { data } = await axios.patch(url, payload);
 
       refetch();
-      setIsDialogOpen(false);
+      setDialogState({ open: false });
       setIsSubmitting(false);
 
       if (targetEmail && isAction('set-primary') && !params.id) {

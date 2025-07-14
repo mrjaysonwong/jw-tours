@@ -7,7 +7,7 @@ import { Box, Tab, useTheme } from '@mui/material';
 // internal imports
 import { StyledHeroTabs } from '../styled/StyledTabs';
 import { StyledHeroOverlay } from '../styled/StyledOverlays';
-import { heroTabComponents } from '@/config/componentMapping';
+import { heroTabComponents } from '@/constants/componentMaps/componentMaps';
 
 const TabPanel = (props) => {
   const { children, value, index, ...other } = props;

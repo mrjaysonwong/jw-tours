@@ -9,7 +9,7 @@ import '@/app/[locale]/globals.css';
 import { auth } from '@/auth';
 import AuthSessionProvider from '@/contexts/AuthSessionProvider';
 import AuthRedirect from '@/app/(features)/authentication/AuthRedirect';
-import Navbar from '@/components/layout/header/Navbar';
+import NavbarWrapper from '@/components/layout/header/NavbarWrapper';
 import ThemeModeIconButton from '@/components/layout/themes/ThemeModeIconButton';
 import Footer from '@/components/layout/footer/Footer';
 import ToggleThemeMode from '@/components/layout/themes/ToggleThemeMode';
@@ -51,9 +51,11 @@ export default async function RootLayout({ children, params }) {
                 <AuthRedirect>
                   <ToggleThemeMode storedTheme={storedTheme}>
                     <UserDataProvider>
-                      <Navbar />
+                      <NavbarWrapper />
                     </UserDataProvider>
+
                     {children}
+
                     <ThemeModeIconButton />
                     <Footer />
                     <GlobalAlert />
@@ -67,4 +69,3 @@ export default async function RootLayout({ children, params }) {
     </html>
   );
 }
-

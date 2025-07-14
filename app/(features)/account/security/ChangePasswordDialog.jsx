@@ -17,7 +17,7 @@ import { useMessageStore } from '@/stores/messageStore';
 import { errorHandler } from '@/helpers/errorHelpers';
 import FormSubmitButton from '@/components/buttons/FormSubmitButton';
 import FormInput from '@/components/inputs/FormInput';
-import { API_URLS } from '@/config/apiRoutes';
+import { API_URLS } from '@/constants/apiRoutes';
 
 const ChangePasswordDialog = ({ isDialogOpen, setIsDialogOpen, userId }) => {
   const [showPassword, setShowPassword] = useState(false);
@@ -43,7 +43,7 @@ const ChangePasswordDialog = ({ isDialogOpen, setIsDialogOpen, userId }) => {
     formState: { errors, isSubmitting, isSubmitSuccessful },
   } = useForm({ resolver: yupResolver(changePasswordSchema) });
 
-  const onSubmit = async (formData, event) => {
+  const onSubmit = async (formData) => {
     try {
       const url = `${API_URLS.USERS}/${userId}/password`;
 

@@ -45,6 +45,4 @@ export const ERROR_MESSAGES = Object.freeze({
   ADMIN_ONLY_ACTION: 'Forbidden. Only admins can perform this action.',
 });
 
-
-export const MAPBOX_ACCESS_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_API_KEY;
-export const MAPBOX_STYLE_ID = 'mapbox/streets-v11';
+export const SERVICE_FEE_PERCENTAGE = 3.5;

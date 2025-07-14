@@ -9,6 +9,15 @@ import {
 
 // internal imports
 import { StyledContainer } from '@/components/styled/StyledContainers';
+import { locales } from '@/navigation';
+
+export function generateStaticParams() {
+  return locales.map((locale) => ({ locale }));
+}
+
+export const metadata = {
+  title: 'Service fee',
+};
 
 export default function ServiceFeeComputationPage() {
   return (

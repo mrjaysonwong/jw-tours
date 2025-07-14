@@ -7,7 +7,7 @@ import User from '@/models/userModel';
 import { HttpError } from '@/helpers/errorHelpers';
 import { STATUS_CODES } from '@/constants/common';
 
-export async function setNewPassword(formData, authToken) {
+export async function setNewPassword(data, authToken) {
   try {
     const tokenExists = await Token.findOne({
       'email.token': authToken,
@@ -27,7 +27,7 @@ export async function setNewPassword(formData, authToken) {
       });
     }
 
-    const hashpassword = await hash(formData.password, 12);
+    const hashpassword = await hash(data.password, 12);
 
     await User.updateOne(
       { _id: tokenExists.userId },

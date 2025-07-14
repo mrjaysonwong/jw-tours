@@ -1,25 +1,30 @@
 // internal imports
-import { validateSessionAndUser } from '@/services/auth/validateSessionAndUser';
+import { validateSession } from '@/services/auth/validateSession';
+import connectMongo from '@/libs/connectMongo';
+import { authorizeUser } from '@/services/auth/authorizeRole';
 import { preferencesSchema } from '@/validation/yup/user/preferencesSchema';
 import { handleApiError } from '@/helpers/errorHelpers';
 import User from '@/models/userModel';
-import { subscribeToNewsletter } from '@/services/user/subscription';
+import { subscribeToNewsletter } from '@/services/users/subscription';
+
+const projection = 'subscription';
 
 // PATCH: /api/v1/users/[id]/preferences
 export async function PATCH(Request, { params }) {
   const userId = params.id;
 
   try {
-    const formData = await Request.json();
-    const isSubscribed = formData.subscription.isSubscribed === true;
+    const data = await Request.json();
 
-    await preferencesSchema.validate({ ...formData }, { abortEarly: false });
+    const isSubscribed = data.subscription.isSubscribed === true;
 
-    const projection = 'subscription';
-    const { session, userExists } = await validateSessionAndUser(
-      userId,
-      projection
-    );
+    await preferencesSchema.validate({ ...data }, { abortEarly: false });
+
+    const session = await validateSession();
+
+    // connect to database
+    await connectMongo();
+    const userExists = await authorizeUser({ session, userId, projection });
 
     // Get the IP Address
     const ipAddress =
@@ -32,7 +37,7 @@ export async function PATCH(Request, { params }) {
     const validIp =
       ipAddress === '::1' || ipAddress === '127.0.0.1' ? '0.0.0.0' : ipAddress;
 
-    const { updatedUser } = await subscribeToNewsletter(
+    const updatedSubscriber = await subscribeToNewsletter(
       isSubscribed,
       userId,
       session,
@@ -45,9 +50,9 @@ export async function PATCH(Request, { params }) {
       { _id: userId },
       {
         $set: {
-          langCode: formData.langCode,
-          'subscription.isSubscribed': formData.subscription.isSubscribed,
-          'subscription.subscriberId': updatedUser?.subscription?.subscriberId,
+          langCode: data.langCode,
+          'subscription.isSubscribed': data.subscription.isSubscribed,
+          'subscription.subscriberId': updatedSubscriber?.data?.id,
         },
       },
       { new: true }

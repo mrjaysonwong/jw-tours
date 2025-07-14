@@ -66,6 +66,12 @@ const ToggleThemeMode = ({ storedTheme, children }) => {
             main: '#2d9562',
             light: '#197e4d',
           },
+          secondary: {
+            main: '#1976d2',
+            light: '#42a5f5',
+            dark: '#1565c0',
+            contrastText: '#fff',
+          },
         },
 
         components: {
@@ -73,6 +79,13 @@ const ToggleThemeMode = ({ storedTheme, children }) => {
             styleOverrides: {
               paper: {
                 backgroundColor: mode === 'dark' && 'black',
+              },
+            },
+          },
+          MuiAutocomplete: {
+            styleOverrides: {
+              paper: {
+                backgroundColor: mode === 'dark' && '#303030',
               },
             },
           },

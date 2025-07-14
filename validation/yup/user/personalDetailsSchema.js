@@ -22,8 +22,7 @@ function getDateOfBirth() {
     .nullable()
     .min(new Date(minYear, 0, 1), `Year cannot be earlier than ${minYear}`)
     .max(new Date(), 'Date cannot be in the future')
-    .typeError('Date must be a valid date in the format YYYY-MM-DD')
-    .notRequired();
+    .typeError('Date must be a valid date in the format YYYY-MM-DD');
 }
 
 export const personalDetailsSchema = yup.object().shape({
@@ -32,32 +31,28 @@ export const personalDetailsSchema = yup.object().shape({
     .trim()
     .required('First name is required')
     .max(50, `Name can't be longer than 50 characters`)
-    .matches(/^[A-Za-z0-9 ]*$/, 'Please enter a valid name.'),
+    .matches(/^[A-Za-z0-9 ]*$/, 'Please enter a valid name'),
   lastName: yup
     .string()
     .trim()
     .required('Last name is required')
     .max(50, `Name can't be longer than 50 characters`)
-    .matches(/^[A-Za-z0-9 ]*$/, 'Please enter a valid name.'),
-  gender: yup
-    .string()
-    .trim()
-    .oneOf(validGenders, 'Invalid gender type.')
-    .notRequired(),
+    .matches(/^[A-Za-z0-9 ]*$/, 'Please enter a valid name'),
+  gender: yup.string().trim().oneOf(validGenders, 'Invalid gender type.'),
   dateOfBirth: getDateOfBirth(),
   nationality: yup
     .string()
     .trim()
+    .nullable()
     .test(
       'is-valid-nationality',
       'Invalid nationality',
       (value) => !value || nationalitySet.has(value)
-    )
-    .notRequired(),
+    ),
   languages: yup
     .array()
     .of(yup.string().oneOf(languages, 'Invalid language'))
-    .notRequired(),
+    .nullable(),
   address: yup
     .object()
     .shape({
@@ -68,21 +63,8 @@ export const personalDetailsSchema = yup.object().shape({
       postcode: yup.string(),
       country: yup.string(),
     })
-    .notRequired(),
-  role: yup
-    .string()
-    .trim()
-    .required('Role is required')
-    .oneOf(validRoles, 'Invalid role')
-    .notRequired(),
-});
-
-export const statusSchema = yup.object({
-  status: yup
-    .string()
-    .trim()
-    .required('Status is required')
-    .oneOf(validStatus, 'Invalid status'),
+    .nullable(),
+  role: yup.string().trim().oneOf(validRoles, 'Invalid role'),
 });
 
 export const userIdSchema = yup.object({
@@ -93,7 +75,7 @@ export const userIdSchema = yup.object({
         .string()
         .matches(
           /^[a-fA-F0-9]{24}$/,
-          'Invalid MongoDB ObjectId, must be 24 hex characters.'
+          'Invalid MongoDB ObjectId, must be 24 hex characters'
         ) // Ensures exactly 24 hex chars
     )
     .min(1, 'At least one user ID is required') // Prevents empty array

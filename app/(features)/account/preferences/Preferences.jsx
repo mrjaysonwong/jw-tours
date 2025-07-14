@@ -6,7 +6,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import { useUserDataContext } from '@/contexts/UserProvider';
 import EditPreferencesDialog from './EditPreferencesDialog';
 import CustomError from '@/components/errors/CustomError';
-import { LOCALE_MAP } from '@/constants/locale_map';
+import { LOCALE_MAP } from '@/constants/localeMap';
 import LoadingSpinner from '@/components/loaders/LoadingSpinner';
 import GridItem from '@/components/grid/GridItem';
 

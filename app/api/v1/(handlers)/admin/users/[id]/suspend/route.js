@@ -1,9 +1,10 @@
-import { validateSessionAdminRole } from '@/services/auth/validateSessionAdminRole';
+import { validateSession } from '@/services/auth/validateSession';
+import { authorizeAdmin } from '@/services/auth/authorizeRole';
 import { handleApiError } from '@/helpers/errorHelpers';
 import { HttpError } from '@/helpers/errorHelpers';
-import connectMongo from '@/services/db/connectMongo';
+import connectMongo from '@/libs/connectMongo';
 import User from '@/models/userModel';
-import { findUserById } from '@/services/user/userQueries';
+import { findUserById } from '@/services/users/userQueries';
 import { STATUS_CODES } from '@/constants/common';
 
 // PATCH: /api/v1/admin/users/[id]/suspend
@@ -20,7 +21,8 @@ export async function PATCH(Request, { params }) {
       });
     }
 
-    await validateSessionAdminRole();
+    const session = await validateSession();
+    await authorizeAdmin(session);
 
     // connect to database
     await connectMongo();

@@ -18,12 +18,12 @@ import ProfileMenu from '@/components/menus/ProfileMenu';
 import {
   dashboardComponents,
   dashboardEditComponents,
-} from '@/config/componentMapping';
+} from '@/constants/componentMaps/componentMaps';
 import { stripLocale } from '@/helpers/pageHelpers';
 import { UserDataProvider } from '@/contexts/UserProvider';
 import NavDrawer from './NavDrawer';
 import { getLastSegment } from '@/helpers/pageHelpers';
-import HideOnScroll from '@/utils/components/HideOnScroll';
+import HideOnScroll from '@/components/common/HideOnScroll';
 
 const drawerWidth = 260;
 

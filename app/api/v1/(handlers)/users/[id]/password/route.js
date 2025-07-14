@@ -1,29 +1,35 @@
 // internal imports
-import { validateSessionAndUser } from '@/services/auth/validateSessionAndUser';
+import { validateSession } from '@/services/auth/validateSession';
+import connectMongo from '@/libs/connectMongo';
+import { authorizeUser } from '@/services/auth/authorizeRole';
 import { emailSchema } from '@/validation/yup/user/contactDetailsSchema';
 import { changePasswordSchema } from '@/validation/yup/user/passwordSchema';
 import { handleApiError } from '@/helpers/errorHelpers';
 import { ACTIONS } from '@/constants/common';
 import { sendEmailLink } from '@/services/auth/sendEmailLink';
-import { updatePassword } from '@/services/user/updatePassword';
+import { updatePassword } from '@/services/users/updatePassword';
 
 // POST: /api/v1/users/[id]/password
 export async function POST(Request, { params }) {
   const userId = params.id;
 
   try {
-    const { email } = await Request.json();
+    const data = await Request.json();
 
-    await emailSchema.validate({ email }, { abortEarly: false });
+    await emailSchema.validate({ ...data }, { abortEarly: false });
 
-    await validateSessionAndUser(userId);
+    const session = await validateSession();
+
+    // connect to database
+    await connectMongo();
+    await authorizeUser({ session, userId });
 
     const actionType = ACTIONS.FORGOT_PASSWORD;
-    const statusCode = await sendEmailLink(email, actionType);
+    const statusCode = await sendEmailLink(data.email, actionType);
 
     return Response.json(
       {
-        message: `Password reset link has been sent to ${email}`,
+        message: `Password reset link has been sent to ${data.email}`,
       },
       { status: statusCode }
     );
@@ -39,13 +45,13 @@ export async function PATCH(Request, { params }) {
   const userId = params.id;
 
   try {
-    const formData = await Request.json();
+    const data = await Request.json();
 
-    await changePasswordSchema.validate({ ...formData }, { abortEarly: false });
+    await changePasswordSchema.validate({ ...data }, { abortEarly: false });
 
     const projection = 'password';
-    const {userExists} = await validateSessionAndUser(userId, projection);
-    await updatePassword(formData, userId, userExists);
+    const { userExists } = await validateSessionAndUser(userId, projection);
+    await updatePassword(data, userId, userExists);
 
     return Response.json(
       {

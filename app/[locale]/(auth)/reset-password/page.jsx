@@ -2,11 +2,16 @@ import { notFound, redirect } from 'next/navigation';
 import { Typography, Divider, Card, CardContent } from '@mui/material';
 
 // internal imports
-import connectMongo from '@/services/db/connectMongo';
+import connectMongo from '@/libs/connectMongo';
 import Token from '@/models/tokenModel';
 import PasswordReset from '@/app/(features)/authentication/PasswordReset';
 import PageLayout from '@/components/layout/PageLayout';
 import AnimateGradient from '@/components/bg-gradients/AnimatedGradient';
+import { locales } from '@/navigation';
+
+export function generateStaticParams() {
+  return locales.map((locale) => ({ locale }));
+}
 
 export const metadata = {
   title: 'Set New Password',
@@ -16,7 +21,7 @@ export default async function ResetPasswordPage({ searchParams }) {
   const tokenParam = searchParams.token;
 
   if (!tokenParam) {
-    redirect(notFound());
+    redirect('/');
   }
 
   // connect to database

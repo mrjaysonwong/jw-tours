@@ -7,6 +7,7 @@ import { useUserDetailsContext } from '@/contexts/UserProvider';
 import { useUserSessionContext } from '@/contexts/UserProvider';
 import EditDetailsDialog from '@/app/(features)/account/personal-details/EditDetailsDialog';
 import GridItem from '@/components/grid/GridItem';
+import { getAddressParts } from '@/utils/common';
 
 const PersonalDetailsCard = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -17,12 +18,16 @@ const PersonalDetailsCard = () => {
   const fullName = `${user?.firstName} ${user?.lastName}`;
   const address = user?.address;
 
-  const name = address?.name;
-  const neighbourhood = address?.neighbourhood;
-  const city = address?.city;
-  const state = address?.state;
-  const postcode = address?.postcode;
-  const country = address?.country;
+  const formattedAddress =
+    address &&
+    getAddressParts(address, [
+      'name',
+      'neighbourhood',
+      'city',
+      'state',
+      'postcode',
+      'country',
+    ]).join(', ');
 
   const DOB = user?.dateOfBirth
     ? new Date(user?.dateOfBirth).toLocaleDateString('en-US', {
@@ -72,11 +77,7 @@ const PersonalDetailsCard = () => {
           <GridItem
             label="Address"
             textData={
-              address
-                ? [name, neighbourhood, city, state, postcode, country]
-                    .filter(Boolean)
-                    .join(', ') || 'Not provided'
-                : 'Not provided'
+              address ? formattedAddress || 'Not provided' : 'Not provided'
             }
           />
         </Grid>

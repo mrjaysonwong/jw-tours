@@ -1,23 +1,26 @@
-import { validateSessionAndUser } from '@/services/auth/validateSessionAndUser';
+import { validateSession } from '@/services/auth/validateSession';
+import connectMongo from '@/libs/connectMongo';
+import { authorizeUser } from '@/services/auth/authorizeRole';
 import { personalDetailsSchema } from '@/validation/yup/user/personalDetailsSchema';
 import { handleApiError } from '@/helpers/errorHelpers';
-import { updatePersonalDetails } from '@/services/user';
+import { updatePersonalDetails } from '@/services/users';
 
 // PATCH: /api/v1/users/[id]/personal-details
 export async function PATCH(Request, { params }) {
   const userId = params.id;
 
   try {
-    const formData = await Request.json();
+    const data = await Request.json();
 
-    await personalDetailsSchema.validate(
-      { ...formData },
-      { abortEarly: false }
-    );
+    await personalDetailsSchema.validate({ ...data }, { abortEarly: false });
 
-    await validateSessionAndUser(userId);
+    const session = await validateSession();
 
-    await updatePersonalDetails({ formData, userId });
+    // connect to database
+    await connectMongo();
+    await authorizeUser({ session, userId });
+
+    await updatePersonalDetails({ data, userId });
 
     return Response.json(
       {

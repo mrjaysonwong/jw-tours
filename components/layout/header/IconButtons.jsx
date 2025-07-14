@@ -3,23 +3,30 @@ import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlin
 import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
 
-const IconButtons = ({ handleIconAuthClick }) => (
-  <>
-    <IconButton>
-      <FavoriteBorderOutlinedIcon />
-    </IconButton>
+// internal imports
+import { useAuthDialogStore } from '@/stores/dialogStore';
 
-    <IconButton>
-      <ShoppingCartOutlinedIcon />
-    </IconButton>
+const IconButtons = () => {
+  const { openAuthDialog } = useAuthDialogStore();
 
-    <IconButton
-      onClick={handleIconAuthClick}
-      aria-label="open auth dialog tabs, Sign In and Sign Up"
-    >
-      <AccountCircleOutlinedIcon />
-    </IconButton>
-  </>
-);
+  return (
+    <>
+      <IconButton>
+        <FavoriteBorderOutlinedIcon />
+      </IconButton>
+
+      <IconButton>
+        <ShoppingCartOutlinedIcon />
+      </IconButton>
+
+      <IconButton
+        onClick={() => openAuthDialog()}
+        aria-label="open auth dialog tabs, Sign In and Sign Up"
+      >
+        <AccountCircleOutlinedIcon />
+      </IconButton>
+    </>
+  );
+};
 
 export default IconButtons;

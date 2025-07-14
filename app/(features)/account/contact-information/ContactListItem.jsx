@@ -12,18 +12,28 @@ const ContactListItem = ({ items, type }) => {
     const displayItem =
       type === 'email' ? item.email : `+${item.dialCode} ${item.phoneNumber}`;
 
-    const menuProps =
+    const otherProps =
       type === 'email'
         ? { email: item.email }
         : { dialCode: item.dialCode, phoneNumber: item.phoneNumber };
 
     return (
-      <Box key={index} sx={{ position: 'relative', display: 'flex' }}>
-        <Typography sx={{ py: 2, mr: 7, ml: 1, overflowX: 'auto' }}>
+      <Box
+        key={index}
+        sx={{
+          position: 'relative',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+        }}
+      >
+        <Typography sx={{ py: 2, ml: 1, overflowX: 'auto' }}>
           {displayItem}
         </Typography>
 
-        {!isPrimary && <MoreVertMenu menuType="cards" {...menuProps} />}
+        {!isPrimary && (
+          <MoreVertMenu menuType="my-contact-info" {...otherProps} />
+        )}
 
         {isPrimary && (
           <>
@@ -34,7 +44,7 @@ const ContactListItem = ({ items, type }) => {
               arrow
               placement="right-end"
             >
-              <Box sx={{ position: 'absolute', left: -10 }}>
+              <Box sx={{ position: 'absolute', left: -10, top: 0 }}>
                 <WorkspacePremiumIcon />
               </Box>
             </Tooltip>

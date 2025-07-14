@@ -1,4 +1,4 @@
-import connectMongo from '@/services/db/connectMongo';
+import connectMongo from '@/libs/connectMongo';
 import VerifyToken from '@/app/(features)/authentication/VerifyToken';
 
 export const metadata = {

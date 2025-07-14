@@ -1,24 +1,24 @@
 // internal imports
 import { signUpSchema } from '@/validation/yup/auth/signUpSchema';
-import connectMongo from '@/services/db/connectMongo';
+import connectMongo from '@/libs/connectMongo';
 import { handleApiError } from '@/helpers/errorHelpers';
-import { registerUser } from '@/services/user/registerUser';
+import { registerUser } from '@/services/users/registerUser';
 
 // POST: /api/v1/auth/signup
 export async function POST(Request) {
   try {
-    const formData = await Request.json();
+    const data = await Request.json();
 
-    await signUpSchema.validate({ ...formData }, { abortEarly: false });
+    await signUpSchema.validate({ ...data }, { abortEarly: false });
 
     // connect to database
     await connectMongo();
 
-    await registerUser(formData);
+    await registerUser(data);
 
     return Response.json(
       {
-        message: `Verification link has been sent to ${formData.email}`,
+        message: `Verification link has been sent to ${data.email}`,
       },
       { status: 201 }
     );

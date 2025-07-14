@@ -1,14 +1,14 @@
 'use client';
 
 // third-party imports
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
 import { Dialog, DialogContent, Box, Tabs, Tab } from '@mui/material';
 
 // internal imports
-import { DialogContext } from '@/components/layout/header/Navbar';
 import SignInForm from '@/components/forms/SignInForm';
 import SignUpForm from '@/components/forms/SignUpForm';
 import { a11yProps } from '@/utils/a11yprops';
+import { useAuthDialogStore } from '@/stores/dialogStore';
 
 const TabPanel = (props) => {
   const { children, value, index, a11ylabel, ...other } = props;
@@ -28,20 +28,20 @@ const TabPanel = (props) => {
 
 const AuthFormDialog = () => {
   const [value, setValue] = useState(0);
-  const { isDialogOpen, setIsDialogOpen } = useContext(DialogContext);
+  const { isAuthDialogOpen, closeAuthDialog } = useAuthDialogStore();
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
 
   const handleClose = () => {
-    setIsDialogOpen(false);
+    closeAuthDialog();
   };
 
   return (
     <>
       <Dialog
-        open={isDialogOpen}
+        open={isAuthDialogOpen}
         onClose={handleClose}
         scroll="body"
         closeAfterTransition={true}
@@ -60,7 +60,11 @@ const AuthFormDialog = () => {
           </Box>
 
           <TabPanel value={value} index={0} a11ylabel="sign-in">
-            <SignInForm isDashboard={false} showRoleSelector={false} />
+            <SignInForm
+              isDashboard={false}
+              showRoleSelector={false}
+              showCancel={true}
+            />
           </TabPanel>
 
           <TabPanel value={value} index={1} a11ylabel="sign-up">

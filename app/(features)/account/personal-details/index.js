@@ -4,7 +4,6 @@ import DateOfBirth from './DateOfBirth';
 import Nationality from './Nationality';
 import Languages from './Languages';
 import Address from './Address';
-import Status from './Status';
 import Role from './Role';
 
 export {
@@ -14,6 +13,5 @@ export {
   Nationality,
   Languages,
   Address,
-  Status,
   Role,
 };

@@ -17,13 +17,13 @@ import { passwordSchema } from '@/validation/yup/user/passwordSchema';
 import FormSubmitButton from '@/components/buttons/FormSubmitButton';
 import { errorHandler } from '@/helpers/errorHelpers';
 import { useMessageStore } from '@/stores/messageStore';
-import { API_URLS } from '@/config/apiRoutes';
+import { API_URLS } from '@/constants/apiRoutes';
 import VerifyOTPDialog from './VerifyOTPDialog';
 
 const TwoFactorAuthDialog = ({
   title,
   isDialogOpen,
-  setIsDialogOpen,
+  setDialogState,
   isSubmitSuccessful,
   selected,
 }) => {
@@ -39,7 +39,7 @@ const TwoFactorAuthDialog = ({
   };
 
   const handleClose = () => {
-    setIsDialogOpen(false);
+    setDialogState({ open: false });
   };
 
   const {
@@ -105,7 +105,7 @@ const TwoFactorAuthDialog = ({
           title="2FA - Account Deletion"
           isOTPOpen={isOTPOpen}
           setIsOTPOpen={setIsOTPOpen}
-          setIsDialogOpen={setIsDialogOpen}
+          setDialogState={setDialogState}
           type="2FA-account-deletion"
           selected={selected}
           password={password}

@@ -1,27 +1,33 @@
-import { validateSessionAndUser } from '@/services/auth/validateSessionAndUser';
+import { validateSession } from '@/services/auth/validateSession';
+import connectMongo from '@/libs/connectMongo';
+import { authorizeUser } from '@/services/auth/authorizeRole';
 import { contactActionSchema } from '@/validation/yup/user/contactActionSchema';
 import { handleApiError } from '@/helpers/errorHelpers';
-import { updatePrimaryNumber, deleteMobileNumber } from '@/services/user';
+import { updatePrimaryNumber, deleteMobileNumber } from '@/services/users';
 
 // PATCH: /api/v1/users/[id]/mobile-number
 export async function PATCH(Request, { params }) {
   const userId = params.id;
 
   try {
-    const requestData = await Request.json();
-    const actionType = requestData.actionType;
+    const data = await Request.json();
+    const actionType = data.actionType;
 
     const schema = contactActionSchema(actionType);
-    await schema.validate({ ...requestData }, { abortEarly: false });
+    await schema.validate({ ...data }, { abortEarly: false });
 
-    await validateSessionAndUser(userId);
+    const session = await validateSession();
+
+    // connect to database
+    await connectMongo();
+    await authorizeUser({ session, userId });
 
     let newPrimaryNumber;
 
     if (actionType === 'update-mobile') {
-      newPrimaryNumber = await updatePrimaryNumber(requestData.phone, userId);
+      newPrimaryNumber = await updatePrimaryNumber(data.phone, userId);
     } else {
-      await deleteMobileNumber(requestData.phone, userId);
+      await deleteMobileNumber(data.phone, userId);
     }
 
     const message = actionType.includes('delete')

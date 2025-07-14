@@ -60,14 +60,11 @@ export async function setFileToBase64({
   setEditDialogOpen,
   setSelectedImage,
   setUploadDialogOpen,
+  isDuplicate,
   handleAlertMessage,
   setIsSubmitting,
   isProfilePhoto,
-  setUploadedImages,
-  setValue,
-  uploadedImages,
-  uploadedFileNames,
-  setUploadedFileNames
+  onSuccess,
 }) {
   const file = event.target.files[0];
 
@@ -76,12 +73,12 @@ export async function setFileToBase64({
     return;
   }
 
-    // Check for duplicate file name
-    if (!isProfilePhoto && uploadedFileNames.includes(file.name)) {
-      handleAlertMessage('This image has already been uploaded.', 'error');
-      emptyFileInput();
-      return;
-    }
+  // Check for duplicate file name
+  if (!isProfilePhoto && isDuplicate) {
+    handleAlertMessage('This image has already been uploaded.', 'error');
+    emptyFileInput();
+    return;
+  }
 
   const allowedFileTypes = ['image/jpeg', 'image/png'];
   const maxWidth = 1200;
@@ -140,14 +137,7 @@ export async function setFileToBase64({
         );
       } else {
         const resizedImage = canvas.toDataURL(file.type);
-
-        setSelectedImage(resizedImage);
-        setUploadedImages((prev) => [...prev, resizedImage]);
-        setUploadedFileNames((prev) => [...prev, file.name]);
-        
-        setValue('images', [...uploadedImages, resizedImage], {
-          shouldValidate: true,
-        });
+        onSuccess(resizedImage);
       }
     };
   };

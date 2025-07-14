@@ -1,13 +1,7 @@
 'use client';
 
 // third-party imports
-import React, {
-  useState,
-  useContext,
-  createContext,
-  useEffect,
-  useCallback,
-} from 'react';
+import React, { useContext, useEffect, useCallback } from 'react';
 import { usePathname } from 'next/navigation';
 import { AppBar, Toolbar, Box, IconButton, Container } from '@mui/material';
 import { useTranslations } from 'next-intl';
@@ -16,12 +10,13 @@ import MenuIcon from '@mui/icons-material/Menu';
 // internal imports
 import { UserSessionContext, UserDataContext } from '@/contexts/UserProvider';
 import Logo from './Logo';
-import HideOnScroll from '@/utils/components/HideOnScroll';
+import HideOnScroll from '@/components/common/HideOnScroll';
 import TopNavLinks from './TopNavLinks';
 import { navLinks } from '@/data/links/navLinks';
 import AuthFormDialog from '@/app/(features)/authentication/AuthFormDialog';
 import { StyledNavIconsContainer } from '@/components/styled/StyledContainers';
 import NavDrawer from './NavDrawer';
+import Currency from '@/components/layout/header/Currency';
 import { useDrawerStore } from '@/stores/drawerStore';
 import { SkeletonCircular } from '@/components/loaders/Skeletons';
 import {
@@ -34,11 +29,10 @@ import IconButtons from './IconButtons';
 import SessionIconButtons from './SessionIconButtons';
 import { useNotificationStore } from '@/stores/notificationStore';
 import SearchBar from './SearchBar';
+import { useAuthDialogStore } from '@/stores/dialogStore';
 
-export const DialogContext = createContext({});
-
-const Navbar = () => {
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+const Navbar = ({currency}) => {
+  const { isAuthDialogOpen } = useAuthDialogStore();
 
   const session = useContext(UserSessionContext);
 
@@ -61,10 +55,6 @@ const Navbar = () => {
 
   const { toggleDrawer } = useDrawerStore();
   const { handleAlertMessage } = useMessageStore();
-
-  const handleIconAuthClick = () => {
-    setIsDialogOpen(true);
-  };
 
   const fetchNotifications = useCallback(() => {
     if (!session?.user?.id) return;
@@ -169,6 +159,8 @@ const Navbar = () => {
                 </Box>
 
                 <StyledNavIconsContainer>
+                  <Currency currency={currency} />
+
                   {session ? (
                     isLoading ? (
                       <SkeletonCircular w={32} h={32} l={4} />
@@ -176,10 +168,10 @@ const Navbar = () => {
                       <SessionIconButtons />
                     )
                   ) : (
-                    <IconButtons handleIconAuthClick={handleIconAuthClick} />
+                    <IconButtons />
                   )}
 
-                  <IconButton
+                  {/* <IconButton
                     aria-label="open nav drawer"
                     onClick={() => toggleDrawer('navDrawerOpen', true)}
                     sx={{
@@ -189,7 +181,7 @@ const Navbar = () => {
                     }}
                   >
                     <MenuIcon />
-                  </IconButton>
+                  </IconButton> */}
                 </StyledNavIconsContainer>
               </Toolbar>
             </Container>
@@ -197,13 +189,9 @@ const Navbar = () => {
         </HideOnScroll>
       </header>
 
-      <NavDrawer linksTransLations={linksTransLations} />
+      {/* <NavDrawer linksTransLations={linksTransLations} /> */}
 
-      {isDialogOpen && !session && (
-        <DialogContext.Provider value={{ isDialogOpen, setIsDialogOpen }}>
-          <AuthFormDialog />
-        </DialogContext.Provider>
-      )}
+      {isAuthDialogOpen && !session && <AuthFormDialog />}
     </>
   );
 };

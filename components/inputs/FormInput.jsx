@@ -26,7 +26,8 @@ const FormInput = ({
   handleChange = () => {},
   autoComplete = 'on',
   readOnly = false,
-  isDisabled = false
+  isDisabled = false,
+  maxLength = 'auto',
 }) => {
   const { ref, onChange, ...restRegister } = register(inputName);
 
@@ -35,13 +36,13 @@ const FormInput = ({
       {type !== 'password' ? (
         <TextField
           {...restRegister}
+          name={inputName}
           inputRef={ref}
           fullWidth
           size="small"
           margin={margin}
           label={label}
           placeholder={placeholder}
-          name={inputName}
           defaultValue={defaultValue}
           disabled={isDisabled}
           onChange={(e) => {
@@ -59,6 +60,8 @@ const FormInput = ({
           }}
           inputProps={{
             readOnly,
+            maxLength: maxLength,
+            length: maxLength,
           }}
         />
       ) : (

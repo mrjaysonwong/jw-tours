@@ -8,7 +8,7 @@ import { useLocale } from 'next-intl';
 
 // internal imports
 import { useRouter, usePathname } from '@/navigation';
-import { LOCALE_MAP } from '@/constants/locale_map';
+import { LOCALE_MAP } from '@/constants/localeMap';
 
 const LocaleSwitcher = () => {
   const { data: session, status } = useSession();
