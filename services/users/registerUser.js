@@ -51,8 +51,9 @@ export async function registerUser(data) {
 
     const { token, expireTimestamp, emailHtml } = generateEmailVerificationData({
       email: data.email,
-      Request,
       actionType: ACTIONS.SIGNUP,
+      firstName: data.firstName,
+      callbackUrl: '', 
     });
 
     await saveNewUser(data, token, expireTimestamp);
