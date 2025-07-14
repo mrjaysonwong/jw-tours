@@ -11,39 +11,40 @@ import Token from '@/models/tokenModel';
 import { sendEmail } from '@/services/email/sendEmail';
 
 async function saveNewUser(data, token, expireTimestamp) {
+  try {
+    const hashedPassword = await hash(data.password, 12);
 
-  console.log('➡️ saveNewUser input:', {
-    firstName: data.firstName,
-    lastName: data.lastName,
-    password: data.password,
-  });
+    const newUser = await User.create({
+      firstName: data.firstName,
+      lastName: data.lastName,
+      email: [
+        {
+          email: data.email,
+          isPrimary: true,
+          isVerified: false,
+        },
+      ],
+      password: hashedPassword,
+    });
 
+    console.log('✅ User created:', newUser._id);
 
-  const hashedPassword = await hash(data.password, 12);
+    await Token.create({
+      userId: newUser._id,
+      email: [
+        {
+          email: data.email,
+          token,
+          expireTimestamp,
+        },
+      ],
+    });
 
-  const newUser = await User.create({
-    firstName: data.firstName,
-    lastName: data.lastName,
-    email: [
-      {
-        email: data.email,
-        isPrimary: true,
-        isVerified: false,
-      },
-    ],
-    password: hashedPassword,
-  });
-
-  await Token.create({
-    userId: newUser._id,
-    email: [
-      {
-        email: data.email,
-        token,
-        expireTimestamp,
-      },
-    ],
-  });
+    console.log('✅ Token created');
+  } catch (error) {
+    console.error('❌ saveNewUser error:', error);
+    throw error;
+  }
 }
 
 export async function registerUser(data) {
@@ -57,18 +58,19 @@ export async function registerUser(data) {
       });
     }
 
-    const { token, expireTimestamp, emailHtml } = generateEmailVerificationData({
-      email: data.email,
-      actionType: ACTIONS.SIGNUP,
-      firstName: data.firstName,
-      callbackUrl: '', 
-    });
+    const { token, expireTimestamp, emailHtml } = generateEmailVerificationData(
+      {
+        email: data.email,
+        actionType: ACTIONS.SIGNUP,
+        firstName: data.firstName,
+        callbackUrl: '',
+      }
+    );
 
     console.log('✅ Email verification data:', { token, expireTimestamp });
 
     await saveNewUser(data, token, expireTimestamp);
     console.log('✅ User and token saved');
-
 
     // Send the email content
     await sendEmail({
@@ -78,7 +80,6 @@ export async function registerUser(data) {
     });
 
     console.log('✅ Email sent');
-
   } catch (error) {
     throw error;
   }
