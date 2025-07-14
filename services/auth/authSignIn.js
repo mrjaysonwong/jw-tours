@@ -159,7 +159,7 @@ async function handleSignInOAuth(user, account) {
   await connectMongo();
   const userExists = await findUser({ email: user.email });
 
-  const isSuspended = userExists.status === 'suspended';
+  const isSuspended = userExists?.status === 'suspended';
 
   if (isSuspended) {
     throw new Error('Your account has been suspended. Please contact support.');
