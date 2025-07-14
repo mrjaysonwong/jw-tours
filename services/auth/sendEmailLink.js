@@ -50,18 +50,13 @@ export async function sendEmailLink(email, actionType, callbackUrl) {
       if (isVerified || isPending) {
         await rateLimiter.consume(email, 1);
 
-        const {
-          token,
-          expireTimestamp,
-          emailHtml,
-        } = generateEmailVerificationData({
-          email,
-          actionType,
-          firstName: userExists.firstName,
-          callbackUrl,
-        });
-
-      
+        const { token, expireTimestamp, emailHtml } =
+          generateEmailVerificationData({
+            email,
+            actionType,
+            firstName: userExists.firstName,
+            callbackUrl,
+          });
 
         const userTokenExists = await manageUserEmailToken(
           userExists._id,
@@ -69,8 +64,6 @@ export async function sendEmailLink(email, actionType, callbackUrl) {
           token,
           expireTimestamp
         );
-
-        
 
         // Send the email content
         await sendEmail({

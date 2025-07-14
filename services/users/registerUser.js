@@ -56,7 +56,11 @@ export async function registerUser(data) {
       callbackUrl: '', 
     });
 
+    console.log('✅ Email verification data:', { token, expireTimestamp });
+
     await saveNewUser(data, token, expireTimestamp);
+    console.log('✅ User and token saved');
+
 
     // Send the email content
     await sendEmail({
@@ -64,6 +68,9 @@ export async function registerUser(data) {
       subject: 'Verify your JW Tours account',
       html: emailHtml,
     });
+
+    console.log('✅ Email sent');
+
   } catch (error) {
     throw error;
   }
