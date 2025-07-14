@@ -9,7 +9,7 @@ export async function POST(Request) {
   try {
     const data = await Request.json();
 
-    await signUpSchema.validate({ ...data }, { abortEarly: false });
+    // await signUpSchema.validate({ ...data }, { abortEarly: false });
 
     // connect to database
     await connectMongo();

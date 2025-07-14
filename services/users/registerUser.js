@@ -11,6 +11,14 @@ import Token from '@/models/tokenModel';
 import { sendEmail } from '@/services/email/sendEmail';
 
 async function saveNewUser(data, token, expireTimestamp) {
+
+  console.log('➡️ saveNewUser input:', {
+    firstName: data.firstName,
+    lastName: data.lastName,
+    password: data.password,
+  });
+
+
   const hashedPassword = await hash(data.password, 12);
 
   const newUser = await User.create({
