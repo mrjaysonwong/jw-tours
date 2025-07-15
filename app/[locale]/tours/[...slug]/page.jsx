@@ -26,10 +26,12 @@ export async function generateMetadata({ params: { slug } }) {
     )}`;
   }
 
-  if (tour) {
-    title = tour.title;
+  if (tourId) {
+    const tour = await fetchTourDetails(tourId);
+    if (tour) {
+      title = tour.title;
+    }
   }
-
   return { title };
 }
 
