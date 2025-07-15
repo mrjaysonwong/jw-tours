@@ -48,6 +48,8 @@ export async function GET(Request, { params }) {
 
     return Response.json({ data: updatedTour }, { status: 200 });
   } catch (error) {
+    console.error('Fetch tour error', error)
+
     const { message, status } = handleApiError(error);
 
     return Response.json({ message }, { status });

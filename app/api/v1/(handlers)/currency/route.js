@@ -47,6 +47,8 @@ export async function POST(Request) {
 
     return Response.json({ data: converted }, { status: 200 });
   } catch (error) {
+    console.error('Unirate api error', error)
+
     const { message, status } = handleApiError(error);
     return Response.json({ message }, { status });
   }
