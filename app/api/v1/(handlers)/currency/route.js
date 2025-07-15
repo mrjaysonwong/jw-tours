@@ -13,13 +13,7 @@ export async function POST(Request) {
   const code = searchParams?.get('code')?.toUpperCase();
 
   try {
-    let amounts = [];
-  try {
-    const body = await Request.json();
-    amounts = body?.amounts ?? [];
-  } catch {
-    amounts = [];
-  }
+    const { amounts } = await Request.json();
 
     if (code === 'USD') {
       return Response.json({ data: amounts }, { status: 200 });
