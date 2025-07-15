@@ -4,6 +4,13 @@ import { availability, timeSlots, durations } from '@/models/tourModel';
 
 const TourAvailability = () => {
   const { control, errors, setValue, tour } = useTourFormContext();
+
+  const durationDefault =
+  tour?.duration?.value && tour?.duration?.unit
+    ? `${tour.duration.value} ${tour.duration.unit}`
+    : '';
+
+
   return (
     <>
       <AutoCompleteInput
@@ -34,7 +41,7 @@ const TourAvailability = () => {
         inputName="duration"
         label="Duration"
         id="duration-select"
-        defaultValue={`${tour?.duration?.value} ${tour?.duration?.unit}`}
+        defaultValue={durationDefault}
         control={control}
         options={durations}
         error={errors?.duration}
