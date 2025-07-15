@@ -66,6 +66,7 @@ export async function POST(Request) {
 
     return Response.json({ checkoutId: newCheckout._id }, { status: 201 });
   } catch (error) {
+    console.error(error)
     const { message, status } = handleApiError(error);
 
     return Response.json({ message }, { status });

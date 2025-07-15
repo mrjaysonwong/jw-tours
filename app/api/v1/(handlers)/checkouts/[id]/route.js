@@ -54,6 +54,7 @@ export async function GET(Request, { params }) {
 
     return Response.json({ data: updatedCheckout }, { status: 200 });
   } catch (error) {
+    console.error(error)
     const { message, status } = handleApiError(error);
 
     return Response.json({ message }, { status });
@@ -109,6 +110,7 @@ export async function PATCH(Request, { params }) {
 
     return Response.json(null, { status: 200 });
   } catch (error) {
+    console.error(error)
     const { message, status } = handleApiError(error);
 
     return Response.json({ message }, { status });

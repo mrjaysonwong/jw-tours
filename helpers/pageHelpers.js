@@ -70,11 +70,9 @@ export function getCurrencyFromCookies(getCookies) {
 
 export function getAuthFetchOptions(getCookies) {
   const store = getCookies();
-  const token = store.get('authjs.session-token')?.value;
-
   return {
     headers: {
-      ...(token && { Cookie: `authjs.session-token=${token}` }),
+      Cookie: store.toString(), // ✅ Forward ALL cookies exactly as received
     },
   };
 }
