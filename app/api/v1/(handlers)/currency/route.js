@@ -22,26 +22,27 @@ export async function POST(Request) {
     let rate = getCachedRate(code);
 
     if (!rate) {
-      // No cache hit, fetch new rate
-      const res = await fetch(
-        `https://api.unirateapi.com/api/rates?api_key=${UNIRATE_API_KEY}&from=USD`
-      );
-
-      const text = await res.text();
-      console.log('Unirate error response:', text);
-
-      const { rates } = await res.json();
-
-      rate = rates?.[code];
-
-      if (!rate) {
-        return Response.json(
-          { message: 'Invalid currency code.' },
-          { status: 400 }
+      try {
+        // No cache hit, fetch new rate
+        const res = await fetch(
+          `https://api.unirateapi.com/api/rates?api_key=${UNIRATE_API_KEY}&from=USD`
         );
-      }
 
-      setCachedRate(code, rate);
+        const { rates } = await res.json();
+
+        rate = rates?.[code];
+
+        if (!rate) {
+          return Response.json(
+            { message: 'Invalid currency code.' },
+            { status: 400 }
+          );
+        }
+
+        setCachedRate(code, rate);
+      } catch (error) {
+        console.error('unirate api error', error);
+      }
     }
 
     const converted = amounts.map(
