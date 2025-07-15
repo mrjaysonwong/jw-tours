@@ -1,22 +1,31 @@
 import { customAlphabet } from 'nanoid';
 
 // Custom alphabet for nanoid
-const nanoid = customAlphabet('123456', 6);
+const nanoidGenerator = customAlphabet('123456', 6);
 
 // Helper function to generate a unique ID
-export const generateUniqueId = async (model, fieldName) => {
-  let uniqueId = nanoid();
-  let isUnique = false;
+export const generateUniqueId = async (Model, fieldName, retries = 10) => {
+  let attempts = 0;
+  let id;
 
-  // Loop until we get a unique ID
-  while (!isUnique) {
-    const existingRecord = await model.findOne({ [fieldName]: uniqueId });
-    if (!existingRecord) {
-      isUnique = true;
-    } else {
-      uniqueId = nanoid(); // Regenerate if the ID already exists
+  while (attempts < retries) {
+    id = nanoidGenerator();
+    const existingDoc = await Model.findOne({ [fieldName]: id });
+
+    if (!existingDoc) {
+      return id;
     }
+
+    console.warn(
+      `[Unique ID Helper] Duplicate ID found for ${fieldName}: ${id}. Retrying... (Attempt ${
+        attempts + 1
+      }/${retries})`
+    );
+    attempts++;
   }
 
-  return uniqueId;
+  throw new Error(
+    `[Unique ID Helper] Failed to generate a unique nanoid for ${fieldName} after ${retries} attempts.
+     Consider increasing the nanoid alphabet/length or adjusting retry count if this happens frequently.`
+  );
 };

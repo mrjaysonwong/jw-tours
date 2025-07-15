@@ -62,7 +62,7 @@ const userSchema = new Schema(
     },
     gender: {
       type: String,
-      enum: ['male', 'female', 'other'],
+      enum: ['', 'male', 'female', 'other'],
     },
     password: {
       type: String,
@@ -121,6 +121,11 @@ const userSchema = new Schema(
       type: String,
       enum: ['pending', 'active', 'suspended', 'inactive'],
       default: 'pending',
+    },
+    guideCustomId: {
+      type: String,
+      unique: true,
+      index: true,
     },
   },
   { timestamps: true }

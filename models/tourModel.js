@@ -79,6 +79,7 @@ const tourSchema = new Schema(
       type: String,
       unique: true,
       required: true,
+      index: true,
     },
     title: {
       type: String,
