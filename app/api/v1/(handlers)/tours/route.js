@@ -109,6 +109,7 @@ export async function GET(Request) {
   const transportationList = transportation?.split(',') || [];
 
   try {
+    // connect to database
     await connectMongo();
 
     const query = {};
@@ -152,6 +153,7 @@ export async function GET(Request) {
 
     return Response.json({ data: updatedTours }, { status: 200 });
   } catch (error) {
+    console.error(error)
     const { message, status } = handleApiError(error);
     return Response.json({ message }, { status });
   }
