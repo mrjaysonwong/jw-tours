@@ -27,11 +27,8 @@ export async function POST(Request) {
         `https://api.unirateapi.com/api/rates?api_key=${UNIRATE_API_KEY}&from=USD`
       );
 
-      if (!res.ok) {
-        const text = await res.text(); // safer fallback
-        console.error('Unirate error response:', text);
-   
-      }
+      const text = await res.text();
+      console.log('Unirate error response:', text);
 
       const { rates } = await res.json();
 
@@ -53,7 +50,7 @@ export async function POST(Request) {
 
     return Response.json({ data: converted }, { status: 200 });
   } catch (error) {
-    console.error('Unirate api error', error)
+    console.error('Unirate api error', error);
 
     const { message, status } = handleApiError(error);
     return Response.json({ message }, { status });
