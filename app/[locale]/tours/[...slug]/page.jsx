@@ -16,8 +16,8 @@ const allowedParams = ['minDuration', 'maxDuration', 'transportation', 'sort'];
 const ITEMS_PER_PAGE = 16;
 
 export async function generateMetadata({ params: { slug } }) {
-  const [geoLocation, destination, tourId] = slug;
-  const tour = await fetchTourDetails(tourId);
+  const [geoLocation, destination, tourId] = slug || [];
+
   let title = `Best Tours in ${cleanSlug(geoLocation)}`;
 
   if (destination) {
