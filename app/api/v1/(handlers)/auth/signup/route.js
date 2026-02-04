@@ -1,6 +1,6 @@
 // internal imports
 import { signUpSchema } from '@/validation/yup/auth/signUpSchema';
-import connectMongo from '@/libs/connectMongo';
+import connectMongo from '@/lib/connectMongo';
 import { handleApiError } from '@/helpers/errorHelpers';
 import { registerUser } from '@/services/users/registerUser';
 

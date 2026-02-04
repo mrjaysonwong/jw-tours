@@ -1,5 +1,5 @@
 import { safeFetch } from '@/helpers/safeFetch';
-import { encodeKey } from '@/libs/paymongo';
+import { encodeKey } from '@/lib/paymongo';
 
 export async function fetchRefunds(amount, paymentId, reason) {
   const url = 'https://api.paymongo.com/refunds';

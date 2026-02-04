@@ -73,6 +73,7 @@ const EditDetailsDialog = ({ isDialogOpen, setIsDialogOpen }) => {
     register,
     control,
     errors,
+    params,
   };
 
   return (

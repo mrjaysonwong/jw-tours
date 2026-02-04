@@ -8,23 +8,21 @@ import {
   DialogActions,
   Button,
   IconButton,
-  Divider,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 
 // internal imports
-import FilterByDuration from './FilterByDuration';
-import FilterByTransportation from './FilterByTransportation';
+import FilterByDuration from '../../app/(features)/tours/FilterByDuration';
+import FilterByTransportation from '../../app/(features)/tours/FilterByTransportation';
 import { filtersSchema } from '@/validation/yup/tour/filtersSchema';
 import FormSubmitButton from '@/components/buttons/FormSubmitButton';
-import { buildQueryParams } from '@/utils/common';
-import { durationOptions } from './FilterByDuration';
-
-const allowedParams = ['minDuration', 'maxDuration', 'transportation', 'sort'];
+import { durationOptions } from '../../app/(features)/tours/FilterByDuration';
+import { transportationOptions } from '@/validation/yup/tour/filtersSchema';
+import { filterParams, getQueryParams } from '@/utils/queryParams';
 
 function getDuration(searchParams) {
-  const searchMin = +searchParams.get('minDuration');
-  const searchMax = +searchParams.get('maxDuration');
+  const searchMin = parseInt(searchParams.get('minDuration'), 10);
+  const searchMax = parseInt(searchParams.get('maxDuration'), 10);
 
   const duration = durationOptions
     .map((opt) => `${opt.min}-${opt.max}`)
@@ -38,19 +36,27 @@ function getDuration(searchParams) {
   return duration;
 }
 
-const TourListingFiltersDialog = ({ isDialogOpen, setIsDialogOpen }) => {
+const TourListFiltersDialog = ({ isDialogOpen, setIsDialogOpen }) => {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+
+  const { sortParam, searchQuery } = getQueryParams(searchParams);
 
   const handleClose = () => {
     setIsDialogOpen(false);
   };
 
   const duration = getDuration(searchParams);
+  const rawTransportation =
+    searchParams.get('transportation')?.split(',') || [];
+
+  const validTransportation = rawTransportation.filter((t) =>
+    transportationOptions.includes(t)
+  );
 
   const defaultValues = {
-    transportation: searchParams.get('transportation')?.split(',') || [],
+    transportation: validTransportation,
     duration: duration.length > 0 ? duration : [],
   };
 
@@ -82,31 +88,30 @@ const TourListingFiltersDialog = ({ isDialogOpen, setIsDialogOpen }) => {
 
     const formValues = {
       transportation: transportation?.join(','),
-      ...(duration && {
-        minDuration,
-        maxDuration,
-      }),
+      minDuration,
+      maxDuration,
     };
 
-    const queryParams = buildQueryParams(
-      formValues,
-      searchParams,
-      allowedParams
-    );
+    const queryParams = filterParams({
+      q: searchQuery,
+      ...formValues,
+      sort: sortParam,
+    });
 
-    const query = queryParams.size > 0 ? `${queryParams.toString()}` : '';
-
-    if (queryParams.size === 0) {
-      router.replace(pathname);
-    } else {
-      router.replace(`${pathname}?${query}`);
-    }
-
+    router.replace(`${pathname}?${queryParams.toString()}`);
     handleClose();
   };
 
   const handleReset = () => {
+    const queryParams = filterParams({
+      q: searchQuery,
+      sort: sortParam,
+    });
+
     reset({ transportation: [], duration: [] });
+
+    router.replace(`${pathname}?${queryParams.toString()}`);
+    handleClose();
   };
 
   return (
@@ -133,7 +138,7 @@ const TourListingFiltersDialog = ({ isDialogOpen, setIsDialogOpen }) => {
 
       <DialogActions sx={{ py: 2, justifyContent: 'center' }}>
         <Button variant="outlined" onClick={handleReset}>
-          Reset Filters
+          Clear Filters
         </Button>
         <FormSubmitButton
           form="filters-form"
@@ -146,4 +151,4 @@ const TourListingFiltersDialog = ({ isDialogOpen, setIsDialogOpen }) => {
   );
 };
 
-export default TourListingFiltersDialog;
+export default TourListFiltersDialog;

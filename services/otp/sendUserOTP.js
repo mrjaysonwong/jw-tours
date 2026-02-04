@@ -8,7 +8,7 @@ import {
 } from '@/services/users/userQueries';
 import { handleRateLimitError, HttpError } from '@/helpers/errorHelpers';
 import { STATUS_CODES } from '@/constants/common';
-import { rateLimiter } from '@/libs/rateLimiter';
+import { rateLimiter } from '@/lib/rateLimiter';
 import { createOrUpdateOTP } from '@/services/otp/createOrUpdateOTP';
 import { formatDate } from '@/utils/formats/formatDates';
 import { sendEmail } from '@/services/email/sendEmail';

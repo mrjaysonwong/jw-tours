@@ -20,6 +20,10 @@ export const StyledMainContainer = styled(Container)({
   },
 });
 
+export const StyledLayoutContainer = styled(Box)({
+  minHeight: '100dvh'
+})
+
 export const StyledContainer = styled(Container)({
   marginTop: '4.2rem',
   minHeight: '80vh',

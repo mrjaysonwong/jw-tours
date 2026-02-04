@@ -1,23 +1,55 @@
 import { unstable_noStore as noStore } from 'next/cache';
+import { Types } from 'mongoose';
 
 // internal imports
 import { validateSession } from '@/services/auth/validateSession';
 import { authorizeUser } from '@/services/auth/authorizeRole';
 import { handleApiError } from '@/helpers/errorHelpers';
 import { STATUS_CODES } from '@/constants/common';
-import connectMongo from '@/libs/connectMongo';
+import connectMongo from '@/lib/connectMongo';
 import Booking from '@/models/bookingModel';
-import Tour from '@/models/tourModel';
 import { formatFromToDate } from '@/utils/formats/formatDates';
+import { apiUserBookingsParams } from '@/constants/queryParams';
+import { sanitizeQueryParams } from '@/utils/queryParams';
 
-const allowedParams = [
-  'transactionId',
-  'tourFrom',
-  'tourTo',
-  'bookingFrom',
-  'bookingTo',
-  'status',
-  'sort',
+const lookupAndUnwindReviews = [
+  {
+    $lookup: {
+      from: 'reviews',
+      localField: '_id',
+      foreignField: 'booking',
+      as: 'tourReview',
+      pipeline: [{ $project: { status: 1, _id: 0 } }],
+    },
+  },
+  { $unwind: { path: '$tourReview', preserveNullAndEmptyArrays: true } },
+];
+
+const lookupAndUnwindTours = [
+  {
+    $lookup: {
+      from: 'tours',
+      localField: 'tour',
+      foreignField: '_id',
+      as: 'tour',
+    },
+  },
+  { $unwind: '$tour' },
+];
+
+const lookupAndUnwindTourGuide = [
+  {
+    $lookup: {
+      from: 'users',
+      localField: 'tour.guide',
+      foreignField: '_id',
+      as: 'tour.guide',
+      pipeline: [
+        { $project: { image: 1, firstName: 1, lastName: 1, email: 1 } },
+      ],
+    },
+  },
+  { $unwind: { path: '$tour.guide', preserveNullAndEmptyArrays: true } },
 ];
 
 // GET: /api/v1/users/[id]/bookings
@@ -25,12 +57,8 @@ export async function GET(Request, { params }) {
   noStore();
   const userId = params.id;
   const searchParams = Request.nextUrl.searchParams;
-  const queryParams = {};
 
-  for (const key of allowedParams) {
-    const value = searchParams.get(key);
-    if (value) queryParams[key] = value;
-  }
+  const queryParams = sanitizeQueryParams(searchParams, apiUserBookingsParams);
 
   const {
     transactionId,
@@ -40,10 +68,10 @@ export async function GET(Request, { params }) {
     bookingTo,
     status,
     sort,
-  } = queryParams;
+  } = Object.fromEntries(queryParams.entries());
 
   const statusList = status?.split(',') || [];
-  const sortAscDesc = sort === 'oldest' ? 1 : -1;
+  const sortDir = sort === 'oldest' ? 1 : -1;
 
   const { fromDate: tourFromDate, toDate: tourToDate } = formatFromToDate({
     from: tourFrom,
@@ -56,41 +84,43 @@ export async function GET(Request, { params }) {
 
   try {
     const session = await validateSession();
-
-    // connect to database
     await connectMongo();
     await authorizeUser({ session, userId });
 
-    // base query builder
-    const query = {
-      booker: userId,
-    };
+    // Base matchStage
+    const matchStage = { booker: new Types.ObjectId(`${userId}`) };
 
     if (transactionId) {
-      query.transactionId = transactionId;
+      matchStage.transactionId = transactionId;
     }
 
     if (tourFrom) {
-      query['bookingRequest.tourDate'] = {
+      matchStage['bookingRequest.tourDate'] = {
         $gte: tourFromDate,
         ...(tourTo && { $lt: tourToDate }),
       };
     }
 
     if (bookingFrom) {
-      query.bookingDate = {
+      matchStage.bookingDate = {
         $gte: bookingFromDate,
         ...(bookingTo && { $lt: bookingToDate }),
       };
     }
 
     if (statusList.length > 0) {
-      query.status = { $in: statusList };
+      matchStage.status = { $in: statusList };
     }
 
-    const bookings = await Booking.find(query)
-      .populate({ path: 'tour' })
-      .sort({ bookingDate: sortAscDesc });
+    // ---- Single aggregation ----
+    const bookings = await Booking.aggregate([
+      { $match: matchStage },
+      ...lookupAndUnwindReviews,
+      ...lookupAndUnwindTours,
+      // join guide inside the tour
+      ...lookupAndUnwindTourGuide,
+      { $sort: { bookingDate: sortDir } },
+    ]);
 
     if (!bookings?.length) {
       return Response.json(
@@ -101,8 +131,8 @@ export async function GET(Request, { params }) {
 
     return Response.json({ data: bookings }, { status: 200 });
   } catch (error) {
+    console.error(error);
     const { message, status } = handleApiError(error);
-
     return Response.json({ message }, { status });
   }
 }

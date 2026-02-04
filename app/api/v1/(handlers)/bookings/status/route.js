@@ -1,4 +1,4 @@
-import connectMongo from '@/libs/connectMongo';
+import connectMongo from '@/lib/connectMongo';
 import { handleApiError } from '@/helpers/errorHelpers';
 import { STATUS_CODES } from '@/constants/common';
 import Booking from '@/models/bookingModel';

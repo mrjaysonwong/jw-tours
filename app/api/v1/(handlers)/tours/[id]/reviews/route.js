@@ -1,6 +1,6 @@
 // internal imports
 import { handleApiError } from '@/helpers/errorHelpers';
-import connectMongo from '@/libs/connectMongo';
+import connectMongo from '@/lib/connectMongo';
 import Review from '@/models/reviewModel';
 
 // GET: /api/v1/tours/[id]/reviews
@@ -9,7 +9,7 @@ export async function GET(Request, { params }) {
 
   const searchParams = Request.nextUrl.searchParams;
   const limit = parseInt(searchParams.get('limit')) || 1;
-  const offset = parseInt(searchParams.get('offset')) || 0;
+  const skip = parseInt(searchParams.get('skip')) || 0;
   const rating = searchParams.get('rating');
 
   try {
@@ -18,18 +18,19 @@ export async function GET(Request, { params }) {
 
     const query = {
       tour: tourId,
+      status: 'approved',
     };
 
-    if (rating !== 'all') query.rating = +rating;
+    if (rating !== 'all') query.rating = parseInt(rating, 10);
 
     const reviews = await Review.find(query)
-      .skip(offset)
+      .skip(skip)
       .limit(limit)
       .populate('user', 'firstName lastName image');
 
     const totalReviews = await Review.countDocuments(query);
 
-    return Response.json({ data: reviews, totalReviews }, { status: 200 });
+    return Response.json({ reviews, totalReviews }, { status: 200 });
   } catch (error) {
     const { message, status } = handleApiError(error);
     return Response.json({ message }, { status });
@@ -44,9 +45,16 @@ export async function POST(Request) {
     // connect to database
     await connectMongo();
 
-    await Review.create({
-      ...data,
-    });
+    await Review.updateOne(
+      { booking: data.booking },
+      {
+        $set: {
+          ...data,
+          status: 'pending',
+        },
+      },
+      { upsert: true }
+    );
 
     return Response.json(
       {

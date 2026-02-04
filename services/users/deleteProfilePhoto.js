@@ -2,7 +2,7 @@
 import User from '@/models/userModel';
 import { HttpError } from '@/helpers/errorHelpers';
 import { STATUS_CODES } from '@/constants/common.js';
-import cloudinary from '@/libs/cloudinary';
+import cloudinary from '@/lib/cloudinary';
 
 export async function deleteProfilePhoto(userId, userExists) {
   try {

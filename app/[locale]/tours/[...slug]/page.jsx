@@ -1,19 +1,19 @@
 import { unstable_noStore as noStore } from 'next/cache';
 import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
 
 // internal imports
 import TourDetails from '@/app/(features)/tours/tour-details/TourDetails';
 import Custom404 from '@/components/errors/Custom404';
-import TourListing from '@/app/(features)/tours/TourListing';
+import TourList from '@/app/(features)/tours/TourList';
 import { cleanSlug } from '@/utils/formats/common';
 import { getCurrencyFromCookies } from '@/helpers/pageHelpers';
-import { fetchTours, fetchTourDetails } from '@/services/tours/fetchTours';
+import { fetchTourList, fetchTourDetails } from '@/services/tours/fetchTours';
 import { fetchTourBookings } from '@/services/bookings/fetchBookings';
-import { convertCurrency } from '@/helpers/convertCurrency';
-
-const allowedParams = ['minDuration', 'maxDuration', 'transportation', 'sort'];
-
-const ITEMS_PER_PAGE = 16;
+import { convertPricing } from '@/helpers/convertCurrency';
+import { fetchWishlist } from '@/services/wishlists/fetchWishlist';
+import { baseTourListParams } from '@/constants/queryParams';
+import { sanitizeQueryParams } from '@/utils/queryParams';
 
 export async function generateMetadata({ params: { slug } }) {
   const [geoLocation, destination, tourId] = slug || [];
@@ -35,27 +35,10 @@ export async function generateMetadata({ params: { slug } }) {
   return { title };
 }
 
-const convertPricing = async (pricing, currencyCode) => {
-  const { tourCost, serviceFee, perPersonFee = 0 } = pricing;
-
-  const [cTour, cService, cPerson] = await convertCurrency(currencyCode, [
-    tourCost,
-    serviceFee,
-    perPersonFee,
-  ]);
-
-  return {
-    convertedPricing: {
-      tourCost: cTour,
-      serviceFee: cService,
-      perPersonFee: cPerson,
-    },
-    convertedTotalCost: cTour + cService + cPerson,
-  };
-};
-
 const handleTourDetails = async (tourId, currency) => {
-  const tour = await fetchTourDetails(tourId);
+  const { guest, user } = await fetchWishlist();
+  const tour = await fetchTourDetails({ tourId });
+
   if (!tour) return <Custom404 resource="tour" />;
 
   const bookings = await fetchTourBookings({ tourId });
@@ -70,66 +53,69 @@ const handleTourDetails = async (tourId, currency) => {
     convertedPricing,
     convertedTotalCost,
     currency,
+    wishlist: {
+      guest,
+      user,
+    },
   };
+
   return <TourDetails tour={updatedTour} bookings={bookings} />;
 };
 
-const handleTourListing = async (
+const handleTourList = async (
   geoLocation,
   destination,
   currency,
   searchParams
 ) => {
-  const queryParams = new URLSearchParams();
+  const queryParams = sanitizeQueryParams(searchParams, baseTourListParams, {
+    isServerComponent: true,
+  });
 
-  for (const key of allowedParams) {
-    const value = searchParams[key];
+  const options = {
+    headers: {
+      'x-currency': encodeURIComponent(JSON.stringify(currency)),
+    },
+  };
 
-    // set if allowed params
-    if (value) queryParams.set(key, value);
-  }
+  const { tours, pagination, locationExists } = await fetchTourList({
+    geoLocation,
+    destination,
+    queryString: queryParams.toString(),
+    options,
+  });
 
-  const query = queryParams.size > 0 ? `${queryParams.toString()}` : '';
+  const { guest, user } = await fetchWishlist();
 
-  const tours = await fetchTours({ geoLocation, destination, query });
-
-  const amounts = tours.map((t) => t.totalCost);
-  const convertedAmounts = await convertCurrency(currency.code, amounts);
-
-  const convertedTours = tours.map((tour, index) => ({
+  const updatedTours = tours.map((tour) => ({
     ...tour,
-    convertedTotalCost: convertedAmounts[index],
-    currency,
+    wishlist: {
+      guest,
+      user,
+    },
   }));
 
-  /* Demo for small-medium dataset */
-  const duplicatedTours = Array.from({ length: 32 }).flatMap(() =>
-    convertedTours.map((t) => ({ ...t }))
-  );
-
-  // Handle pagination
-  const totalPages = Math.ceil(convertedTours.length / ITEMS_PER_PAGE);
-  const currentPage = Math.max(1, parseInt(searchParams?.page || '1', 10));
-
-  if (totalPages > 0 && currentPage > totalPages) {
-    return <Custom404 resource="tours page" />;
+  if (
+    queryParams.has('page') &&
+    (pagination.totalPages === 0 ||
+      pagination.currentPage > pagination.totalPages)
+  ) {
+    queryParams.delete('page');
+    redirect(`?${queryParams.toString()}`);
   }
 
-  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-  const paginatedTours = convertedTours.slice(
-    startIndex,
-    startIndex + ITEMS_PER_PAGE
-  );
+  if (!tours.length && !locationExists) {
+    return <Custom404 redirectPath="/tours" />;
+  }
 
   return (
-    <TourListing
-      tours={paginatedTours}
-      page={currentPage}
-      totalPages={totalPages}
-      geoLocation={geoLocation}
+    <TourList
+      tours={updatedTours}
       destination={destination}
-      totalTours={convertedTours.length}
-      searchParams={searchParams}
+      geoLocation={geoLocation}
+      page={pagination.currentPage}
+      totalPages={pagination.totalPages}
+      totalTours={pagination.totalCount}
     />
   );
 };
@@ -139,10 +125,11 @@ export default async function ToursSlugPage({
   searchParams,
 }) {
   noStore();
+
   const currency = getCurrencyFromCookies(cookies);
   const [geoLocation, destination, tourId] = slug;
 
   return tourId
     ? await handleTourDetails(tourId, currency)
-    : await handleTourListing(geoLocation, destination, currency, searchParams);
+    : await handleTourList(geoLocation, destination, currency, searchParams);
 }

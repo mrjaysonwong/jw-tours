@@ -6,24 +6,18 @@ import TuneIcon from '@mui/icons-material/Tune';
 
 // internal imports
 import BookingsFiltersDialog from '@/app/(features)/bookings/BookingsFiltersDialog';
-import TourListingFiltersDialog from '@/app/(features)/tours/TourListingFiltersDialog';
+import TourListFiltersDialog from '@/components/dialogs/TourListFiltersDialog';
+import { baseTourListParams, bookingsParams } from '@/constants/queryParams';
 
-const allowedParams = [
-  'tourFrom',
-  'tourTo',
-  'bookingFrom',
-  'bookingTo',
-  'status',
-  'minDuration',
-  'maxDuration',
-  'transportation',
-];
-
-const countVisibleFilters = (searchParams) => {
+const countVisibleFilters = (searchParams, type) => {
   let total = 0;
 
+  const allowedQueryParams =
+    type === 'my-bookings' ? bookingsParams : baseTourListParams;
+
   for (const [key, value] of searchParams.entries()) {
-    if (allowedParams.includes(key)) {
+    if (key === 'sort' || key === 'page') continue;
+    if (allowedQueryParams.includes(key)) {
       total += value.split(',').filter(Boolean).length;
     }
   }
@@ -35,7 +29,7 @@ const FiltersButton = ({ type }) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const searchParams = useSearchParams();
-  const count = countVisibleFilters(searchParams);
+  const count = countVisibleFilters(searchParams, type);
   const invisible = count === 0;
 
   const handleClick = () => {
@@ -49,10 +43,6 @@ const FiltersButton = ({ type }) => {
         variant="dot"
         color="primary"
         invisible={invisible}
-        anchorOrigin={{
-          vertical: 'top',
-          horizontal: 'right',
-        }}
       >
         <Button
           color="inherit"
@@ -71,7 +61,7 @@ const FiltersButton = ({ type }) => {
             setIsDialogOpen={setIsDialogOpen}
           />
         ) : (
-          <TourListingFiltersDialog
+          <TourListFiltersDialog
             isDialogOpen={isDialogOpen}
             setIsDialogOpen={setIsDialogOpen}
           />

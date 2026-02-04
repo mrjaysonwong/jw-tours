@@ -5,4 +5,5 @@ export const PROJECTED_FIELDS = Object.freeze({
   WITH_PASSWORD:
     'email firstName lastName role image langCode password status accountProvider',
   GUIDE: 'firstName lastName image',
+  USER: 'image firstName lastName'
 });

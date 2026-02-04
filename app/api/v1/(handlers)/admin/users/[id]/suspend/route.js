@@ -2,7 +2,7 @@ import { validateSession } from '@/services/auth/validateSession';
 import { authorizeAdmin } from '@/services/auth/authorizeRole';
 import { handleApiError } from '@/helpers/errorHelpers';
 import { HttpError } from '@/helpers/errorHelpers';
-import connectMongo from '@/libs/connectMongo';
+import connectMongo from '@/lib/connectMongo';
 import User from '@/models/userModel';
 import { findUserById } from '@/services/users/userQueries';
 import { STATUS_CODES } from '@/constants/common';

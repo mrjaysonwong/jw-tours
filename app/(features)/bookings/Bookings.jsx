@@ -6,7 +6,7 @@ import FiltersButton from '@/components/buttons/FiltersButton';
 import SortBy from './SortBy';
 import BookingList from './BookingList';
 
-const Bookings = ({ bookings, reviews }) => {
+const Bookings = ({ bookings }) => {
   return (
     <StyledContainer>
       <Grid container spacing={2}>
@@ -33,7 +33,7 @@ const Bookings = ({ bookings, reviews }) => {
             {bookings.length} booking{bookings.length > 1 ? 's' : ''} found
           </Typography>
 
-          <BookingList bookings={bookings} reviews={reviews} />
+          <BookingList bookings={bookings} />
         </>
       )}
     </StyledContainer>

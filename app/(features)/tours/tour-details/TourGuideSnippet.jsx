@@ -1,12 +1,10 @@
 import Link from 'next/link';
 import {
   Typography,
-  Box,
   Card,
   CardHeader,
   CardContent,
   Avatar,
-  Rating,
 } from '@mui/material';
 
 // internal imports
@@ -50,22 +48,6 @@ const TourGuideSnippet = () => {
               Mabuhay! My Name is Fedil and I would like to invite you visit my
               beautiful country of...
             </Typography>
-            <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
-              <Rating
-                name="half-rating-read"
-                defaultValue={5}
-                readOnly
-                size="small"
-                sx={{ color: '#FCC737' }}
-              />
-              <Typography sx={{ mx: 0.5 }}>5</Typography>
-              <Typography
-                variant="body2"
-                sx={{ mx: 1, textDecoration: 'underline' }}
-              >
-                42 reviews
-              </Typography>
-            </Box>
           </CardContent>
         </Card>
       </Link>

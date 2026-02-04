@@ -3,7 +3,7 @@ export async function safeFetch(url, options = {}) {
     const res = await fetch(url, options);
 
     if (res.status === 500) {
-      throw new Error('Internal Server Error');
+      throw new Error('Something went wrong');
     }
 
     const { data } = await res.json();

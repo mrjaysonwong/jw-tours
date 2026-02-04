@@ -2,7 +2,7 @@
 import { passwordSchema } from '@/validation/yup/user/passwordSchema';
 import { validateSession } from '@/services/auth/validateSession';
 import { authorizeAdmin } from '@/services/auth/authorizeRole';
-import connectMongo from '@/libs/connectMongo';
+import connectMongo from '@/lib/connectMongo';
 import { findUserById } from '@/services/users/userQueries';
 import { handleApiError } from '@/helpers/errorHelpers';
 import { validatePassword } from '@/services/admin/twoFactorAuth';

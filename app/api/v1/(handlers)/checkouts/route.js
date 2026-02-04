@@ -1,13 +1,12 @@
 // internal imports
 import { validateSession } from '@/services/auth/validateSession';
 import { authorizeUser } from '@/services/auth/authorizeRole';
-import connectMongo from '@/libs/connectMongo';
+import connectMongo from '@/lib/connectMongo';
 import { handleApiError } from '@/helpers/errorHelpers';
 import { STATUS_CODES } from '@/constants/common';
 import Checkout from '@/models/checkoutModel';
 import Tour from '@/models/tourModel';
 import User from '@/models/userModel';
-import { formatISO } from '@/utils/formats/formatDates';
 import { getExpireTimestamp } from '@/utils/common';
 
 // POST: /api/v1/checkouts
@@ -30,8 +29,6 @@ export async function POST(Request) {
       tourDate,
       startTime,
     } = await Request.json();
-
-    const localTourDate = formatISO(tourDate);
 
     // connect to database
     await connectMongo();
@@ -58,7 +55,7 @@ export async function POST(Request) {
         totalPerPersonFee,
         serviceFee,
         totalCost,
-        tourDate: localTourDate,
+        tourDate: new Date(tourDate),
         startTime,
       },
       expireAt,
@@ -66,7 +63,7 @@ export async function POST(Request) {
 
     return Response.json({ checkoutId: newCheckout._id }, { status: 201 });
   } catch (error) {
-    console.error(error)
+    console.error(error);
     const { message, status } = handleApiError(error);
 
     return Response.json({ message }, { status });

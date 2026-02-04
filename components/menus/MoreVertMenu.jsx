@@ -7,6 +7,7 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import ContactMenuActionDialog from '@/components/dialogs/ContactMenuActionDialog';
 import TwoFactorAuthDialog from '@/components/dialogs/TwoFactorAuthDialog';
 import SendNotificationDialog from '@/components/dialogs/SendNotificationDialog';
+import ReviewMenuActionDialog from '@/components/dialogs/ReviewMenuActionDialog';
 import { actionMap } from '@/constants/vertMenuActionMap';
 import { useSendNotificationStore } from '@/stores/notificationStore';
 import { menuActionHelpers } from '@/helpers/menuActionHelpers';
@@ -19,6 +20,7 @@ const MoreVertMenu = ({
   id,
   selected,
   setSelected,
+  row,
 }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
@@ -63,7 +65,12 @@ const MoreVertMenu = ({
     setAnchorEl(null);
   };
 
-  const options = actionMap[menuType] || actionMap.default;
+  const baseOptions = actionMap[menuType] || actionMap.default;
+
+  // ✅ Filter actions based on row status
+  const options = baseOptions.filter(
+    (option) => !option.showIf || option.showIf(row)
+  );
 
   const dataAttributes = {
     ...(id && { 'data-id': id }),
@@ -136,6 +143,16 @@ const MoreVertMenu = ({
           isDialogOpen={dialogState.open}
           setDialogState={setDialogState}
           setSelected={setSelected}
+        />
+      )}
+
+      {dialogState.type === 'review-action' && (
+        <ReviewMenuActionDialog
+          isDialogOpen={dialogState.open}
+          setDialogState={setDialogState}
+          menuAction={menuAction}
+          setMenuAction={setMenuAction}
+          id={row._id}
         />
       )}
     </>

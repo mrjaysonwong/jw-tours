@@ -3,7 +3,7 @@ import { validateSession } from '@/services/auth/validateSession';
 import { authorizeAdmin } from '@/services/auth/authorizeRole';
 import { handleApiError } from '@/helpers/errorHelpers';
 import { createUser } from '@/services/admin/createUser';
-import connectMongo from '@/libs/connectMongo';
+import connectMongo from '@/lib/connectMongo';
 
 // POST: /api/v1/admin/create-user
 export async function POST(Request) {

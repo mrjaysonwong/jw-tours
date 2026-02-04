@@ -22,7 +22,7 @@ const CustomError = ({ error, reset, h = '50dvh' }) => {
         alt="robot-error"
       />
 
-      <Typography>{error?.message ?? 'Something went wrong'}</Typography>
+      <Typography>{error?.message ?? 'Something went wrong.'}</Typography>
       <Button
         size="small"
         variant="contained"

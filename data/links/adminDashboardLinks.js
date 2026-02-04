@@ -11,6 +11,7 @@ import ReviewsIcon from '@mui/icons-material/Reviews';
 import PaymentsIcon from '@mui/icons-material/Payments';
 import MoneyOffOutlinedIcon from '@mui/icons-material/MoneyOffOutlined';
 import BarChartOutlinedIcon from '@mui/icons-material/BarChartOutlined';
+import ReviewsOutlinedIcon from '@mui/icons-material/ReviewsOutlined';
 
 export const drawerDashboardLinks = [
   {
@@ -74,6 +75,16 @@ export const drawerManagementLinks = (id) => [
       {
         href: `/admin/dashboard/tours/${id}/edit`,
         label: 'Edit',
+      },
+    ],
+  },
+  {
+    label: 'Reviews',
+    icon: <ReviewsOutlinedIcon />,
+    dropDownMenu: [
+      {
+        href: '/admin/dashboard/reviews',
+        label: 'List',
       },
     ],
   },

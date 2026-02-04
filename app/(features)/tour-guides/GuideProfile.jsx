@@ -31,7 +31,6 @@ const GuideProfile = ({ guide, bookings, tours }) => {
         <Grid
           container
           spacing={2}
-          alignItems="flex-start"
           sx={{
             h5: {
               background: '-webkit-linear-gradient(20deg, #27AF60, #1CA085)',

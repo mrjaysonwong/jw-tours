@@ -1,5 +1,12 @@
 import { useState } from 'react';
-import { Toolbar, Box, IconButton, Drawer, Typography } from '@mui/material';
+import {
+  AppBar,
+  Toolbar,
+  Box,
+  IconButton,
+  Drawer,
+  Typography,
+} from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 
@@ -42,12 +49,12 @@ const DrawerList = () => {
 
   return (
     <>
-      <Toolbar
-        sx={{ py: 1.5, borderBottom: '1px solid', borderColor: 'divider' }}
-      >
-        <Typography variant="h6">Notifications</Typography>
+      <Toolbar sx={{ borderBottom: 1, borderColor: 'divider' }}>
+        <Typography variant="h6" sx={{ flex: 1 }}>
+          Notifications
+        </Typography>
 
-        <Box sx={{ display: 'flex', alignItems: 'center', ml: 'auto' }}>
+        <Box sx={{ display: 'flex', ml: 'auto' }}>
           <MenuButton
             open={open}
             anchorEl={anchorEl}
@@ -57,11 +64,6 @@ const DrawerList = () => {
           <IconButton
             aria-label="close notifications drawer"
             onClick={() => toggleDrawer('notificationsDrawerOpen', false)}
-            sx={{
-              svg: {
-                fontSize: { xs: '2rem', md: '1.5rem' },
-              },
-            }}
           >
             <CloseIcon />
           </IconButton>
@@ -81,7 +83,6 @@ const NotificationsSidebar = () => {
       <Drawer
         hideBackdrop={true}
         variant="temporary"
-        elevation={3}
         transitionDuration={300}
         anchor="right"
         open={notificationsDrawerOpen}

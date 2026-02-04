@@ -1,6 +1,6 @@
 // internal imports
 import { findUserEmail } from '@/services/users/userQueries';
-import { rateLimiter } from '@/libs/rateLimiter';
+import { rateLimiter } from '@/lib/rateLimiter';
 import { handleRateLimitError } from '@/helpers/errorHelpers';
 import { generateEmailVerificationData } from '@/services/auth/generateEmailVerificationData';
 import { ACTIONS } from '@/constants/common';

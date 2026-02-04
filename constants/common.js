@@ -42,8 +42,8 @@ export const ERROR_MESSAGES = Object.freeze({
   UNEXPECTED_ERROR: 'Unexpected error occurred. Try again later.',
   SERVER_ERROR_LOCAL:
     'We are experiencing some issues. Please refresh the page or try again later.',
-  ADMIN_ONLY: 'Unauthorized. Only admin can access this resource.',
-  ADMIN_ONLY_ACTION: 'Forbidden. Only admins can perform this action.',
+  ADMIN_ONLY: 'Forbidden. Only admin can access this resource.',
+  ADMIN_ONLY_ACTION: 'Forbidden. Only admin can perform this action.',
 });
 
 export const SERVICE_FEE_PERCENTAGE = 3.5;

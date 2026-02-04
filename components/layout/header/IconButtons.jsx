@@ -1,6 +1,5 @@
 import { IconButton } from '@mui/material';
 import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';
-import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
 
 // internal imports
@@ -11,12 +10,8 @@ const IconButtons = () => {
 
   return (
     <>
-      <IconButton>
+      <IconButton component="a" href="/wishlists" aria-label="Go to wishlists">
         <FavoriteBorderOutlinedIcon />
-      </IconButton>
-
-      <IconButton>
-        <ShoppingCartOutlinedIcon />
       </IconButton>
 
       <IconButton

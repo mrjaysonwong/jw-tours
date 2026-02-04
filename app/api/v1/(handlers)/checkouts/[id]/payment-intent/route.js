@@ -1,6 +1,6 @@
 // internal imports
 import { validateSession } from '@/services/auth/validateSession';
-import connectMongo from '@/libs/connectMongo';
+import connectMongo from '@/lib/connectMongo';
 import { handleApiError } from '@/helpers/errorHelpers';
 import { STATUS_CODES } from '@/constants/common';
 import Checkout from '@/models/checkoutModel';
@@ -12,7 +12,7 @@ import {
   createPaymentIntent,
   attachToPaymentIntent,
 } from '@/services/payments/payment-intent/paymentIntent';
-import { nanoid } from '@/libs/nanoid';
+import { nanoid } from '@/lib/nanoid';
 
 const transactionId = `TXN-${nanoid()}`;
 

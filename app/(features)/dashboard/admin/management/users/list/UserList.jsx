@@ -1,79 +1,70 @@
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import Link from 'next/link';
 import { useDebounce } from 'use-debounce';
-import {
-  TableContainer,
-  TablePagination,
-  Typography,
-  Paper,
-  Box,
-  Button,
-} from '@mui/material';
+import { useSearchParams, usePathname, useRouter } from 'next/navigation';
+import { TableContainer, Typography, Paper, Box, Button } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 
 // internal imports
-import { useUserListData } from '@/hooks/useUserData';
+import { useUserList } from '@/hooks/useUser';
 import LoadingSpinner from '@/components/loaders/LoadingSpinner';
 import CustomError from '@/components/errors/CustomError';
-import {
-  EnhancedTableToolbar,
-  TableContent,
-  TableToolbar,
-  SearchUser,
-} from '.';
-
-export const statusMap = {
-  0: null,
-  1: 'active',
-  2: 'pending',
-  3: 'suspended',
-  4: 'inactive',
-};
+import { EnhancedTableToolbar, TableContent, TableToolbar } from '.';
+import { usePaginationQueryParams } from '@/hooks/usePaginationQueryParams';
+import { allowedLimits } from '@/constants/pagination';
+import { UserListDataProvider } from '@/contexts/UserProvider';
+import { TableToolbarProvider } from '@/contexts/TableToolbarProvider';
+import CustomSearchBar from '@/components/inputs/CustomSearchBar';
+import { useSyncSearchQuery } from '@/hooks/useSyncSearchQuery';
+import { useSortHandler } from '@/hooks/useSortHandler';
+import CustomTablePagination from '@/components/pagination/CustomTablePagination';
+import { filterParams, getQueryParams } from '@/utils/queryParams';
 
 const UserList = () => {
-  const [order, setOrder] = useState('desc');
-  const [orderBy, setOrderBy] = useState('createdAt');
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+  const router = useRouter();
 
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(25);
+  // Read query params
+  const { pageParam, limitParam, searchQuery, sortParam, tabParam, roleParam } =
+    getQueryParams(searchParams);
+
+  const [searchTerm, setSearchTerm] = useState(searchQuery);
   const [selected, setSelected] = useState(new Set());
 
-  const [role, setRole] = useState('');
-  const [value, setValue] = useState(0);
-  const [searchTerm, setSearchTerm] = useState('');
+  // Search query
   const [debouncedText] = useDebounce(searchTerm, 1500);
 
-  const { users, total, isLoading, isError, error } = useUserListData(
-    debouncedText,
-    page,
-    rowsPerPage
+  const isEnabled = pathname === '/admin/dashboard/users';
+
+  const { orderBy, order, handleRequestSort } = useSortHandler(
+    'createdAt',
+    'asc'
   );
 
-  const filteredUsers = useMemo(() => {
-    if (!users) return [];
-
-    return users.filter((user) => {
-      const matchesRole = !role || user.role === role;
-      const matchesStatus =
-        statusMap[value] === null || user.status === statusMap[value];
-
-      return matchesRole && matchesStatus;
+  const { isLoading, isError, error, users, totalCount, statusCount, refetch } =
+    useUserList({
+      searchParams,
+      enabled: isEnabled,
     });
-  }, [users, role, value]);
 
-  const handleSelectAllClick = useCallback(
-    (event) => {
-      const isChecked = event.target.checked;
-      const targetUsers = filteredUsers || users;
-      const setMapUsers = new Set(targetUsers.map((e) => e._id));
+  const { page, limit, setPage, setLimit } = usePaginationQueryParams({
+    totalCount,
+    pageParam,
+    limitParam,
+    searchQuery,
+    sortParam,
+    tabParam,
+    roleParam,
+  });
 
-      // if checked all map set of users else deselect all
-      setSelected(isChecked ? setMapUsers : new Set());
-    },
-    [users, filteredUsers]
-  );
+  useSyncSearchQuery({
+    searchTerm,
+    sortParam,
+    searchParams,
+  });
 
-  const handleClick = useCallback((event, id) => {
+  const handleRowSelect = useCallback((event, id) => {
     setSelected((prevSelected) => {
       const newSelected = new Set(prevSelected);
 
@@ -87,39 +78,52 @@ const UserList = () => {
     });
   }, []);
 
-  const handleClearFilters = useCallback(() => {
-    setRole('');
-    setSearchTerm('');
-    setPage(0);
-    setValue(0);
+  const handleSelectAll = useCallback((event, allIds) => {
+    const isChecked = event.target.checked;
+    setSelected(isChecked ? new Set(allIds) : new Set());
   }, []);
 
-  const handleRequestSort = useCallback(
-    (event, property) => {
-      const isAsc = orderBy === property && order === 'asc';
-      setOrder(isAsc ? 'desc' : 'asc');
-      setOrderBy(property);
+  const handleChangeRole = useCallback(
+    (event) => {
+      const newRole = event.target.value;
+
+      const queryParams = new URLSearchParams(searchParams);
+      queryParams.set('role', newRole ?? '');
+      queryParams.delete('page');
+      queryParams.delete('limit');
+      router.replace(`${pathname}?${queryParams.toString()}`);
     },
-    [order, orderBy]
+    [searchParams, pathname, router]
   );
 
-  const handleChangePage = useCallback((event, newPage) => {
-    setPage(newPage);
-  }, []);
+  const handleClearFilters = useCallback(() => {
+    const queryParams = filterParams({ q: searchQuery, sort: sortParam });
 
-  const handleChangeRowsPerPage = useCallback((event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  }, []);
+    router.replace(`${pathname}?${queryParams.toString()}`);
+  }, [pathname, router, searchQuery, sortParam]);
 
-  const handleChangeRole = useCallback((event) => {
-    setRole(event.target.value);
-  }, []);
+  const tableToolbarCtxValue = {
+    totalCount,
+    statusCount,
+    tabParam,
+    debouncedText,
+    setSearchTerm,
+    role: roleParam,
+    onChangeRole: handleChangeRole,
+    users,
+    onClearFilters: handleClearFilters,
+  };
 
-  const handleChangeTab = useCallback((event, newValue) => {
-    setValue(newValue);
-    setPage(0);
-  }, []);
+  const userListCtxValue = {
+    users,
+    refetch,
+    onRequestSort: handleRequestSort,
+    orderBy,
+    order,
+    selected,
+    onRowSelect: handleRowSelect,
+    onSelectAll: handleSelectAll,
+  };
 
   return (
     <>
@@ -129,21 +133,19 @@ const UserList = () => {
         sx={{
           display: { xs: 'block', md: 'flex' },
           alignItems: 'center',
-          my: 2,
         }}
       >
         <Box sx={{ width: { xs: 'auto', md: 300 } }}>
-          <SearchUser
+          <CustomSearchBar
+            type="user"
             searchTerm={searchTerm}
             setSearchTerm={setSearchTerm}
-            setPage={setPage}
-            setRole={setRole}
-            setValue={setValue}
+            placeholder="Search by Name, Email"
           />
         </Box>
 
-        <Box sx={{ ml: 'auto', my: 2, textAlign: 'right' }}>
-          <Link href="/admin/dashboard/users/add">
+        <Box sx={{ ml: 'auto', textAlign: 'right', my: { xs: 2, md: 'auto' } }}>
+          <Link href="/admin/dashboard/users/new">
             <Button startIcon={<AddIcon />} variant="contained">
               Add New User
             </Button>
@@ -151,76 +153,42 @@ const UserList = () => {
         </Box>
       </Box>
 
-      {isLoading ? (
-        <Paper sx={{ minHeight: '100dvh' }}>
+      <Paper sx={{ my: 2 }}>
+        {isLoading ? (
           <LoadingSpinner h="100vh" />
-        </Paper>
-      ) : (
-        <>
-          {isError ? (
-            <Paper sx={{ minHeight: '100dvh' }}>
-              <CustomError error={error} h="100vh" />
-            </Paper>
-          ) : (
-            <>
-              <Paper sx={{ py: 2 }}>
-                <TableToolbar
-                  role={role}
-                  handleChangeRole={handleChangeRole}
-                  handleClearFilters={handleClearFilters}
-                  filteredUsers={filteredUsers}
-                  value={value}
-                  handleChangeTab={handleChangeTab}
-                  users={users}
-                  debouncedText={debouncedText}
-                  setSearchTerm={setSearchTerm}
-                  setValue={setValue}
-                  setRole={setRole}
-                />
+        ) : isError ? (
+          <CustomError error={error} h="100vh" />
+        ) : (
+          <>
+            <TableToolbarProvider value={tableToolbarCtxValue}>
+              <TableToolbar />
+            </TableToolbarProvider>
 
-                {selected.size > 0 && (
-                  <EnhancedTableToolbar
-                    numSelected={selected.size}
-                    selected={selected}
-                    setSelected={setSelected}
-                  />
-                )}
+            {selected.size > 0 && (
+              <EnhancedTableToolbar
+                numSelected={selected.size}
+                selected={selected}
+                setSelected={setSelected}
+              />
+            )}
 
-                <TableContainer sx={{ maxHeight: 440 }}>
-                  <TableContent
-                    users={users}
-                    filteredUsers={filteredUsers}
-                    selected={selected}
-                    value={value}
-                    order={order}
-                    orderBy={orderBy}
-                    handleRequestSort={handleRequestSort}
-                    onSelectAllClick={handleSelectAllClick}
-                    handleClick={handleClick}
-                    total={total}
-                  />
-                </TableContainer>
+            <TableContainer sx={{ maxHeight: 540, borderRadius: '5px' }}>
+              <UserListDataProvider value={userListCtxValue}>
+                <TableContent />
+              </UserListDataProvider>
+            </TableContainer>
 
-                <TablePagination
-                  rowsPerPageOptions={[5, 10, 25, 50, 250, 500]}
-                  component="div"
-                  count={role || value ? filteredUsers.length : total}
-                  rowsPerPage={rowsPerPage}
-                  page={page}
-                  onPageChange={handleChangePage}
-                  onRowsPerPageChange={handleChangeRowsPerPage}
-                  slotProps={{
-                    select: {
-                      name: 'select-option-page',
-                    },
-                  }}
-                  sx={{ mr: 2 }}
-                />
-              </Paper>
-            </>
-          )}
-        </>
-      )}
+            <CustomTablePagination
+              allowedLimits={allowedLimits}
+              totalCount={totalCount}
+              limit={limit}
+              page={page}
+              setPage={setPage}
+              setLimit={setLimit}
+            />
+          </>
+        )}
+      </Paper>
     </>
   );
 };

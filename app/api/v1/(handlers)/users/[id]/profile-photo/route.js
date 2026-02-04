@@ -1,5 +1,5 @@
 import { validateSession } from '@/services/auth/validateSession';
-import connectMongo from '@/libs/connectMongo';
+import connectMongo from '@/lib/connectMongo';
 import { authorizeUser } from '@/services/auth/authorizeRole';
 import { handleApiError } from '@/helpers/errorHelpers';
 import { updateProfilePhoto, deleteProfilePhoto } from '@/services/users';

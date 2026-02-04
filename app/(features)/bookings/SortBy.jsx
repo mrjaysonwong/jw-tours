@@ -12,15 +12,10 @@ const SortBy = () => {
 
   const handleChange = (event) => {
     const newSort = event.target.value;
-    const queryParams = new URLSearchParams(searchParams.toString());
+    const queryParams = new URLSearchParams(searchParams);
 
-    if (newSort === 'oldest') {
-      queryParams.set('sort', 'oldest');
-    } else {
-      queryParams.delete('sort');
-    }
-
-    router.replace(`${pathname}?${queryParams}`, { scroll: false });
+    queryParams.set('sort', newSort);
+    router.replace(`${pathname}?${queryParams.toString()}`);
   };
 
   return (
@@ -35,7 +30,11 @@ const SortBy = () => {
       <Typography>Sort by:</Typography>
 
       <FormControl size="small">
-        <Select name="sort-bookings-by" value={sortParam} onChange={handleChange}>
+        <Select
+          name="sort-bookings-by"
+          value={sortParam}
+          onChange={handleChange}
+        >
           <MenuItem value={'newest'}>Newest booking</MenuItem>
           <MenuItem value={'oldest'}>Oldest booking</MenuItem>
         </Select>

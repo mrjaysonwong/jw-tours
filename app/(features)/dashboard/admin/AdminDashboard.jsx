@@ -50,9 +50,7 @@ export default function AdminDashboard({ categorySlug, actionSlug, slug }) {
     null;
 
   const handleDrawerToggle = () => {
-    if (!isClosing) {
-      setMobileOpen(!mobileOpen);
-    }
+    if (!isClosing) setMobileOpen(!mobileOpen);
   };
 
   return (
@@ -119,7 +117,6 @@ export default function AdminDashboard({ categorySlug, actionSlug, slug }) {
             flexGrow: 1,
             p: 2,
             mt: 7,
-            mx: { lg: 1 },
             width: { xs: `calc(100% - ${drawerWidth}px)` },
 
             h5: {

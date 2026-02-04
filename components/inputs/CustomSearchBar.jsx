@@ -1,19 +1,16 @@
-import { Box, InputBase } from '@mui/material';
+import { Box, InputBase, IconButton } from '@mui/material';
 import { alpha } from '@mui/material/styles';
 import SearchIcon from '@mui/icons-material/Search';
+import CloseIcon from '@mui/icons-material/Close';
 
-const SearchUser = ({
+const CustomSearchBar = ({
+  type,
   searchTerm,
   setSearchTerm,
-  setPage,
-  setRole,
-  setValue,
+  placeholder = 'Search',
 }) => {
   const handleChange = (event) => {
     setSearchTerm(event.target.value);
-    setPage(0);
-    setRole('');
-    setValue(0);
   };
 
   return (
@@ -34,19 +31,30 @@ const SearchUser = ({
     >
       <InputBase
         fullWidth
-        placeholder="Search"
+        placeholder={placeholder}
         value={searchTerm}
         onChange={handleChange}
         autoComplete="off"
         inputProps={{
-          id: 'search-user',
-          'aria-label': 'search user',
+          id: `search-${type}`,
+          'aria-label': `search ${type}`,
         }}
         startAdornment={<SearchIcon sx={{ mr: 1, color: 'grey' }} />}
+        endAdornment={
+          searchTerm && (
+            <IconButton
+              size="small"
+              aria-label="clear input"
+              onClick={() => setSearchTerm('')}
+            >
+              <CloseIcon fontSize="small" />
+            </IconButton>
+          )
+        }
         sx={{ px: 2, flex: 1, py: 1.5 }}
       />
     </Box>
   );
 };
 
-export default SearchUser;
+export default CustomSearchBar;

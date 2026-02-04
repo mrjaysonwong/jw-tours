@@ -1,12 +1,12 @@
 'use client';
 
 // third party imports
-import React, { createContext, useContext } from 'react';
+import React, { createContext, useContext, useMemo } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 // internal imports
-import { useUserData } from '@/hooks/useUserData';
+import { useUserData } from '@/hooks/useUser';
 
 export const UserSessionContext = createContext(undefined);
 
@@ -14,13 +14,13 @@ export const UserDataContext = createContext({
   refetch: () => console.warn('Refetch called without a provider'),
 });
 
-export const UserListDataContext = createContext(undefined);
 export const UserDetailsContext = createContext({
   userId: null,
   user: null,
   email: null,
 });
 export const UserNotificationsContext = createContext(undefined);
+export const UserListDataContext = createContext(undefined);
 
 const queryClient = new QueryClient();
 
@@ -81,6 +81,48 @@ export const UserNotificationsProvider = ({ value, children }) => {
   );
 };
 
+export const UserListDataProvider = ({ value, children }) => {
+  const {
+    users,
+    refetch,
+    onRequestSort,
+    orderBy,
+    order,
+    selected,
+    onRowSelect,
+    onSelectAll,
+  } = value;
+
+  const memoizedValue = useMemo(
+    () => ({
+      users,
+      refetch,
+      onRequestSort,
+      orderBy,
+      order,
+      selected,
+      onRowSelect,
+      onSelectAll,
+    }),
+    [
+      users,
+      refetch,
+      onRequestSort,
+      orderBy,
+      order,
+      selected,
+      onRowSelect,
+      onSelectAll,
+    ]
+  );
+
+  return (
+    <UserListDataContext.Provider value={memoizedValue}>
+      {children}
+    </UserListDataContext.Provider>
+  );
+};
+
 export const useUserSessionContext = () => {
   return useContext(UserSessionContext);
 };
@@ -95,4 +137,8 @@ export const useUserDetailsContext = () => {
 
 export const useUserNotificationsContext = () => {
   return useContext(UserNotificationsContext);
+};
+
+export const useUserListContext = () => {
+  return useContext(UserListDataContext);
 };

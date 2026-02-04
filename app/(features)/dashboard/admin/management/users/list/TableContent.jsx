@@ -1,5 +1,4 @@
-import React, { useMemo } from 'react';
-import Image from 'next/image';
+import React, { useCallback, useMemo } from 'react';
 import {
   Table,
   TableBody,
@@ -7,19 +6,19 @@ import {
   TableHead,
   TableRow,
   TableSortLabel,
-  Typography,
   Checkbox,
   Box,
 } from '@mui/material';
 import { visuallyHidden } from '@mui/utils';
 
 // internal imports
+import { useUserListContext } from '@/contexts/UserProvider';
+import { formatISO } from '@/utils/formats/formatDates';
 import ProfileAvatar from '@/components/images/ProfileAvatar';
 import MoreVertMenu from '@/components/menus/MoreVertMenu';
-import { stableSort, getComparator } from '@/utils/sort';
 import { statusLabelColorMap } from '@/constants/statusColorMaps';
-import { StyledUserListTableRow } from '@/components/styled/StyledTableRows';
-import { formatISO } from '@/utils/formats/formatDates';
+import { StyledTableRow } from '@/components/styled/StyledTableRows';
+import NoDataRow from '@/components/tables/NoDataRow';
 
 const headCells = [
   { id: 'lastName', label: 'Name' },
@@ -30,188 +29,156 @@ const headCells = [
   { id: 'actions', label: 'Actions' },
 ];
 
-const noSortColumns = ['Email', 'Actions'];
+const noSortHeader = ['Email', 'Role', 'Status', 'Actions'];
 
-const EnhancedTableHead = React.memo(
-  ({
-    numSelected,
-    order,
-    orderBy,
-    onRequestSort,
-    rowCount,
-    onSelectAllClick,
-  }) => {
-    const createSortHandler = (property) => (event) => {
-      onRequestSort(event, property);
-    };
+const UserRow = React.memo(({ user, isSelected, onRowSelect }) => {
+  const isItemSelected = isSelected(user._id);
 
-    return (
-      <TableHead>
-        <TableRow sx={{ th: { border: 'none' } }}>
-          <TableCell padding="checkbox">
-            <Checkbox
-              indeterminate={numSelected > 0 && numSelected < rowCount}
-              checked={rowCount > 0 && numSelected === rowCount}
-              onChange={onSelectAllClick}
-              inputProps={{
-                'aria-label': 'select all users',
-                name: 'select-all',
-              }}
-            />
-          </TableCell>
+  const labelId = `checkbox-${user._id}`;
+  const primaryEmail = user.email.find((e) => e.isPrimary === true);
 
-          {headCells.map((headCell) => {
-            const shouldHide = noSortColumns.includes(headCell.label);
-
-            return (
-              <TableCell
-                key={headCell.id}
-                sortDirection={orderBy === headCell.id ? order : false}
-                sx={{ whiteSpace: 'nowrap' }}
-              >
-                {!shouldHide ? (
-                  <TableSortLabel
-                    active={orderBy === headCell.id}
-                    direction={orderBy === headCell.id ? order : 'asc'}
-                    onClick={createSortHandler(headCell.id)}
-                  >
-                    {headCell.label}
-                    {orderBy === headCell.id ? (
-                      <Box component="span" sx={visuallyHidden}>
-                        {order === 'desc'
-                          ? 'sorted descending'
-                          : 'sorted ascending'}
-                      </Box>
-                    ) : null}
-                  </TableSortLabel>
-                ) : (
-                  headCell.label
-                )}
-              </TableCell>
-            );
-          })}
-        </TableRow>
-      </TableHead>
-    );
-  }
-);
-
-EnhancedTableHead.displayName = 'EnhancedTableHead';
-
-const TableContent = ({
-  users,
-  filteredUsers,
-  selected,
-  value,
-  order,
-  orderBy,
-  handleRequestSort,
-  onSelectAllClick,
-  handleClick,
-  total,
-}) => {
-  const isSelected = useMemo(() => {
-    return (id) => selected.has(id);
-  }, [selected]);
-
-  const sortedUsers = useMemo(() => {
-    return stableSort(filteredUsers, getComparator(order, orderBy));
-  }, [filteredUsers, order, orderBy]);
+  const statusColor = statusLabelColorMap[user.status];
 
   return (
-    <Table stickyHeader sx={{ minWidth: 650 }} aria-label="user list table">
-      <EnhancedTableHead
-        numSelected={selected.size}
-        order={order}
-        orderBy={orderBy}
-        onRequestSort={handleRequestSort}
-        rowCount={value === 0 ? users.length : filteredUsers.length}
-        onSelectAllClick={onSelectAllClick}
-      />
-      <TableBody>
-        {sortedUsers.map((row, index) => {
-          const isItemSelected = isSelected(row._id);
-          const labelId = `enhanced-table-checkbox-${index}`;
-          const primaryEmail = row.email.find((e) => e.isPrimary === true);
-          const statusColor = statusLabelColorMap[row.status];
+    <StyledTableRow
+      hover
+      color={statusColor.color}
+      alphacolor={statusColor.alphaColor}
+    >
+      <TableCell padding="checkbox">
+        <Checkbox
+          color="primary"
+          checked={isItemSelected}
+          selected={isItemSelected}
+          onClick={(event) => onRowSelect(event, user._id)}
+          inputProps={{
+            'aria-labelledby': labelId,
+            name: labelId,
+          }}
+        />
+      </TableCell>
 
-          return (
-            <StyledUserListTableRow
-              hover
-              key={row._id}
-              role="checkbox"
-              tabIndex={-1}
-              color={statusColor.color}
-              alphacolor={statusColor.alphaColor}
-            >
-              <TableCell padding="checkbox">
-                <Checkbox
-                  color="primary"
-                  checked={isItemSelected}
-                  selected={isItemSelected}
-                  onClick={(event) => handleClick(event, row._id)}
-                  inputProps={{
-                    'aria-labelledby': labelId,
-                    id: `checkbox-${row._id}`,
-                  }}
-                />
-              </TableCell>
+      <TableCell id={labelId} component="th" scope="row" align="left">
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <ProfileAvatar user={user} h={32} w={32} m={2} ariaHidden />
 
-              <TableCell id={labelId} scope="row">
-                <Box
-                  sx={{
-                    display: 'flex',
-                    alignItems: 'center',
-                  }}
-                >
-                  <ProfileAvatar user={row} h={32} w={32} m={2} />
+          <span className="name">
+            {user.lastName}, {user.firstName}
+          </span>
+        </Box>
+      </TableCell>
 
-                  <span className="name">
-                    {row.lastName}, {row.firstName}
-                  </span>
-                </Box>
-              </TableCell>
+      <TableCell align="left">{primaryEmail.email}</TableCell>
 
-              <TableCell id={labelId} scope="row">
-                {primaryEmail.email}
-              </TableCell>
+      <TableCell align="left">
+        <span className="role">{user.role}</span>
+      </TableCell>
 
-              <TableCell id={labelId} scope="row">
-                <span className="role">{row.role}</span>
-              </TableCell>
+      <TableCell align="left">
+        <span className="status">{user.status}</span>
+      </TableCell>
 
-              <TableCell id={labelId} scope="row">
-                <span className="status">{row.status}</span>
-              </TableCell>
+      <TableCell align="left">{formatISO(user.createdAt)}</TableCell>
 
-              <TableCell id={labelId} scope="row">
-                <span>{formatISO(row.createdAt)}</span>
-              </TableCell>
-
-              <TableCell id={labelId} scope="row">
-                <MoreVertMenu menuType="users-table" id={row._id} />
-              </TableCell>
-            </StyledUserListTableRow>
-          );
-        })}
-
-        {(filteredUsers.length === 0 || total === 0) && (
-          <TableRow sx={{ height: '40vh' }}>
-            <TableCell colSpan={6} align="center">
-              <Image
-                src="https://res.cloudinary.com/dpyxciwcu/image/upload/v1736652221/jwtours/status/alert-folder_18157948_p41rkd.png"
-                alt="No data icon"
-                width={109}
-                height={109}
-                priority
-              />
-              <Typography sx={{ color: 'grey' }}>No data</Typography>
-            </TableCell>
-          </TableRow>
-        )}
-      </TableBody>
-    </Table>
+      <TableCell align="left">
+        <MoreVertMenu menuType="users-table" id={user._id} row={user} />
+      </TableCell>
+    </StyledTableRow>
   );
+});
+
+const UserTable = React.memo(() => {
+  const {
+    users,
+    onRequestSort,
+    orderBy,
+    order,
+    selected,
+    onRowSelect,
+    onSelectAll,
+  } = useUserListContext();
+
+  const isSelected = useCallback((id) => selected.has(id), [selected]);
+
+  const allIds = useMemo(() => users.map((u) => u._id), [users]);
+
+  const numSelected = selected.size;
+  const rowCount = users.length;
+
+  return (
+    <>
+      <Table stickyHeader sx={{ minWidth: 550 }} aria-label="user list table">
+        <TableHead>
+          <TableRow sx={(theme) => ({ th: { border: 'none' } })}>
+            <TableCell padding="checkbox">
+              <Checkbox
+                indeterminate={numSelected > 0 && numSelected < rowCount}
+                checked={rowCount > 0 && numSelected === rowCount}
+                onChange={(e) => onSelectAll(e, allIds)}
+                inputProps={{
+                  'aria-label': 'select all users',
+                  name: 'select-all',
+                }}
+              />
+            </TableCell>
+
+            {headCells.map((headCell) => {
+              const shouldHide = noSortHeader.includes(headCell.label);
+
+              return (
+                <TableCell
+                  key={headCell.id}
+                  sortDirection={orderBy === headCell.id ? order : false}
+                  component="th"
+                  scope="col"
+                  sx={{ whiteSpace: 'nowrap' }}
+                >
+                  {!shouldHide ? (
+                    <TableSortLabel
+                      active={orderBy === headCell.id}
+                      direction={orderBy === headCell.id ? order : 'asc'}
+                      onClick={() => onRequestSort(headCell.id)}
+                    >
+                      {headCell.label}
+                      {orderBy === headCell.id ? (
+                        <Box component="span" sx={visuallyHidden}>
+                          {order === 'desc'
+                            ? 'sorted descending'
+                            : 'sorted ascending'}
+                        </Box>
+                      ) : null}
+                    </TableSortLabel>
+                  ) : (
+                    headCell.label
+                  )}
+                </TableCell>
+              );
+            })}
+          </TableRow>
+        </TableHead>
+
+        <TableBody>
+          {users.map((user, index) => (
+            <UserRow
+              key={user._id}
+              user={user}
+              isSelected={isSelected}
+              onRowSelect={onRowSelect}
+            />
+          ))}
+
+          {users.length === 0 && <NoDataRow />}
+        </TableBody>
+      </Table>
+    </>
+  );
+});
+
+const TableContent = () => {
+  return <UserTable />;
 };
 
 export default React.memo(TableContent);
+
+UserRow.displayName = 'UserRow';
+UserTable.displayName = 'UserTable';

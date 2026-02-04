@@ -1,158 +1,247 @@
-import * as React from 'react';
-import { TextField, Stack, Autocomplete, InputAdornment } from '@mui/material';
+import React, { useState } from 'react';
+import { useDebounce } from 'use-debounce';
+import { useSearchParams, usePathname, useRouter } from 'next/navigation';
+import {
+  TextField,
+  Stack,
+  Autocomplete,
+  InputAdornment,
+  Box,
+  Typography,
+  Paper,
+  ListSubheader,
+} from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
+import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
+import PlaceOutlinedIcon from '@mui/icons-material/PlaceOutlined';
 
-// Top 100 films as rated by IMDb users. http://www.imdb.com/chart/top
-const top100Films = [
-  { title: 'The Shawshank Redemption', year: 1994 },
-  { title: 'The Godfather', year: 1972 },
-  { title: 'The Godfather: Part II', year: 1974 },
-  { title: 'The Dark Knight', year: 2008 },
-  { title: '12 Angry Men', year: 1957 },
-  { title: "Schindler's List", year: 1993 },
-  { title: 'Pulp Fiction', year: 1994 },
-  {
-    title: 'The Lord of the Rings: The Return of the King',
-    year: 2003,
-  },
-  { title: 'The Good, the Bad and the Ugly', year: 1966 },
-  { title: 'Fight Club', year: 1999 },
-  {
-    title: 'The Lord of the Rings: The Fellowship of the Ring',
-    year: 2001,
-  },
-  {
-    title: 'Star Wars: Episode V - The Empire Strikes Back',
-    year: 1980,
-  },
-  { title: 'Forrest Gump', year: 1994 },
-  { title: 'Inception', year: 2010 },
-  {
-    title: 'The Lord of the Rings: The Two Towers',
-    year: 2002,
-  },
-  { title: "One Flew Over the Cuckoo's Nest", year: 1975 },
-  { title: 'Goodfellas', year: 1990 },
-  { title: 'The Matrix', year: 1999 },
-  { title: 'Seven Samurai', year: 1954 },
-  {
-    title: 'Star Wars: Episode IV - A New Hope',
-    year: 1977,
-  },
-  { title: 'City of God', year: 2002 },
-  { title: 'Se7en', year: 1995 },
-  { title: 'The Silence of the Lambs', year: 1991 },
-  { title: "It's a Wonderful Life", year: 1946 },
-  { title: 'Life Is Beautiful', year: 1997 },
-  { title: 'The Usual Suspects', year: 1995 },
-  { title: 'Léon: The Professional', year: 1994 },
-  { title: 'Spirited Away', year: 2001 },
-  { title: 'Saving Private Ryan', year: 1998 },
-  { title: 'Once Upon a Time in the West', year: 1968 },
-  { title: 'American History X', year: 1998 },
-  { title: 'Interstellar', year: 2014 },
-  { title: 'Casablanca', year: 1942 },
-  { title: 'City Lights', year: 1931 },
-  { title: 'Psycho', year: 1960 },
-  { title: 'The Green Mile', year: 1999 },
-  { title: 'The Intouchables', year: 2011 },
-  { title: 'Modern Times', year: 1936 },
-  { title: 'Raiders of the Lost Ark', year: 1981 },
-  { title: 'Rear Window', year: 1954 },
-  { title: 'The Pianist', year: 2002 },
-  { title: 'The Departed', year: 2006 },
-  { title: 'Terminator 2: Judgment Day', year: 1991 },
-  { title: 'Back to the Future', year: 1985 },
-  { title: 'Whiplash', year: 2014 },
-  { title: 'Gladiator', year: 2000 },
-  { title: 'Memento', year: 2000 },
-  { title: 'The Prestige', year: 2006 },
-  { title: 'The Lion King', year: 1994 },
-  { title: 'Apocalypse Now', year: 1979 },
-  { title: 'Alien', year: 1979 },
-  { title: 'Sunset Boulevard', year: 1950 },
-  {
-    title:
-      'Dr. Strangelove or: How I Learned to Stop Worrying and Love the Bomb',
-    year: 1964,
-  },
-  { title: 'The Great Dictator', year: 1940 },
-  { title: 'Cinema Paradiso', year: 1988 },
-  { title: 'The Lives of Others', year: 2006 },
-  { title: 'Grave of the Fireflies', year: 1988 },
-  { title: 'Paths of Glory', year: 1957 },
-  { title: 'Django Unchained', year: 2012 },
-  { title: 'The Shining', year: 1980 },
-  { title: 'WALL·E', year: 2008 },
-  { title: 'American Beauty', year: 1999 },
-  { title: 'The Dark Knight Rises', year: 2012 },
-  { title: 'Princess Mononoke', year: 1997 },
-  { title: 'Aliens', year: 1986 },
-  { title: 'Oldboy', year: 2003 },
-  { title: 'Once Upon a Time in America', year: 1984 },
-  { title: 'Witness for the Prosecution', year: 1957 },
-  { title: 'Das Boot', year: 1981 },
-  { title: 'Citizen Kane', year: 1941 },
-  { title: 'North by Northwest', year: 1959 },
-  { title: 'Vertigo', year: 1958 },
-  {
-    title: 'Star Wars: Episode VI - Return of the Jedi',
-    year: 1983,
-  },
-  { title: 'Reservoir Dogs', year: 1992 },
-  { title: 'Braveheart', year: 1995 },
-  { title: 'M', year: 1931 },
-  { title: 'Requiem for a Dream', year: 2000 },
-  { title: 'Amélie', year: 2001 },
-  { title: 'A Clockwork Orange', year: 1971 },
-  { title: 'Like Stars on Earth', year: 2007 },
-  { title: 'Taxi Driver', year: 1976 },
-  { title: 'Lawrence of Arabia', year: 1962 },
-  { title: 'Double Indemnity', year: 1944 },
-  {
-    title: 'Eternal Sunshine of the Spotless Mind',
-    year: 2004,
-  },
-  { title: 'Amadeus', year: 1984 },
-  { title: 'To Kill a Mockingbird', year: 1962 },
-  { title: 'Toy Story 3', year: 2010 },
-  { title: 'Logan', year: 2017 },
-  { title: 'Full Metal Jacket', year: 1987 },
-  { title: 'Dangal', year: 2016 },
-  { title: 'The Sting', year: 1973 },
-  { title: '2001: A Space Odyssey', year: 1968 },
-  { title: "Singin' in the Rain", year: 1952 },
-  { title: 'Toy Story', year: 1995 },
-  { title: 'Bicycle Thieves', year: 1948 },
-  { title: 'The Kid', year: 1921 },
-  { title: 'Inglourious Basterds', year: 2009 },
-  { title: 'Snatch', year: 2000 },
-  { title: '3 Idiots', year: 2009 },
-  { title: 'Monty Python and the Holy Grail', year: 1975 },
-];
+// internal imports
+import { useSearchTours } from '@/hooks/useTours';
+import { getQueryParams } from '@/utils/queryParams';
 
-export const SearchBar = () => {
+const SearchBar = ({ w = 360, handleClose = () => {} }) => {
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+  const router = useRouter();
+
+  const { searchQuery } = getQueryParams(searchParams);
+
+  const segments = pathname.split('/').filter(Boolean);
+  const [, , d] = segments;
+  const destination = d?.replace(/-/g, ' ');
+  const inputValue = searchQuery || destination;
+
+  const [searchTerm, setSearchTerm] = useState(searchQuery ?? '');
+  const [debouncedText] = useDebounce(searchTerm, 700);
+
+  const { isLoading, isError, error, tours } = useSearchTours({
+    debouncedText,
+  });
+
+  const handleInputChange = (event, newValue) => {
+    setSearchTerm(newValue);
+  };
+
+  const handleChange = (e) => {
+    setSearchTerm(e.target.value);
+  };
+
+  const handleSelect = (event, value) => {
+    if (!value || value.custom) return;
+
+    if (value.seeAll) {
+      router.push(`/tours/search?q=${debouncedText}`);
+      handleClose();
+      return;
+    }
+
+    if (typeof value === 'string') {
+      return;
+    }
+
+    const geoLocation = value?.geoLocation?.toLowerCase().replace(/\s+/g, '-');
+
+    const destination = value?.destination?.name
+      ?.toLowerCase()
+      .replace(/\s+/g, '-');
+
+    handleClose();
+    router.push(`/tours/${geoLocation}/${destination}`);
+  };
+
+  const displayedOptions = (() => {
+    if (searchTerm.trim() === ' ') return [];
+
+    if (debouncedText && !isLoading) {
+      if (tours.length > 0) {
+        return [...tours.slice(0,10), { seeAll: true }];
+      }
+
+      return [
+        {
+          custom: true,
+          label: isError ? error.message : `No results for "${debouncedText}"`,
+          subLabel: isError
+            ? 'Please clear input and try again'
+            : 'Check your spelling, or search another term',
+        },
+      ];
+    }
+
+    return [];
+  })();
+
   return (
-    <Stack spacing={2} sx={{ width: 300 }}>
+    <Stack spacing={2} sx={{ width: w }}>
       <Autocomplete
         freeSolo
-        id="free-solo-2-demo"
-        disableClearable
-        options={top100Films.map((option) => option.title)}
+        clearIcon={searchTerm ? undefined : null}
+        value={inputValue ? inputValue : ''}
+        filterOptions={(x) => x}
+        options={displayedOptions}
+        getOptionLabel={(option) => {
+          if (typeof option === 'string') return option;
+          if (option.seeAll) return searchTerm;
+          if (option.custom) return option.label;
+          return option.destination?.name || option?.geoLocation;
+        }}
+        loading={isLoading}
+        onInputChange={handleInputChange}
+        onChange={handleSelect}
+        PaperComponent={({ children }) => (
+          <Paper sx={{ mt: 1 }}>
+            {tours.length > 0 && (
+              <Typography
+                sx={{
+                  px: 2,
+                  pt: 2,
+                  pb: 1,
+                  fontWeight: 500,
+                }}
+              >
+                All results
+              </Typography>
+            )}
+            {children}
+          </Paper>
+        )}
+        renderOption={(props, option) => {
+          const { key, ...optionProps } = props;
+
+          if (option.custom) {
+            return (
+              <ListSubheader
+                key={optionProps.id}
+                sx={{
+                  cursor: 'default',
+                  pointerEvents: 'none',
+                  bgcolor: 'inherit',
+                }}
+              >
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                  {isError && <ErrorOutlineOutlinedIcon color="error" />}
+                  <Typography
+                    variant="body2"
+                    fontWeight={500}
+                    sx={{
+                      mt: 1,
+                      color: (theme) =>
+                        isError
+                          ? theme.palette.error.main
+                          : theme.palette.mode === 'light'
+                          ? 'black'
+                          : theme.palette.common.white,
+                    }}
+                  >
+                    {option.label}
+                  </Typography>
+                </Box>
+
+                <Typography variant="caption" color="text.secondary">
+                  {option.subLabel}
+                </Typography>
+              </ListSubheader>
+            );
+          }
+
+          if (option.seeAll) {
+            return (
+              <Box
+                component="li"
+                key={optionProps.id}
+                {...optionProps}
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 1,
+                  px: 2,
+                  py: 1,
+                  cursor: 'pointer',
+                  '&:hover': { backgroundColor: 'action.hover' },
+                }}
+              >
+                <SearchIcon color="secondary" />
+                <Typography variant="body2">
+                  See all results for{' '}
+                  <span style={{ fontWeight: 510 }}>
+                    &quot;{debouncedText}&quot;
+                  </span>
+                </Typography>
+              </Box>
+            );
+          }
+
+          // normal search result item
+          return (
+            <Box
+              component="li"
+              key={optionProps.id}
+              {...optionProps}
+              sx={{ display: 'flex' }}
+            >
+              <PlaceOutlinedIcon />
+              <Box
+                sx={{ display: 'block', textTransform: 'capitalize', px: 1 }}
+              >
+                <Typography variant="body2" fontWeight={500}>
+                  {option.destination?.name}
+                </Typography>
+                <Box sx={{ display: 'flex', gap: 0.5 }}>
+                  <Typography variant="body2" color="text.secondary">
+                    {option.geoLocation} •
+                  </Typography>
+
+                  <Typography variant="body2" color="text.secondary">
+                    {option.destination?.country}
+                  </Typography>
+                </Box>
+              </Box>
+            </Box>
+          );
+        }}
         renderInput={(params) => (
           <TextField
             {...params}
-            placeholder="Search for a place or activity"
+            placeholder="Search for a destination"
+            onChange={handleChange}
             InputProps={{
               ...params.InputProps,
-              type: 'search',
               startAdornment: (
-                <InputAdornment position="start" sx={{ m: 0 }}>
+                <InputAdornment position="start" sx={{ ml: 1, mr: 0 }}>
                   <SearchIcon />
                 </InputAdornment>
               ),
             }}
             size="small"
+            sx={(theme) => ({
+              '& .MuiOutlinedInput-root': {
+                borderRadius: '20px',
+              },
+              '& input::placeholder': {
+                color: theme.palette.mode === 'light' ? '#333' : 'white',
+                opacity: 0.6,
+              },
+            })}
           />
         )}
       />

@@ -24,6 +24,7 @@ import { formatLastName } from '@/utils/formats/common';
 import { useTourReviews } from '@/hooks/useReviews';
 import { SkeletonReviewList } from '@/components/loaders/Skeletons';
 import FilterTourRatings from './FilterReviewsByRating';
+import CustomError from '@/components/errors/CustomError';
 
 const starLevels = [5, 4, 3, 2, 1];
 
@@ -84,8 +85,10 @@ const ClampedComment = ({ text }) => {
   );
 };
 
-const ReviewList = ({ reviews, isLoading }) => {
+const ReviewList = ({ reviews, isLoading, isError, error }) => {
   if (isLoading) return <SkeletonReviewList l={3} />;
+  if (isError) return <CustomError error={error} />;
+
   if (reviews.length === 0) {
     return (
       <>
@@ -134,15 +137,20 @@ const ReviewList = ({ reviews, isLoading }) => {
 };
 
 const TourReviews = () => {
-  const [value, setValue] = useState('all');
+  const [rating, setRating] = useState('all');
 
   const { tour } = useTourDetails();
   const { starCounts, reviewCount, avgRating } = tour.reviewSummary;
 
-  const { data, isLoading, hasNextPage, isFetchingNextPage, fetchNextPage } =
-    useTourReviews(tour._id, value);
-
-  const allReviews = data?.pages.flatMap((page) => page.data) ?? [];
+  const {
+    isLoading,
+    isError,
+    error,
+    reviews,
+    hasNextPage,
+    isFetchingNextPage,
+    fetchNextPage,
+  } = useTourReviews(tour._id, rating);
 
   return (
     <>
@@ -206,12 +214,17 @@ const TourReviews = () => {
           <Divider />
 
           <Box sx={{ my: 3, textAlign: 'right' }}>
-            <FilterTourRatings value={value} setValue={setValue} />
+            <FilterTourRatings rating={rating} setRating={setRating} />
           </Box>
 
-          <ReviewList reviews={allReviews} isLoading={isLoading} />
+          <ReviewList
+            reviews={reviews}
+            isLoading={isLoading}
+            isError={isError}
+            error={error}
+          />
 
-          {hasNextPage && (
+          {hasNextPage && !isError && (
             <Box sx={{ textAlign: 'center' }}>
               <Button
                 variant="outlined"

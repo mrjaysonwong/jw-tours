@@ -52,6 +52,26 @@ const componentLookup = {
   'Important Information': ImportantInformation,
 };
 
+const detailsSection = [
+  'Title',
+  'Overview',
+  'Images',
+  'Destination',
+  'Itinerary',
+  'Meeting Location',
+];
+
+const propertiesSection = [
+  'Capacity',
+  'Pricing',
+  'Tour Cancellation',
+  'Tour Guide',
+  'Tour Availability',
+  'Transportation',
+  'Tour Inclusions',
+  'Important Information',
+];
+
 export const useTourFormContext = () => {
   const createTourContext = useCreateTourContext();
   const tourDetailsContext = useTourDetails();
@@ -87,14 +107,7 @@ const CardForm = () => {
               <Divider />
 
               <CardContent>
-                {[
-                  'Title',
-                  'Overview',
-                  'Images',
-                  'Destination',
-                  'Itinerary',
-                  'Meeting Location',
-                ].map((componentName, index) => {
+                {detailsSection.map((componentName, index) => {
                   const Component = componentLookup[componentName];
                   return (
                     <Box key={componentName}>
@@ -129,16 +142,7 @@ const CardForm = () => {
               <Divider />
 
               <CardContent>
-                {[
-                  'Capacity',
-                  'Pricing',
-                  'Tour Cancellation',
-                  'Tour Guide',
-                  'Tour Availability',
-                  'Transportation',
-                  'Tour Inclusions',
-                  'Important Information',
-                ].map((componentName, index) => {
+                {propertiesSection.map((componentName, index) => {
                   const Component = componentLookup[componentName];
                   return (
                     <Box key={componentName}>

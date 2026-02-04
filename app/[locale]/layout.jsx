@@ -17,6 +17,7 @@ import { UserSessionProvider, UserDataProvider } from '@/contexts/UserProvider';
 import { locales } from '@/navigation';
 import { createMetadata } from '@/helpers/metadataHelpers';
 import GlobalAlert from '@/components/alerts/GlobalAlert';
+import { StyledLayoutContainer } from '@/components/styled/StyledContainers';
 
 export async function generateMetadata({ params: { locale } }) {
   return createMetadata(locale, 'layout');
@@ -53,9 +54,7 @@ export default async function RootLayout({ children, params }) {
                     <UserDataProvider>
                       <NavbarWrapper />
                     </UserDataProvider>
-
-                    {children}
-
+                    <StyledLayoutContainer>{children}</StyledLayoutContainer>
                     <ThemeModeIconButton />
                     <Footer />
                     <GlobalAlert />

@@ -1,6 +1,6 @@
 import { handleApiError } from '@/helpers/errorHelpers';
 import { STATUS_CODES } from '@/constants/common';
-import connectMongo from '@/libs/connectMongo';
+import connectMongo from '@/lib/connectMongo';
 import Booking from '@/models/bookingModel';
 import Tour from '@/models/tourModel';
 

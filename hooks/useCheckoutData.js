@@ -15,7 +15,7 @@ export const useCheckoutData = (token) => {
     } catch (error) {
       console.error(error);
 
-      throw new Error('Failed to fetch data.');
+      throw new Error('Something went wrong');
     }
   };
 

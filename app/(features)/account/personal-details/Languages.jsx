@@ -3,16 +3,13 @@ import { Controller } from 'react-hook-form';
 
 // internal imports
 import { useEditUserDetailsContext } from '@/contexts/EditUserDetailsProvider';
-import { useUserSessionContext } from '@/contexts/UserProvider';
 import { languages } from '@/data/countries/languages';
 
 const Languages = () => {
-  const { user, control } = useEditUserDetailsContext();
-  const session = useUserSessionContext();
-  const isAdmin = session.user.role === 'admin';
+  const { user, control, params } = useEditUserDetailsContext();
 
   return (
-    <Grid item xs={12} md={isAdmin ? 12 : 6}>
+    <Grid item xs={12} md={params.id ? 12 : 6}>
       <Controller
         name="languages"
         control={control}

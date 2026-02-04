@@ -5,7 +5,7 @@ import { validateSession } from '@/services/auth/validateSession';
 import { authorizeAdmin } from '@/services/auth/authorizeRole';
 import { handleApiError } from '@/helpers/errorHelpers';
 import { STATUS_CODES } from '@/constants/common';
-import connectMongo from '@/libs/connectMongo';
+import connectMongo from '@/lib/connectMongo';
 import Booking from '@/models/bookingModel';
 import Tour from '@/models/tourModel';
 
@@ -18,7 +18,7 @@ export async function GET(Request) {
 
     // connect to database
     await connectMongo();
-    await authorizeAdmin(session, 'GET');
+    await authorizeAdmin(session);
 
     const bookings = await Booking.find({});
 

@@ -6,7 +6,7 @@ import axios from 'axios';
 import { Typography } from '@mui/material';
 
 // internal imports
-import { useTourData } from '@/hooks/useTourData';
+import { useTour } from '@/hooks/useTours';
 import { TourDetailsProvider } from '@/contexts/TourContextProvider';
 import LoadingSpinner from '@/components/loaders/LoadingSpinner';
 import CustomError from '@/components/errors/CustomError';
@@ -29,7 +29,7 @@ const EditForm = () => {
     error,
     isClientError,
     refetch,
-  } = useTourData(params.id);
+  } = useTour(params.id);
 
   const {
     register,

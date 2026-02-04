@@ -32,14 +32,15 @@ const reviewSchema = new Schema(
       required: true,
     },
     status: {
-      type: 'String',
+      type: String,
+      enum: ['pending', 'approved', 'rejected'],
       default: 'pending',
     },
   },
   { timestamps: true }
 );
 
-reviewSchema.index({ tour: 1, rating: 1 });
+reviewSchema.index({ tour: 1, rating: 1, user: 1, status: 1 });
 
 const Review = models?.Review || model('Review', reviewSchema);
 

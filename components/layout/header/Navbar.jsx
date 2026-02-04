@@ -30,8 +30,9 @@ import SessionIconButtons from './SessionIconButtons';
 import { useNotificationStore } from '@/stores/notificationStore';
 import SearchBar from './SearchBar';
 import { useAuthDialogStore } from '@/stores/dialogStore';
+import SearchDrawer from './SearchDialog';
 
-const Navbar = ({currency}) => {
+const Navbar = ({ currency }) => {
   const { isAuthDialogOpen } = useAuthDialogStore();
 
   const session = useContext(UserSessionContext);
@@ -159,11 +160,15 @@ const Navbar = ({currency}) => {
                 </Box>
 
                 <StyledNavIconsContainer>
+                  <Box sx={{ display: { xs: 'block', md: 'none' } }}>
+                    <SearchDrawer />
+                  </Box>
+
                   <Currency currency={currency} />
 
                   {session ? (
                     isLoading ? (
-                      <SkeletonCircular w={32} h={32} l={4} />
+                      <SkeletonCircular w={32} h={32} l={3} />
                     ) : (
                       <SessionIconButtons />
                     )

@@ -10,6 +10,7 @@ const HistoryBackButton = ({
   variant = 'text',
   isSubmitting,
   margin = 0,
+  redirectPath,
 }) => {
   const router = useRouter();
   const t1 = useTranslations('common');
@@ -18,7 +19,11 @@ const HistoryBackButton = ({
     if (window.history.length === 2) {
       router.replace('/');
     } else {
-      router.back();
+      if (redirectPath) {
+        router.replace(redirectPath);
+      } else {
+        router.back();
+      }
     }
   };
 

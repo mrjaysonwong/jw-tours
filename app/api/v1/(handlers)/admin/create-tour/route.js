@@ -2,7 +2,7 @@ import { validateSession } from '@/services/auth/validateSession';
 import { authorizeAdmin } from '@/services/auth/authorizeRole';
 import { handleApiError } from '@/helpers/errorHelpers';
 import { STATUS_CODES } from '@/constants/common';
-import connectMongo from '@/libs/connectMongo';
+import connectMongo from '@/lib/connectMongo';
 import { tourSchema } from '@/validation/yup/tour/tourSchema';
 import Tour from '@/models/tourModel';
 import User from '@/models/userModel';

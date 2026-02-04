@@ -3,6 +3,7 @@ export function formatUrl(name) {
 }
 
 export function capitalizeText(str) {
+  if (!str) return '';
   return str.replace(/\b\w/g, (char) => char.toUpperCase());
 }
 
@@ -32,3 +33,12 @@ export const formatCardExpiry = (value) => {
 
 export const formatNumber = (num, locale = 'en-US') =>
   Math.round(num).toLocaleString(locale);
+
+export const formatValue = (value) => {
+  return value?.replace(/-/g, ' ').toLowerCase();
+};
+
+
+export const escapeRegex = (str) => {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}

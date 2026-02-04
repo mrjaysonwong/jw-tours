@@ -1,5 +1,5 @@
 import { validateSession } from '@/services/auth/validateSession';
-import connectMongo from '@/libs/connectMongo';
+import connectMongo from '@/lib/connectMongo';
 import { authorizeUser } from '@/services/auth/authorizeRole';
 import { personalDetailsSchema } from '@/validation/yup/user/personalDetailsSchema';
 import { handleApiError } from '@/helpers/errorHelpers';

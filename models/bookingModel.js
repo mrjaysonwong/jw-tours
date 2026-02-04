@@ -1,7 +1,7 @@
 import { Schema, model, models } from 'mongoose';
 
 // internal imports
-import { nanoid } from '@/libs/nanoid';
+import { nanoid } from '@/lib/nanoid';
 import {
   bookingRequestSchema,
   contactSchema,

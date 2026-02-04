@@ -25,7 +25,7 @@ import { getCancellationStatus } from '@/utils/common';
 const INITIAL_VISIBLE = 6;
 const LOAD_MORE_COUNT = 3;
 
-const BookingList = ({ bookings, reviews }) => {
+const BookingList = ({ bookings }) => {
   const [visibleCount, setVisibleCount] = useState(INITIAL_VISIBLE);
   const [isCancelDialogOpen, setIsCancelDialogOpen] = useState(false);
   const [isReviewDialogOpen, setIsReviewDialogOpen] = useState(false);
@@ -39,6 +39,7 @@ const BookingList = ({ bookings, reviews }) => {
   const router = useRouter();
 
   const visibleBookings = bookings.slice(0, visibleCount);
+
   const hasMore = visibleCount < bookings.length;
 
   const handleClickCancelBooking = (
@@ -93,11 +94,7 @@ const BookingList = ({ bookings, reviews }) => {
               ? 'upcoming'
               : 'completed';
 
-          const hasReview = reviews.find(
-            (review) =>
-              review.booking.toString() === booking._id &&
-              review.status !== 'rejected'
-          );
+          const isReviewNotRejected = booking.tourReview?.status !== 'rejected';
 
           return (
             <Grid key={index} item xs={12} md={4}>
@@ -203,17 +200,17 @@ const BookingList = ({ bookings, reviews }) => {
                     )}
 
                   {bookingStatus === 'completed' &&
-                    hasReview?.status !== 'approved' && (
+                    booking.tourReview.status !== 'approved' && (
                       <Button
                         color="secondary"
                         size="small"
                         variant="contained"
-                        disabled={!!hasReview}
+                        disabled={isReviewNotRejected}
                         onClick={() =>
                           handleClickLeaveReview(_id, tour, booker)
                         }
                       >
-                        {hasReview?.status === 'pending'
+                        {booking.tourReview.status === 'pending'
                           ? 'Review pending'
                           : 'Leave a review'}
                       </Button>

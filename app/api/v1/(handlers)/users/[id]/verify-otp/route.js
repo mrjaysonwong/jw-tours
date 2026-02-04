@@ -1,7 +1,7 @@
 // internal imports
 import { verifyContactSchema } from '@/validation/yup/auth/verifyContactSchema';
 import { validateSession } from '@/services/auth/validateSession';
-import connectMongo from '@/libs/connectMongo';
+import connectMongo from '@/lib/connectMongo';
 import { authorizeUser } from '@/services/auth/authorizeRole';
 import { handleApiError } from '@/helpers/errorHelpers';
 import { verifyAndAddEmail, verifyAndAddMobile } from '@/services/users';

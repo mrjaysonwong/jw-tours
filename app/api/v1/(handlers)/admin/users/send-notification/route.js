@@ -3,7 +3,7 @@ import { STATUS_CODES } from '@/constants/common';
 import { sendNotificationSchema } from '@/validation/yup/admin/sendNotificationSchema';
 import { validateSession } from '@/services/auth/validateSession';
 import { authorizeAdmin } from '@/services/auth/authorizeRole';
-import connectMongo from '@/libs/connectMongo';
+import connectMongo from '@/lib/connectMongo';
 import { templateRelatedIdCounter } from '@/services/notifications/templateRelatedIdCounter';
 import { sendNotificationToUsers } from '@/services/admin/sendNotification';
 import { sendBatch } from '@/services/email/sendBatch';

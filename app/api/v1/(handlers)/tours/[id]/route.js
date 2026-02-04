@@ -2,12 +2,12 @@ import mongoose from 'mongoose';
 
 // internal imports
 import { tourSchema } from '@/validation/yup/tour/tourSchema';
-import connectMongo from '@/libs/connectMongo';
+import connectMongo from '@/lib/connectMongo';
 import Tour from '@/models/tourModel';
 import { handleApiError } from '@/helpers/errorHelpers';
 import { STATUS_CODES } from '@/constants/common';
 import { updateTourImages } from '@/services/tours/uploadTourImages';
-import { getReviewSummary } from '@/services/reviews/reviewSummary';
+import { getTourReviewStats } from '@/services/reviews/reviewStats';
 
 // GET: /api/v1/tours/[id]
 export async function GET(Request, { params }) {
@@ -33,7 +33,7 @@ export async function GET(Request, { params }) {
       );
     }
 
-    const { starCounts, totalCount, avgRating } = await getReviewSummary(
+    const { starCounts, totalCount, avgRating } = await getTourReviewStats(
       tourId
     );
 
@@ -48,7 +48,7 @@ export async function GET(Request, { params }) {
 
     return Response.json({ data: updatedTour }, { status: 200 });
   } catch (error) {
-    console.error('Fetch tour error', error)
+    console.error('Fetch tour error', error);
 
     const { message, status } = handleApiError(error);
 

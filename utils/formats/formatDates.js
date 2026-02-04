@@ -26,9 +26,8 @@ export function getDateTime(timestamp) {
 }
 
 export function formatFromToDate({ from, to }) {
-  const fromDate = dayjs(from).startOf('day').format('YYYY-MM-DD');
-  const toDate = dayjs(to).add(1, 'day').startOf('day').format('YYYY-MM-DD');
-
+  const fromDate = dayjs(from).startOf('day').toDate();
+  const toDate = dayjs(to).add(1, 'day').startOf('day').toDate(); 
   return { fromDate, toDate };
 }
 

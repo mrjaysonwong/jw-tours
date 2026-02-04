@@ -17,12 +17,17 @@ import {
 import GroupOutlinedIcon from '@mui/icons-material/GroupOutlined';
 import AccessTimeOutlinedIcon from '@mui/icons-material/AccessTimeOutlined';
 import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';
+import FavoriteIcon from '@mui/icons-material/Favorite';
 
 // internal imports
 import { formatISOlong } from '@/utils/formats/formatDates';
 import { formatUrl, formatLastName } from '@/utils/formats/common';
 import { iconMapping } from '@/constants/iconMaps/icons';
 import MoreVertMenu from '@/components/menus/MoreVertMenu';
+import { useMessageStore } from '@/stores/messageStore';
+import { useUserSessionContext } from '@/contexts/UserProvider';
+import { useWishlistDataContext } from '@/contexts/WishlistProvider';
+import { useWishlistActions } from '@/hooks/useWishlistActions';
 
 const styledBox = {
   display: 'flex',
@@ -53,30 +58,40 @@ const styledTypo = {
   WebkitTextFillColor: 'transparent',
 };
 
-// add feature add to favorite
-
 const TourCard = ({ tour }) => {
-  const path = usePathname();
-  const isAdmin = path.includes('admin');
+  const { wishlist, value } = useWishlistDataContext() || {};
 
-  const { tourCost, perPersonFee, serviceFee } = tour.pricing;
-  const basePricing = tourCost + perPersonFee + serviceFee;
+  const guestWishlist = tour?.wishlist?.guest || wishlist?.guest;
+  const userWishlist = tour?.wishlist?.user || wishlist?.user;
+
+  const pathname = usePathname();
+  const isAdmin = pathname.includes('admin');
+  const isPathWishlist = pathname.includes('wishlists');
+
+  const tourIds = new Set([
+    ...(guestWishlist?.tours?.map((t) => t._id) || []),
+    ...(userWishlist?.tours?.map((t) => t._id) || []),
+  ]);
+
+  const inWishlist = tourIds.has(tour._id);
+
+  const session = useUserSessionContext();
+
+  const { handleAlertMessage } = useMessageStore();
 
   const amount = tour.currency
     ? `${tour.currency.symbol} ${Math.round(
         tour.convertedTotalCost
       ).toLocaleString()} ${tour.currency.code}`
-    : `$ ${Math.round(basePricing).toLocaleString()} USD`;
+    : `$ ${Math.round(tour.totalCost).toLocaleString()} USD`;
 
   const href = `/tours/${formatUrl(tour.geoLocation)}/${formatUrl(
     tour.destination.name
   )}/${tour._id}`;
 
-  const handleClickFavorite = (e) => {
-    e.stopPropagation();
-    e.preventDefault();
-    console.log('clicked favorite');
-  };
+  const target = isPathWishlist ? (value === 0 ? 'guest' : 'user') : 'all';
+
+  const { handleClickFavorite } = useWishlistActions(handleAlertMessage);
 
   const CardContentComponent = (
     <Card
@@ -92,18 +107,31 @@ const TourCard = ({ tour }) => {
         <CardMedia component="img" image={tour.images[0].url} height={150} />
 
         {!isAdmin && (
-          <Box sx={{ position: 'absolute', top: 10, right: 15 }}>
+          <Box
+            sx={{
+              position: 'absolute',
+              top: 10,
+              right: 15,
+            }}
+          >
             <IconButton
               disableRipple
-              onClick={handleClickFavorite}
+              onClick={(e) =>
+                handleClickFavorite(e, tour._id, inWishlist, session, target)
+              }
               size="small"
               aria-label="add to favorites"
               sx={{
                 bgcolor: 'white',
-                '& svg': { color: 'black' },
+                '& svg': {
+                  color: inWishlist ? 'var(--color-dark-red)' : 'black',
+                },
+                '& svg:hover': {
+                  transform: 'scale(1.2)',
+                },
               }}
             >
-              <FavoriteBorderOutlinedIcon />
+              {inWishlist ? <FavoriteIcon /> : <FavoriteBorderOutlinedIcon />}
             </IconButton>
           </Box>
         )}
@@ -137,18 +165,17 @@ const TourCard = ({ tour }) => {
         }
         subheader={
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <Typography sx={{ fontWeight: 500 }}>{tour.avgRating}</Typography>
             <Rating
               size="small"
               name="rating"
               value={tour.avgRating}
               precision={0.5}
               readOnly
-              sx={{ color: '#FCC737' }}
+              sx={{ color: '#FCC737', mx: 0.5 }}
             />
 
-            <Typography variant="caption" sx={{ mx: 0.5 }}>
-              ({tour.reviewCount})
-            </Typography>
+            <Typography variant="caption">({tour.reviewCount})</Typography>
           </Box>
         }
         sx={{ py: 0 }}

@@ -3,7 +3,7 @@
 import { signIn } from '@/auth';
 import { redirect } from '@/navigation';
 import { AuthError } from 'next-auth';
-import connectMongo from '@/libs/connectMongo';
+import connectMongo from '@/lib/connectMongo';
 import { findUser } from '@/services/users/userQueries';
 import { BASE_URL } from '@/constants/env';
 

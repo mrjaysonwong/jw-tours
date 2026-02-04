@@ -1,12 +1,12 @@
 // internal imports
 import { validateSession } from '@/services/auth/validateSession';
-import connectMongo from '@/libs/connectMongo';
+import connectMongo from '@/lib/connectMongo';
 import { handleApiError } from '@/helpers/errorHelpers';
 import { STATUS_CODES } from '@/constants/common';
 import Checkout from '@/models/checkoutModel';
 import Tour from '@/models/tourModel';
 import User from '@/models/userModel';
-import { getReviewSummary } from '@/services/reviews/reviewSummary';
+import { getTourReviewStats } from '@/services/reviews/reviewStats';
 
 // GET: /api/v1/checkouts/[id]
 export async function GET(Request, { params }) {
@@ -42,7 +42,7 @@ export async function GET(Request, { params }) {
 
     const tourId = checkout.tour._id;
 
-    const { totalCount, avgRating } = await getReviewSummary(tourId);
+    const { totalCount, avgRating } = await getTourReviewStats(tourId);
 
     const updatedCheckout = {
       ...checkout.toObject(),

@@ -1,5 +1,6 @@
 import Link from 'next/link';
-import { Typography, Box } from '@mui/material';
+import { Typography, Box, Grid, Card } from '@mui/material';
+import PlaceOutlinedIcon from '@mui/icons-material/PlaceOutlined';
 
 // internal imports
 import { formatUrl } from '@/utils/formats/common';
@@ -7,30 +8,44 @@ import { useGuideData } from '@/contexts/GuideProfileProvider';
 
 const GuideTours = () => {
   const { name, tours } = useGuideData();
-  
+
   return (
     <Box sx={{ my: 1 }}>
-      <Typography variant="h6">
+      <Typography variant="h6" sx={{ my: 1 }}>
         Tours by <span style={{ textTransform: 'capitalize' }}>{name}.</span>
       </Typography>
 
       {tours.length === 0 ? (
-        <div>No tours yet</div>
+        <Typography>No hosted tours yet</Typography>
       ) : (
-        <ul>
+        <Grid container spacing={2}>
           {tours.map((tour) => {
-            const href = `/tours/${formatUrl(
-              tour.geoLocation
-            )}/${formatUrl(tour.destination.name)}/${tour._id}`;
+            const href = `/tours/${formatUrl(tour.geoLocation)}/${formatUrl(
+              tour.destination.name
+            )}/${tour._id}`;
+
             return (
-              <li key={tour._id} style={{ textTransform: 'capitalize' }}>
+              <Grid key={tour._id} item xs={6} sm={4} lg={2}>
                 <Link href={href} target="_blank">
-                  {tour.destination.name}
+                  <Card
+                    sx={{
+                      textAlign: 'center',
+                      textTransform: 'capitalize',
+                      p: 1,
+                      display: 'flex',
+                      alignItems: 'center',
+                    }}
+                  >
+                    <PlaceOutlinedIcon sx={{ mr: 1 }} />
+                    <Typography color="inherit">
+                      {tour.destination.name}
+                    </Typography>
+                  </Card>
                 </Link>
-              </li>
+              </Grid>
             );
           })}
-        </ul>
+        </Grid>
       )}
     </Box>
   );

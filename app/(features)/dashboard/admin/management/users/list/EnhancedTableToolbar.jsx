@@ -1,4 +1,3 @@
-import React from 'react';
 import { Toolbar, Typography, Box } from '@mui/material';
 
 // internal imports
@@ -41,4 +40,4 @@ const EnhancedTableToolbar = ({ numSelected, selected, setSelected }) => {
   );
 };
 
-export default React.memo(EnhancedTableToolbar);
+export default EnhancedTableToolbar;

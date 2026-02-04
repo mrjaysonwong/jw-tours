@@ -3,20 +3,20 @@ import { Button, Menu, MenuItem, Fade } from '@mui/material';
 import TuneOutlinedIcon from '@mui/icons-material/TuneOutlined';
 
 const filterOptions = [
-  { value: 'all', label: 'All stars' },
-  { value: '5', label: '5 stars' },
-  { value: '4', label: '4 stars' },
-  { value: '3', label: '3 stars' },
-  { value: '2', label: '2 stars' },
-  { value: '1', label: '1 star' },
+  { rating: 'all', label: 'All stars' },
+  { rating: '5', label: '5 stars' },
+  { rating: '4', label: '4 stars' },
+  { rating: '3', label: '3 stars' },
+  { rating: '2', label: '2 stars' },
+  { rating: '1', label: '1 star' },
 ];
 
-const getLabel = (value) => {
-  const found = filterOptions.find((opt) => opt.value === value);
+const getLabel = (rating) => {
+  const found = filterOptions.find((opt) => opt.rating === rating);
   return found ? found.label : 'All stars';
 };
 
-export const FilterReviewsByRating = ({ value, setValue }) => {
+export const FilterReviewsByRating = ({ rating, setRating }) => {
   const [anchorEl, setAnchorEl] = useState(null);
 
   const open = Boolean(anchorEl);
@@ -28,8 +28,8 @@ export const FilterReviewsByRating = ({ value, setValue }) => {
     setAnchorEl(null);
   };
 
-  const handleSelect = (val) => {
-    setValue(val);
+  const handleSelect = (newValue) => {
+    setRating(newValue);
     handleClose();
   };
 
@@ -46,7 +46,7 @@ export const FilterReviewsByRating = ({ value, setValue }) => {
         startIcon={<TuneOutlinedIcon />}
         sx={{ textTransform: 'none', color: 'inherit', borderColor: 'inherit' }}
       >
-        Filter by {getLabel(value)}
+        Filter by {getLabel(rating)}
       </Button>
       <Menu
         id="fade-menu"
@@ -60,9 +60,9 @@ export const FilterReviewsByRating = ({ value, setValue }) => {
       >
         {filterOptions.map((option) => (
           <MenuItem
-            key={option.value}
-            selected={value === option.value}
-            onClick={() => handleSelect(option.value)}
+            key={option.rating}
+            selected={rating === option.rating}
+            onClick={() => handleSelect(option.rating)}
           >
             {option.label}
           </MenuItem>

@@ -1,4 +1,4 @@
-import cloudinary from '@/libs/cloudinary';
+import cloudinary from '@/lib/cloudinary';
 import Tour from '@/models/tourModel';
 
 export async function uploadTourImages(base64Images, tourId) {

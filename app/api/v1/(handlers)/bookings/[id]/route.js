@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 
 // internal imports
 import { validateSession } from '@/services/auth/validateSession';
-import connectMongo from '@/libs/connectMongo';
+import connectMongo from '@/lib/connectMongo';
 import { STATUS_CODES, ERROR_MESSAGES } from '@/constants/common';
 import Booking from '@/models/bookingModel';
 import Tour from '@/models/tourModel';

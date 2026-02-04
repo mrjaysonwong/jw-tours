@@ -7,7 +7,7 @@ export const bookingRequestSchema = new Schema({
   totalPerPersonFee: Number,
   serviceFee: { type: Number, required: true },
   totalCost: { type: Number, required: true },
-  tourDate: { type: String, required: true },
+  tourDate: { type: Date, required: true },
   startTime: { type: String, required: true },
 }, { _id: false });
 

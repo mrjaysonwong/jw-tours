@@ -10,6 +10,7 @@ import CreateNewTour from '@/app/(features)/dashboard/admin/management/tours/Cre
 import EditTour from '@/app/(features)/dashboard/admin/management/tours/EditTour';
 import Notifications from '@/app/(features)/dashboard/admin/communication/notifications/Notifications';
 import NotificationsReport from '@/app/(features)/dashboard/admin/communication/notifications/NotificationsReport';
+import ReviewList from '@/app/(features)/dashboard/admin/management/reviews/ReviewList';
 
 // mysettings tab components
 import Profile from '@/app/(features)/account/profile/Profile';
@@ -42,6 +43,10 @@ import Transport from '@/app/(features)/tours/tour-details/Transport';
 import Meals from '@/app/(features)/tours/tour-details/Meals';
 import Accomodation from '@/app/(features)/tours/tour-details/Accomodation';
 
+// wishlists tab components
+import GuestWishlist from '@/app/(features)/wishlists/GuestWishlist';
+import UserWishlist from '@/app/(features)/wishlists/UserWishlist';
+
 export const dashboardComponents = {
   overview: Overview,
   analytics: Analytics,
@@ -50,6 +55,7 @@ export const dashboardComponents = {
   users_new: CreateNewUser,
   tours: TourList,
   tours_new: CreateNewTour,
+  reviews: ReviewList,
   notifications: Notifications,
   notifications_reports: NotificationsReport,
 };
@@ -97,3 +103,5 @@ export const tourInclusionsTabComponents = {
   Meals,
   Accomodation,
 };
+
+export const wishListTabComponents = [GuestWishlist, UserWishlist];

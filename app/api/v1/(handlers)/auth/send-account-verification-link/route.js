@@ -1,6 +1,6 @@
 // internal imports
 import { emailSchema } from '@/validation/yup/user/contactDetailsSchema';
-import connectMongo from '@/libs/connectMongo';
+import connectMongo from '@/lib/connectMongo';
 import { handleApiError } from '@/helpers/errorHelpers';
 import { ACTIONS } from '@/constants/common';
 import { sendEmailLink } from '@/services/auth/sendEmailLink';

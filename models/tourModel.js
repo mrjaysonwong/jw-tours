@@ -258,6 +258,9 @@ tourSchema.index({
   'duration.value': 1,
   'duration.unit': 1,
   'transportation.type': 1,
+  'destination.name': 1,
+  geoLocation: 1,
+  title: 1,
 });
 
 const Tour = models?.Tour || model('Tour', tourSchema);

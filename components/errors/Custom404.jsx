@@ -9,7 +9,7 @@ import { Typography, Box } from '@mui/material';
 import { StyledMainContainer } from '@/components/styled/StyledContainers';
 import HistoryBackButton from '../buttons/HistoryBackButton';
 
-const Custom404 = ({ resource = 'page', h }) => {
+const Custom404 = ({ resource = 'page', h, redirectPath }) => {
   const t = useTranslations('not_found_page');
 
   return (
@@ -30,7 +30,7 @@ const Custom404 = ({ resource = 'page', h }) => {
         </Typography>
       </Box>
 
-      <HistoryBackButton />
+      <HistoryBackButton redirectPath={redirectPath} />
     </StyledMainContainer>
   );
 };

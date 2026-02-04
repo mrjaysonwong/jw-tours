@@ -19,21 +19,14 @@ import FilterByStatus from './FilterByStatus';
 import FormSubmitButton from '@/components/buttons/FormSubmitButton';
 import { filtersSchema } from '@/validation/yup/bookings/filtersSchema';
 import { formatDate2 } from '@/utils/formats/formatDates';
-import { buildQueryParams } from '@/utils/common';
-
-const allowedParams = [
-  'tourFrom',
-  'tourTo',
-  'bookingFrom',
-  'bookingTo',
-  'status',
-  'sort',
-];
+import { filterParams, getQueryParams } from '@/utils/queryParams';
 
 const BookingsFiltersDialog = ({ isDialogOpen, setIsDialogOpen }) => {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+
+  const { sortParam } = getQueryParams(searchParams);
 
   const getDate = (key) => {
     const val = searchParams.get(key);
@@ -72,24 +65,25 @@ const BookingsFiltersDialog = ({ isDialogOpen, setIsDialogOpen }) => {
       status: formData.status?.join(','),
     };
 
-    const queryParams = buildQueryParams(
-      formValues,
-      searchParams,
-      allowedParams
-    );
-
-    const query = queryParams.size > 0 ? `${queryParams.toString()}` : '';
+    const queryParams = filterParams({
+      ...formValues,
+      sort: sortParam,
+    });
 
     if (queryParams.size === 0) {
       router.replace(pathname);
     } else {
-      router.replace(`${pathname}?${query}`);
+      router.replace(`${pathname}?${queryParams.toString()}`);
     }
 
     handleClose();
   };
 
   const handleReset = () => {
+    const queryParams = filterParams({
+      sort: sortParam,
+    });
+
     reset({
       tourFrom: null,
       tourTo: null,
@@ -97,6 +91,9 @@ const BookingsFiltersDialog = ({ isDialogOpen, setIsDialogOpen }) => {
       bookingTo: null,
       status: [],
     });
+
+    router.replace(`${pathname}?${queryParams.toString()}`);
+    handleClose();
   };
 
   return (
@@ -125,7 +122,7 @@ const BookingsFiltersDialog = ({ isDialogOpen, setIsDialogOpen }) => {
       </DialogContent>
       <DialogActions sx={{ py: 2, justifyContent: 'center' }}>
         <Button variant="outlined" onClick={handleReset}>
-          Reset Filters
+          Clear Filters
         </Button>
 
         <FormSubmitButton

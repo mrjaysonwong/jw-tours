@@ -1,7 +1,7 @@
 import { handleApiError } from '@/helpers/errorHelpers';
 import { fetchPaymentIntent } from '@/services/payments/payment-intent/fetchPaymentIntent';
 import { fetchRefunds } from '@/services/refunds/fetchRefunds';
-import connectMongo from '@/libs/connectMongo';
+import connectMongo from '@/lib/connectMongo';
 import Booking from '@/models/bookingModel';
 
 // POST: /api/v1/refunds

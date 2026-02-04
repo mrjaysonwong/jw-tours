@@ -1,14 +1,18 @@
-import { StyledContainer } from '@/components/styled/StyledContainers';
+// internal imports
+import Wishlists from '@/app/(features)/wishlists/Wishlists';
+import { fetchWishlist } from '@/services/wishlists/fetchWishlist';
 
-// proceed to wishlish feature
-// use post request?
-// how to persist and sync with logged in account
+export const metadata = { title: 'Wishlists' };
 
+export default async function WishListsPage() {
+  const { guest, user } = await fetchWishlist();
 
-export default function WishListsPage() {
-  return (
-    <StyledContainer>
-      <h5>Wishlists Page</h5>
-    </StyledContainer>
+  /* Demo for small-medium dataset */
+  const duplicatedTours = Array.from({ length: 32 }).flatMap(() =>
+    guest?.tours.map((t) => ({ ...t }))
   );
+
+  const wishlist = { guest, user }
+
+  return <Wishlists wishlist={wishlist} />;
 }

@@ -1,5 +1,5 @@
 import { safeFetch } from '@/helpers/safeFetch';
-import { encodeKey } from '@/libs/paymongo';
+import { encodeKey } from '@/lib/paymongo';
 
 export async function fetchPaymentIntent(id) {
   const url = `https://api.paymongo.com/v1/payment_intents/${id}`;

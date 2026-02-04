@@ -3,6 +3,7 @@ import React, { useState, useRef } from 'react';
 import Slider from 'react-slick';
 import Image from 'next/image';
 import { Box, IconButton, Tabs, Tab } from '@mui/material';
+import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import ShareIcon from '@mui/icons-material/Share';
 import 'slick-carousel/slick/slick.css';
@@ -10,6 +11,9 @@ import 'slick-carousel/slick/slick-theme.css';
 
 // Internal imports
 import { useTourDetails } from '@/contexts/TourContextProvider';
+import { useMessageStore } from '@/stores/messageStore';
+import { useUserSessionContext } from '@/contexts/UserProvider';
+import { useWishlistActions } from '@/hooks/useWishlistActions';
 
 function CustomNextArrow(props) {
   const { className, style, onClick } = props;
@@ -50,6 +54,23 @@ const TourImageGallery = () => {
 
   const [value, setValue] = useState(0);
   const slider1Ref = useRef(null);
+
+  const { handleAlertMessage } = useMessageStore();
+
+  const guestWishlist = tour?.wishlist?.guest;
+  const userWishlist = tour?.wishlist?.user;
+
+  const tourIds = new Set([
+    ...(guestWishlist?.tours?.map((t) => t._id) || []),
+    ...(userWishlist?.tours?.map((t) => t._id) || []),
+  ]);
+
+  const inWishlist = tourIds.has(tour._id);
+
+  const session = useUserSessionContext();
+  const target = 'all';
+
+  const { handleClickFavorite } = useWishlistActions(handleAlertMessage);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -142,15 +163,21 @@ const TourImageGallery = () => {
       >
         <IconButton
           aria-label="add to favorites"
-          sx={{ color: 'white', backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
+          disableRipple
+          onClick={(e) =>
+            handleClickFavorite(e, tour._id, inWishlist, session, target)
+          }
+          sx={{
+            bgcolor: 'white',
+            '& svg': {
+              color: inWishlist ? 'var(--color-dark-red)' : 'black',
+            },
+          }}
         >
-          <FavoriteIcon />
+          {inWishlist ? <FavoriteIcon /> : <FavoriteBorderOutlinedIcon />}
         </IconButton>
-        <IconButton
-          aria-label="share"
-          sx={{ color: 'white', backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
-        >
-          <ShareIcon />
+        <IconButton aria-label="share" disableRipple sx={{ bgcolor: 'white' }}>
+          <ShareIcon sx={{ color: 'black' }} />
         </IconButton>
       </Box>
     </Box>

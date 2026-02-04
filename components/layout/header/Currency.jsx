@@ -34,7 +34,7 @@ const CurrencySwitcherDialog = ({ isDialogOpen, setIsDialogOpen }) => {
   };
 
   return (
-    <Dialog open={isDialogOpen} scroll="body">
+    <Dialog open={isDialogOpen} closeAfterTransition={false} scroll="body">
       <DialogTitle>Select a Currency</DialogTitle>
 
       <IconButton
@@ -92,8 +92,18 @@ const Currency = ({ currency }) => {
   return (
     <>
       <Typography
+        component="button"
         onClick={handleClickCurrency}
-        sx={{ textDecoration: 'underline', mx: 1, cursor: 'pointer' }}
+        sx={{
+          textDecoration: 'underline',
+          mx: 1,
+          cursor: 'pointer',
+          background: 'none',
+          border: 'none',
+          p: 0,
+          color: 'inherit',
+          font: 'inherit',
+        }}
       >
         {currency.symbol} {currency.code}
       </Typography>

@@ -16,6 +16,17 @@ export const actionMap = {
     { label: 'Delete', action: 'delete' },
     { label: 'Send Notification', action: 'send-notification' },
   ],
+  'reviews-table': [
+    {
+      label: 'Approve',
+      action: 'approve',
+      showIf: (row) => row.status === 'pending',
+    },
+    {
+      label: 'Reject',
+      action: 'reject',
+      showIf: (row) => row.status === 'pending',
+    },
+    { label: 'Delete', action: 'delete', showIf: () => true },
+  ],
 };
-
-

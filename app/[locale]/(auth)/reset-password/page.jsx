@@ -2,7 +2,7 @@ import { notFound, redirect } from 'next/navigation';
 import { Typography, Divider, Card, CardContent } from '@mui/material';
 
 // internal imports
-import connectMongo from '@/libs/connectMongo';
+import connectMongo from '@/lib/connectMongo';
 import Token from '@/models/tokenModel';
 import PasswordReset from '@/app/(features)/authentication/PasswordReset';
 import PageLayout from '@/components/layout/PageLayout';

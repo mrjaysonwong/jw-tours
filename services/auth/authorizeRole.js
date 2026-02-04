@@ -21,22 +21,15 @@ export async function authorizeUser({ session, userId, projection }) {
   }
 }
 
-export async function authorizeAdmin(session, method) {
+export async function authorizeAdmin(session) {
   try {
     const isAdminRole = session.user.role === 'admin';
 
     if (!isAdminRole) {
-      if (method === 'GET') {
-        throw new HttpError({
-          message: ERROR_MESSAGES.ADMIN_ONLY,
-          status: STATUS_CODES.UNAUTHORIZED,
-        });
-      } else {
-        throw new HttpError({
-          message: ERROR_MESSAGES.ADMIN_ONLY_ACTION,
-          status: STATUS_CODES.FORBIDDEN,
-        });
-      }
+      throw new HttpError({
+        message: ERROR_MESSAGES.ADMIN_ONLY_ACTION,
+        status: STATUS_CODES.FORBIDDEN,
+      });
     }
 
     return;

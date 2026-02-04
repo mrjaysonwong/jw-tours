@@ -3,7 +3,7 @@
 import { TableRow } from '@mui/material';
 import { styled } from '@mui/system';
 
-export const StyledUserListTableRow = styled(TableRow)(
+export const StyledTableRow = styled(TableRow)(
   ({ color, alphacolor }) => ({
     '& .name, & .role , & .status': {
       textTransform: 'capitalize',

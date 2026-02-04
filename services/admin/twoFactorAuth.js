@@ -5,7 +5,7 @@ import { render } from '@react-email/render';
 // internal imports
 import { STATUS_CODES } from '@/constants/common';
 import { handleRateLimitError, HttpError } from '@/helpers/errorHelpers';
-import { rateLimiter } from '@/libs/rateLimiter';
+import { rateLimiter } from '@/lib/rateLimiter';
 import { createOrUpdateOTP } from '@/services/otp/createOrUpdateOTP';
 import { formatDate } from '@/utils/formats/formatDates';
 import { sendEmail } from '@/services/email/sendEmail';

@@ -3,8 +3,8 @@ import axios from 'axios';
 
 // internal imports
 import { UNIRATE_API_KEY } from '@/constants/env';
-import { encodeKey } from '@/libs/paymongo';
-import { fxBuffer } from '@/libs/cache/currencyCache';
+import { encodeKey } from '@/lib/paymongo';
+import { fxBuffer } from '@/lib/cache/currencyCache';
 import { BASE_URL } from '@/constants/env';
 
 async function convertToPHP(amount) {

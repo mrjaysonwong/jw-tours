@@ -1,75 +1,41 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { CsvBuilder } from 'filefy';
-import { Grid, Button, Typography, Chip, Box } from '@mui/material';
+import { Box, Grid, Button, Typography } from '@mui/material';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import FilterAltOffIcon from '@mui/icons-material/FilterAltOff';
 
 // internal imports
-import { TabsFilter, RoleFilter } from '.';
-import { statusMap } from './UserList';
+import StatusTabsFilter from '@/components/tabs/StatusTabsFilter';
+import TableFilterChip from '@/components/chips/TableFilterChip';
+import { useTableToolbarContext } from '@/contexts/TableToolbarProvider';
+import { getQueryParams } from '@/utils/queryParams';
+import RoleFilter from './RoleFilter';
 import ConfirmationDialog from '@/components/dialogs/ConfirmationDialog';
+import { formatISO } from '@/utils/formats/formatDates';
+import { userTabLabelsMap } from '@/constants/tabs';
 
-const FilterChip = React.memo(
-  ({ filterType, label, setSearchTerm, setValue, setRole }) => {
-    const handleDelete = useCallback(() => {
-      switch (filterType) {
-        case 'Role':
-          setRole('');
-          break;
-        case 'Status':
-          setValue(0);
-          break;
-        default:
-          setSearchTerm('');
-      }
-    }, [filterType, setRole, setValue, setSearchTerm]);
-
-    return (
-      <Box
-        sx={{
-          display: 'flex',
-          alignItems: 'center',
-          px: 1,
-          py: 0.5,
-          border: '1px solid',
-          borderColor: 'divider',
-          borderRadius: '14px',
-          mt: 1,
-          textTransform: filterType !== 'Keyword' && 'capitalize',
-        }}
-      >
-        <Typography variant="body2" sx={{ mr: 1, fontWeight: 500 }}>
-          {filterType}:
-        </Typography>
-        <Chip size="small" label={label} onDelete={handleDelete} />
-      </Box>
-    );
-  }
-);
-
-FilterChip.displayName = 'FilterChip';
-
-const TableToolbar = ({
-  role,
-  handleChangeRole,
-  handleClearFilters,
-  filteredUsers,
-  value,
-  handleChangeTab,
-  users,
-  debouncedText,
-  setSearchTerm,
-  setValue,
-  setRole,
-}) => {
+const TableToolbar = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  const searchParams = useSearchParams();
+  const { debouncedText, users, onClearFilters } = useTableToolbarContext();
+  const { searchQuery, tabParam, roleParam } = getQueryParams(searchParams);
 
   const handleExport = () => {
     // Define columns
-    const columns = ['ID', 'FirstName', 'LastName', 'Email', 'Role', 'Status'];
+    const columns = [
+      'ID',
+      'FirstName',
+      'LastName',
+      'Email',
+      'Role',
+      'Status',
+      'Date Created',
+    ];
 
-    const orderedUsers = filteredUsers.sort((a, b) =>
-      a.firstName.localeCompare(b.firstName)
+    const orderedUsers = users.sort((a, b) =>
+      a.lastName.localeCompare(b.lastName)
     );
 
     // Prepare the CSV data from users
@@ -80,6 +46,7 @@ const TableToolbar = ({
       user.email[0].email,
       user.role,
       user.status,
+      formatISO(user.createdAt),
     ]);
 
     // Create the CSV
@@ -93,12 +60,7 @@ const TableToolbar = ({
 
   return (
     <>
-      <TabsFilter
-        value={value}
-        handleChangeTab={handleChangeTab}
-        filteredUsers={filteredUsers}
-        users={users}
-      />
+      <StatusTabsFilter tabLabelsMap={userTabLabelsMap} />
 
       <Grid
         container
@@ -106,7 +68,7 @@ const TableToolbar = ({
         sx={{ display: 'flex', alignItems: 'center', p: 2 }}
       >
         <Grid item xs={12} sm={3}>
-          <RoleFilter role={role} handleChangeRole={handleChangeRole} />
+          <RoleFilter />
         </Grid>
 
         <Grid item xs={6} sm={6}>
@@ -114,7 +76,7 @@ const TableToolbar = ({
             size="small"
             startIcon={<FilterAltOffIcon />}
             color="inherit"
-            onClick={handleClearFilters}
+            onClick={onClearFilters}
           >
             Clear Filters
           </Button>
@@ -131,52 +93,36 @@ const TableToolbar = ({
           </Button>
         </Grid>
 
-        {(debouncedText || role || value > 0) && (
-          <>
-            <Grid item xs={12}>
-              <Typography>
-                <span style={{ fontWeight: 500, fontSize: '14px' }}>
-                  {filteredUsers.length}
-                </span>
-                <span style={{ color: 'gray', marginLeft: '5px' }}>
-                  results found
-                </span>
-              </Typography>
-            </Grid>
+        <Grid item xs={12}>
+          <Typography>
+            <span style={{ fontWeight: 500, fontSize: '14px' }}>
+              {users.length}
+            </span>
+            <span style={{ color: 'gray', marginLeft: '5px' }}>
+              result{users.length > 1 ? 's' : ''} found
+            </span>
+          </Typography>
+        </Grid>
 
-            <Box
-              sx={{
-                display: 'flex',
-                flexWrap: 'wrap',
-                mx: 2,
+        <Box
+          sx={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            mx: 2,
 
-                '& > :not(last-child)': {
-                  mr: 1,
-                },
-              }}
-            >
-              {debouncedText && (
-                <FilterChip
-                  filterType="Keyword"
-                  label={debouncedText}
-                  setSearchTerm={setSearchTerm}
-                />
-              )}
+            '& > :not(last-child)': {
+              mr: 1,
+            },
+          }}
+        >
+          {debouncedText && searchQuery && (
+            <TableFilterChip filterType="Keyword" label={searchQuery} />
+          )}
 
-              {role && (
-                <FilterChip filterType="Role" label={role} setRole={setRole} />
-              )}
+          {roleParam && <TableFilterChip filterType="Role" label={roleParam} />}
 
-              {value > 0 && (
-                <FilterChip
-                  filterType="Status"
-                  label={statusMap[value]}
-                  setValue={setValue}
-                />
-              )}
-            </Box>
-          </>
-        )}
+          {tabParam && <TableFilterChip filterType="Status" label={tabParam} />}
+        </Box>
       </Grid>
 
       {isDialogOpen && (

@@ -1,6 +1,6 @@
 // internal imports
 import { validateSession } from '@/services/auth/validateSession';
-import connectMongo from '@/libs/connectMongo';
+import connectMongo from '@/lib/connectMongo';
 import { authorizeUser } from '@/services/auth/authorizeRole';
 import { addContactDetailsSchema } from '@/validation/yup/auth/addContactDetailsSchema';
 import { REQUEST_TYPES } from '@/constants/common';

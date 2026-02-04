@@ -1,5 +1,3 @@
-'use client';
-
 export const menuActionHelpers = ({
   event,
   menuType,
@@ -21,6 +19,10 @@ export const menuActionHelpers = ({
       : setTargetNumber(event.currentTarget.getAttribute('data-number'));
   };
 
+  const handleReviewAction = () => {
+    setDialogState({ type: 'review-action', open: true });
+  };
+
   const actionMap = {
     'my-contact-info': {
       'set-primary': handleContactInfoAction,
@@ -39,9 +41,24 @@ export const menuActionHelpers = ({
     'tour-list': {
       edit: () => router.push(`/admin/dashboard/tours/${targetId}/edit`),
     },
+    'reviews-table': {
+      approve: handleReviewAction,
+      reject: handleReviewAction,
+      delete: handleReviewAction,
+    },
   };
 
   const handler = actionMap[menuType]?.[action];
 
   handler();
+};
+
+export const validateMenuAction = (menuAction, allowedActions) => {
+  if (!menuAction) {
+    return { isValidAction: false, message: 'Missing body' };
+  }
+  if (!allowedActions.includes(menuAction)) {
+    return { isValidAction: false, message: 'Invalid action' };
+  }
+  return { isValidAction: true };
 };

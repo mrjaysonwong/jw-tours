@@ -13,7 +13,6 @@ export const getDurationInDays = (duration) => {
   return 0; // for hours, minutes, etc.
 };
 
-
 export const getAddressParts = (
   option,
   fields = [
@@ -59,27 +58,4 @@ export const getExpireTimestamp = () => {
   const expireAt = new Date(expireTimestamp);
 
   return expireAt;
-};
-
-export const buildQueryParams = (formValues, searchParams, allowedParams) => {
-  const queryParams = new URLSearchParams();
-
-  for (const key of allowedParams) {
-    if (key === 'sort') {
-      const sort = searchParams.get('sort');
-      if (sort) queryParams.set('sort', sort);
-    } else {
-      const value = formValues[key];
-      if (value) queryParams.set(key, value);
-    }
-  }
-
-  return queryParams;
-};
-
-
-export const getParam = (searchParams, key) => {
-  const value = searchParams.get(key);
-
-  return value ? value.replace(/-/g, ' ').toLowerCase() : undefined;
 };

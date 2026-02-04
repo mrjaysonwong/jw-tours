@@ -1,40 +1,47 @@
-import { useInfiniteQuery } from '@tanstack/react-query';
+import { useQuery, useInfiniteQuery } from '@tanstack/react-query';
 import axios from 'axios';
 
 // internal imports
 import { API_URLS } from '@/constants/apiRoutes';
+import { filterParams } from '@/utils/queryParams';
 
-export const useTourReviews = (tourId, value) => {
-  const fetchReviews = async ({ pageParam = 0 }) => {
+export const useTourReviews = (tourId, rating) => {
+  const fetchTourReviews = async ({ pageParam }) => {
     try {
-      const limit = 1; // page size
+      const queryParams = filterParams({
+        limit: 1, // adjust page size
+        skip: pageParam,
+        rating,
+      });
 
-      const url = `${API_URLS.TOURS}/${tourId}/reviews?limit=${limit}&offset=${pageParam}&rating=${value}`;
+      const url = `${
+        API_URLS.TOURS
+      }/${tourId}/reviews?${queryParams.toString()}`;
 
       const { data } = await axios.get(url);
 
       return data;
     } catch (error) {
       console.error(error);
-
-      throw new Error('Failed to fetch data.');
+      throw new Error('Something went wrong.');
     }
   };
 
   const {
     data,
     isLoading,
-    fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-    status,
+    fetchNextPage,
+    isError,
+    error,
   } = useInfiniteQuery({
-    queryKey: ['reviews', tourId, value],
-    queryFn: fetchReviews,
+    queryKey: ['reviews', tourId, rating],
+    queryFn: fetchTourReviews,
     initialPageParam: 0,
     getNextPageParam: (lastPage, allPages) => {
       const totalReviews = lastPage.totalReviews;
-      const totalSoFar = allPages.flatMap((p) => p.data).length;
+      const totalSoFar = allPages.flatMap((p) => p.reviews).length;
 
       if (totalSoFar >= totalReviews) return undefined;
 
@@ -42,12 +49,48 @@ export const useTourReviews = (tourId, value) => {
     },
   });
 
+  // flatten the reviews
+  const allReviews = data?.pages.flatMap((page) => page.reviews) ?? [];
+
   return {
-    data,
     isLoading,
-    fetchNextPage,
+    isError,
+    error,
+    reviews: allReviews,
     hasNextPage,
     isFetchingNextPage,
-    status,
+    fetchNextPage,
+  };
+};
+
+export const useAdminTourReviews = ({ searchParams, enabled = false }) => {
+  const queryString = new URLSearchParams(searchParams).toString();
+
+  const fetchTourReviews = async () => {
+    try {
+      const url = `${API_URLS.REVIEWS}?${queryString}`;
+      const { data } = await axios.get(url);
+
+      return data;
+    } catch (error) {
+      console.error(error);
+      throw new Error('Something went wrong');
+    }
+  };
+
+  const { isLoading, data, isError, error, refetch } = useQuery({
+    queryKey: ['dashboard-reviews', queryString],
+    queryFn: fetchTourReviews,
+    enabled,
+  });
+
+  return {
+    isLoading,
+    isError,
+    error,
+    reviews: data?.reviews ?? [],
+    totalCount: data?.totalCount,
+    statusCount: data?.statusCount,
+    refetch,
   };
 };

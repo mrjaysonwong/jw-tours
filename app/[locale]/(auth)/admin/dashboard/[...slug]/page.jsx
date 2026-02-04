@@ -14,6 +14,7 @@ const categoryActions = {
   bookings: ['new', 'reports'],
   users: ['new'],
   tours: ['new'],
+  reviews: [],
   payments: ['new', 'reports'],
   refunds: ['new', 'reports'],
   notifications: ['new', 'reports'],
@@ -21,6 +22,7 @@ const categoryActions = {
 
 export default async function AdminDashboardSlugPage({ params: { slug } }) {
   const session = await auth();
+  
   if (session?.user?.role !== 'admin' || !session)
     return redirect('/admin/signin');
 

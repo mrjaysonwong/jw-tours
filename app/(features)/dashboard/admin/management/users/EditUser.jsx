@@ -7,7 +7,7 @@ import BadgeOutlinedIcon from '@mui/icons-material/BadgeOutlined';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 
 // internal imports
-import { useAdminUserData } from '@/hooks/useUserData';
+import { useAdminUserData } from '@/hooks/useUser';
 import { UserDetailsProvider } from '@/contexts/UserProvider';
 import CustomTab from '@/components/tabs/CustomTab';
 import { adminEditUserTabComponents } from '@/constants/componentMaps/componentMaps';
