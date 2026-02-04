@@ -9,7 +9,7 @@ export async function GET(Request, { params }) {
   const tourId = params.id;
 
   const searchParams = Request.nextUrl.searchParams;
-  const tourDate = searchParams?.get('tourDate')?.slice(0, 10);
+  const tourDate = new Date(searchParams.get('tourDate'));
 
   try {
     // connect to database
@@ -20,7 +20,7 @@ export async function GET(Request, { params }) {
     if (tourDate) {
       bookings = await Booking.find({
         tour: tourId,
-        'bookingRequest.tourDate': { $regex: `^${tourDate}` },
+        'bookingRequest.tourDate': tourDate,
       }).select('status');
     } else {
       bookings = await Booking.find({
